@@ -36,6 +36,7 @@ export const profileParticipants = pgTable(
 
 // ProfileParticipant Type
 export type ProfileParticipant = typeof profileParticipants.$inferSelect;
+export type NewProfileParticipant = typeof profileParticipants.$inferInsert;
 
 // Drizzle Zod Schema
 export const insertProfileParticipantSchema = createInsertSchema(

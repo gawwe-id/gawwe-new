@@ -8,15 +8,22 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default function RootLayout({
+import { auth } from "@/lib/auth";
+import { SessionProvider } from "next-auth/react";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en">
       <body className="antialiased">
-        <Providers>{children}</Providers>
+        <SessionProvider session={session}>
+          <Providers>{children}</Providers>
+        </SessionProvider>
       </body>
     </html>
   );

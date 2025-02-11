@@ -1,9 +1,14 @@
 import { auth, signIn, signOut } from "@/lib/auth";
 import { RecentPost } from "./components/post";
 import { Button, Input } from "@mui/joy";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
   const session = await auth();
+
+  if (session) {
+    redirect("/dashboard");
+  }
 
   return (
     <main className="flex min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 flex-col items-center justify-center relative isolate">
@@ -22,35 +27,20 @@ export default async function Home() {
 
         <RecentPost />
 
-        {session?.user ? (
-          <div>
-            <h2>Logged in</h2>
-            <p>{JSON.stringify(session?.user)}</p>
-            <form
-              action={async () => {
-                "use server";
-                await signOut();
-              }}
-            >
-              <button type="submit">Sign Out</button>
-            </form>
-          </div>
-        ) : (
-          <>
-            <form
-              action={async () => {
-                "use server";
-                await signIn("google");
-              }}
-            >
-              <button type="submit">Signin with Google</button>
-            </form>
+        <form
+          action={async () => {
+            "use server";
+            await signIn("google");
+          }}
+        >
+          <button type="submit">Signin with Google</button>
+        </form>
 
-            <br />
-            <br />
-            <br />
+        <br />
+        <br />
+        <br />
 
-            {/* <form
+        {/* <form
               action={async (formData) => {
                 "use server";
                 await signIn("resend", formData);
@@ -60,19 +50,17 @@ export default async function Home() {
               <button type="submit">Signin with Resend</button>
             </form> */}
 
-            <form
-              action={async (formData) => {
-                "use server";
-                await signIn("resend", formData);
-              }}
-            >
-              <Input type="email" name="email" placeholder="Email" size="lg" />
-              <Button type="submit" size="lg" variant="soft" color="primary">
-                Signin with Resend
-              </Button>
-            </form>
-          </>
-        )}
+        <form
+          action={async (formData) => {
+            "use server";
+            await signIn("resend", formData);
+          }}
+        >
+          <Input type="email" name="email" placeholder="Email" size="lg" />
+          <Button type="submit" size="lg" variant="soft" color="primary">
+            Signin with Resend
+          </Button>
+        </form>
       </div>
     </main>
   );

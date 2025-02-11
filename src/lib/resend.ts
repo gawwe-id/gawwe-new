@@ -1,7 +1,14 @@
+// src/lib/resend.ts
 import { Resend } from "resend";
-// import { config } from "dotenv";
 
-// config({ path: ".env" });
+const createResendClient = () => {
+  if (typeof window !== "undefined") return null;
 
-// export const resend = new Resend("re_XaSFUeFK_LvLN2fRmEtwSrXkgGqA1f9Xb");
-export const resend = new Resend(process.env.RESEND_API_KEY);
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY environment variable is not set");
+  }
+
+  return new Resend(process.env.RESEND_API_KEY);
+};
+
+export const resend = createResendClient();
