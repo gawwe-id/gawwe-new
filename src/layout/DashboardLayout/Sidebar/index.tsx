@@ -6,6 +6,7 @@ import {
   Box,
   Divider,
   GlobalStyles,
+  Input,
   List,
   ListItem,
   ListItemButton,
@@ -20,10 +21,11 @@ import TitleLogo from "./TitleLogo"
 import UserDisplay from "./UserDisplay"
 import Toggler from "./Toggler"
 import { closeSidebar } from "../utils"
-import { Menu, participant } from "../menu-items/participant"
+import { Menu, participant, participant_bottom } from "../menu-items/participant"
 
 // assets
-import { KeyboardArrowDown } from "@mui/icons-material"
+import { KeyboardArrowDown, KeyboardCommandKeyRounded, SearchRounded } from "@mui/icons-material"
+import ListMenuItem from "./ListMenuItem"
 
 export default function Sidebar() {
   return (
@@ -79,8 +81,14 @@ export default function Sidebar() {
         onClick={() => closeSidebar()}
       />
       <TitleLogo />
-      {/* <Input size="sm" startDecorator={<SearchRounded />} placeholder="Cari..." /> */}
+      <Input
+        size="sm"
+        startDecorator={<SearchRounded />}
+        endDecorator={<KeyboardCommandKeyRounded />}
+        placeholder="Cari..."
+      />
       <Box
+        mt={1}
         sx={{
           minHeight: 0,
           overflow: "hidden auto",
@@ -101,55 +109,24 @@ export default function Sidebar() {
           }}
         >
           {participant.map((menu: Menu) => {
-            return menu.children ? (
-              <ListItem nested key={menu.id}>
-                <Toggler
-                  renderToggle={({ open, setOpen }) => (
-                    <ListItemButton onClick={() => setOpen(!open)}>
-                      <menu.icon />
-                      <ListItemContent>
-                        <Typography level="title-sm">{menu.title}</Typography>
-                      </ListItemContent>
-                      <KeyboardArrowDown
-                        sx={[
-                          open
-                            ? { transform: "rotate(180deg)" }
-                            : { transform: "none" },
-                        ]}
-                      />
-                    </ListItemButton>
-                  )}
-                >
-                  <List sx={{ gap: 0.5 }}>
-                    {menu.children.map((submenu) => (
-                      <Link
-                        href={submenu.url}
-                        key={submenu.id}
-                        style={{ textDecoration: "none" }}
-                      >
-                        <ListItem sx={{ mt: 0.5 }}>
-                          <ListItemButton>{submenu.title}</ListItemButton>
-                        </ListItem>
-                      </Link>
-                    ))}
-                  </List>
-                </Toggler>
-              </ListItem>
-            ) : (
-              <Link
-                href={menu.url}
-                key={menu.id}
-                style={{ textDecoration: "none" }}
-              >
-                <ListItem>
-                  <ListItemButton>
-                    <menu.icon />
-                    <ListItemContent>
-                      <Typography level="title-sm">{menu.title}</Typography>
-                    </ListItemContent>
-                  </ListItemButton>
-                </ListItem>
-              </Link>
+            return (
+              <ListMenuItem key={menu.id} menu={menu} />
+            )
+          })}
+        </List>
+        <List
+          size="sm"
+          sx={{
+            mt: 'auto',
+            flexGrow: 0,
+            '--ListItem-radius': (theme) => theme.vars.radius.sm,
+            '--List-gap': '8px',
+            // mb: 2,
+          }}
+        >
+          {participant_bottom.map((menu) => {
+            return (
+              <ListMenuItem key={menu.id} menu={menu} />
             )
           })}
         </List>

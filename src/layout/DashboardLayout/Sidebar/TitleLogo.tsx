@@ -17,7 +17,7 @@ export default function TitleLogo() {
   const { data: session } = useSession();
 
   return (
-    <Box mb={3} sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+    <Box mb={2} sx={{ display: "flex", gap: 1, alignItems: "center" }}>
       <IconButton variant="soft" color="primary" size="sm">
         {session?.user?.role === "agency" ? (
           <SchoolRounded />
