@@ -1,43 +1,125 @@
 "use client"
 
-import Link from "next/link"
-
+import { memo } from 'react'
 import {
   Box,
   Divider,
   GlobalStyles,
   Input,
   List,
-  ListItem,
-  ListItemButton,
-  ListItemContent,
   Sheet,
-  Typography,
   listItemButtonClasses,
 } from "@mui/joy"
+import { useSession } from "next-auth/react"
+import { KeyboardCommandKeyRounded, SearchRounded } from "@mui/icons-material"
 
-// project import
+// Project imports
 import TitleLogo from "./TitleLogo"
 import UserDisplay from "./UserDisplay"
-import Toggler from "./Toggler"
-import { closeSidebar } from "../utils"
-import { Menu, participant, participant_bottom } from "../menu-items/participant"
-
-// assets
-import { KeyboardArrowDown, KeyboardCommandKeyRounded, SearchRounded } from "@mui/icons-material"
 import ListMenuItem from "./ListMenuItem"
+import { closeSidebar } from "../utils"
+import { Menu, participant, participant_bottom, agency, agency_bottom } from "../menu-items"
 
-export default function Sidebar() {
+// Types
+interface SidebarProps {
+  className?: string
+}
+
+// Constants
+const SIDEBAR_WIDTH = {
+  default: "220px",
+  lg: "240px",
+}
+
+const TRANSITION_DURATION = "0.4s"
+
+// Styled components
+const SidebarOverlay = memo(({ onClick }: { onClick: () => void }) => (
+  <Box
+    className="Sidebar-overlay"
+    sx={{
+      position: "fixed",
+      zIndex: 9998,
+      top: 0,
+      left: 0,
+      width: "100vw",
+      height: "100vh",
+      opacity: "var(--SideNavigation-slideIn)",
+      backgroundColor: "var(--joy-palette-background-backdrop)",
+      transition: `opacity ${TRANSITION_DURATION}`,
+      transform: {
+        xs: "translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1) + var(--SideNavigation-slideIn, 0) * var(--Sidebar-width, 0px)))",
+        lg: "translateX(-100%)",
+      },
+    }}
+    onClick={onClick}
+  />
+))
+SidebarOverlay.displayName = 'SidebarOverlay'
+
+const MenuList = memo(({ items }: { items: Menu[] }) => (
+  <List
+    size="sm"
+    sx={{
+      gap: 1,
+      "--List-nestedInsetStart": "30px",
+      "--ListItem-radius": (theme) => theme.vars.radius.sm,
+    }}
+  >
+    {items.map((menu) => (
+      <ListMenuItem key={menu.id} menu={menu} />
+    ))}
+  </List>
+))
+MenuList.displayName = 'MenuList'
+
+const BottomMenuList = memo(({ items }: { items: Menu[] }) => (
+  <List
+    size="sm"
+    sx={{
+      mt: 'auto',
+      flexGrow: 0,
+      '--ListItem-radius': (theme) => theme.vars.radius.sm,
+      '--List-gap': '8px',
+    }}
+  >
+    {items.map((menu) => (
+      <ListMenuItem key={menu.id} menu={menu} />
+    ))}
+  </List>
+))
+BottomMenuList.displayName = 'BottomMenuList'
+
+const SearchInput = memo(() => (
+  <Input
+    size="sm"
+    startDecorator={<SearchRounded />}
+    endDecorator={<KeyboardCommandKeyRounded />}
+    placeholder="Cari..."
+  />
+))
+SearchInput.displayName = 'SearchInput'
+
+// Main component
+const Sidebar = ({ className }: SidebarProps) => {
+  const { data: session } = useSession()
+  const role = session?.user.role
+
+  const menuItems = role === "participant" ? participant : agency
+  const bottomMenuItems = role === "participant" ? participant_bottom : agency_bottom
+
+  if (!role) return null
+
   return (
     <Sheet
-      className="Sidebar"
+      className={`Sidebar ${className || ''}`}
       sx={{
         position: { xs: "fixed", md: "sticky" },
         transform: {
           xs: "translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1)))",
           md: "none",
         },
-        transition: "transform 0.4s, width 0.4s",
+        transition: `transform ${TRANSITION_DURATION}, width ${TRANSITION_DURATION}`,
         zIndex: 10000,
         height: "100dvh",
         width: "var(--Sidebar-width)",
@@ -54,39 +136,17 @@ export default function Sidebar() {
       <GlobalStyles
         styles={(theme) => ({
           ":root": {
-            "--Sidebar-width": "220px",
+            "--Sidebar-width": SIDEBAR_WIDTH.default,
             [theme.breakpoints.up("lg")]: {
-              "--Sidebar-width": "240px",
+              "--Sidebar-width": SIDEBAR_WIDTH.lg,
             },
           },
         })}
       />
-      <Box
-        className="Sidebar-overlay"
-        sx={{
-          position: "fixed",
-          zIndex: 9998,
-          top: 0,
-          left: 0,
-          width: "100vw",
-          height: "100vh",
-          opacity: "var(--SideNavigation-slideIn)",
-          backgroundColor: "var(--joy-palette-background-backdrop)",
-          transition: "opacity 0.4s",
-          transform: {
-            xs: "translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1) + var(--SideNavigation-slideIn, 0) * var(--Sidebar-width, 0px)))",
-            lg: "translateX(-100%)",
-          },
-        }}
-        onClick={() => closeSidebar()}
-      />
+      <SidebarOverlay onClick={closeSidebar} />
       <TitleLogo />
-      <Input
-        size="sm"
-        startDecorator={<SearchRounded />}
-        endDecorator={<KeyboardCommandKeyRounded />}
-        placeholder="Cari..."
-      />
+      <SearchInput />
+
       <Box
         mt={1}
         sx={{
@@ -100,39 +160,14 @@ export default function Sidebar() {
           },
         }}
       >
-        <List
-          size="sm"
-          sx={{
-            gap: 1,
-            "--List-nestedInsetStart": "30px",
-            "--ListItem-radius": (theme) => theme.vars.radius.sm,
-          }}
-        >
-          {participant.map((menu: Menu) => {
-            return (
-              <ListMenuItem key={menu.id} menu={menu} />
-            )
-          })}
-        </List>
-        <List
-          size="sm"
-          sx={{
-            mt: 'auto',
-            flexGrow: 0,
-            '--ListItem-radius': (theme) => theme.vars.radius.sm,
-            '--List-gap': '8px',
-            // mb: 2,
-          }}
-        >
-          {participant_bottom.map((menu) => {
-            return (
-              <ListMenuItem key={menu.id} menu={menu} />
-            )
-          })}
-        </List>
+        <MenuList items={menuItems} />
+        <BottomMenuList items={bottomMenuItems} />
       </Box>
+
       <Divider />
       <UserDisplay />
     </Sheet>
   )
 }
+
+export default memo(Sidebar)

@@ -3,7 +3,7 @@ import React from 'react'
 import Toggler from './Toggler'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import Link from 'next/link'
-import { Menu } from '../menu-items/participant'
+import { Menu } from '../menu-items'
 
 interface ListMenuItemProps {
   menu: Menu
