@@ -205,7 +205,7 @@ export const participant_bottom: Menu[] = [
     id: "accounts",
     title: "Account Setting",
     icon: icon.accounts!,
-    url: "/accounts",
+    url: "/account",
   },
 ]
 
@@ -214,6 +214,6 @@ export const agency_bottom: Menu[] = [
     id: "accounts",
     title: "Account Setting",
     icon: icon.accounts!,
-    url: "/agency/accounts",
+    url: "/agency/account",
   },
 ]
