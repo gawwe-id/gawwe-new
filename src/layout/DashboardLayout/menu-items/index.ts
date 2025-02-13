@@ -26,18 +26,12 @@ const icon: Record<string, SvgIconComponent> = {
   students: GroupRounded
 }
 
-type Submenu = {
-  id: string
-  title: string
-  url: string
-}
-
 export type Menu = {
   id: string
   title: string
   url: string
-  icon: SvgIconComponent
-  children?: Submenu[] | null
+  icon?: SvgIconComponent
+  children?: Menu[] | null
 }
 
 

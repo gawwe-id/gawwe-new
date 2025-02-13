@@ -6,6 +6,7 @@ import { Box } from "@mui/joy";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import DialogAlert from "@/components/dialog/DialogAlert";
+import DynamicBreadcrumbs from "@/components/DynamicBreadcrumbs";
 
 // project import
 const Sidebar = lazy(() => import("./Sidebar/index"));
@@ -36,20 +37,35 @@ export default async function DashboardLayout({
         component="main"
         className="MainContent"
         sx={{
-          pt: { xs: "calc(12px + var(--Header-height))", md: 3 },
+          pt: { xs: 'calc(12px + var(--Header-height))', md: 3 },
           pb: { xs: 2, sm: 2, md: 3 },
           flex: 1,
-          display: "flex",
-          flexDirection: "column",
+          display: 'flex',
+          flexDirection: 'column',
           minWidth: 0,
-          height: "100dvh",
+          height: '100dvh',
           gap: 1,
-          overflow: "auto",
+          overflow: 'auto',
         }}
       >
-        {children}
+        <Box sx={{ flex: 1, width: '100%' }}>
+          <Box
+            sx={{
+              position: 'sticky',
+              top: { sm: -100, md: -110 },
+              bgcolor: 'background.body',
+              zIndex: 9995,
+            }}
+          >
+            <Box sx={{ px: { xs: 2, md: 6 } }}>
+              <DynamicBreadcrumbs
+                sx={{ mb: 2 }} // Optional additional styling
+              />
+              {children}
+            </Box>
+          </Box>
+        </Box>
       </Box>
-
       <DialogAlert />
     </Box>
   );

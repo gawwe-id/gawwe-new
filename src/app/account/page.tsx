@@ -1,9 +1,11 @@
+// import project
 import DasbhboardLayout from "@/layout/DashboardLayout";
+import Account from "@/views/account";
 
 export default async function AccountPage() {
   return (
     <DasbhboardLayout>
-      <h2>ACOUNTS</h2>
+      <Account />
     </DasbhboardLayout>
   );
 }

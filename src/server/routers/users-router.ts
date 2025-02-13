@@ -9,19 +9,19 @@ export const usersRouter = j.router({
  * GET USER BY ID
  ======================================== */
   single: privateProcedure
-    .input(z.object({ userId: z.string() }))
-    .query(async ({ c, ctx, input }) => {
-      const { db } = ctx;
-      const { userId } = input;
+    .query(async ({ c, ctx }) => {
+      const { db, user } = ctx;
 
-      const user = await db.query.users.findFirst({
-        where: eq(users.id, userId),
-      });
+      const [data] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, user.id as string))
+        .limit(1);
 
       return c.json(
         {
           message: "Success",
-          data: user,
+          data,
         },
         200
       );
