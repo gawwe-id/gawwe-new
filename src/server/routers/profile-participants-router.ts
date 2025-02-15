@@ -1,11 +1,11 @@
-import { users, profileParticipants } from "@/server/db/schema";
+import { users, profileParticipants } from '@/server/db/schema';
 import {
   insertProfileParticipantSchema,
-  updateProfileParticipantSchema,
-} from "@/server/db/schema/profileParticipants";
-import { eq } from "drizzle-orm";
-import { j, privateProcedure } from "../jstack";
-import { z } from "zod";
+  updateProfileParticipantSchema
+} from '@/server/db/schema/profileParticipants';
+import { eq } from 'drizzle-orm';
+import { j, privateProcedure } from '../jstack';
+import { z } from 'zod';
 
 export const profileParticipantsRouter = j.router({
   /** ========================================
@@ -23,8 +23,8 @@ export const profileParticipantsRouter = j.router({
 
       return c.json(
         {
-          message: "Berhasil membuat Profile",
-          data: participant,
+          message: 'Berhasil membuat Profile',
+          data: participant
         },
         200
       );
@@ -33,26 +33,34 @@ export const profileParticipantsRouter = j.router({
   /** ========================================
  * GET SINGLE PROFILE PARTICIPANT
  ======================================== */
-  single: privateProcedure
-    .input(z.object({ profileId: z.string() }))
-    .query(async ({ c, ctx, input }) => {
-      const { db } = ctx;
-      const { profileId } = input;
+  single: privateProcedure.query(async ({ c, ctx }) => {
+    const { db, user } = ctx;
+    const userId = user.id;
 
-      const [participant] = await db
-        .select()
-        .from(profileParticipants)
-        .where(eq(profileParticipants.id, profileId))
-        .execute();
-
+    if (!userId) {
       return c.json(
         {
-          message: "Success",
-          data: participant,
+          message: 'User Not Fount',
+          data: null
         },
-        200
+        404
       );
-    }),
+    }
+
+    const [participant] = await db
+      .select()
+      .from(profileParticipants)
+      .where(eq(profileParticipants.userId, userId))
+      .execute();
+
+    return c.json(
+      {
+        message: 'Success',
+        data: participant
+      },
+      200
+    );
+  }),
 
   /** ========================================
  * UPDATE PROFILE PARTICIPANT
@@ -61,7 +69,7 @@ export const profileParticipantsRouter = j.router({
     .input(
       z.object({
         id: z.string(),
-        updateProfile: updateProfileParticipantSchema,
+        updateProfile: updateProfileParticipantSchema
       })
     )
     .mutation(async ({ c, ctx, input }) => {
@@ -76,10 +84,10 @@ export const profileParticipantsRouter = j.router({
 
       return c.json(
         {
-          message: "Berhasil update Profile",
-          data: participant,
+          message: 'Berhasil update Profile',
+          data: participant
         },
         200
       );
-    }),
+    })
 });

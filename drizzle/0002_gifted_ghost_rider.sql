@@ -1,0 +1,1 @@
+ALTER TABLE "profile_participants" ALTER COLUMN "birth_date" SET DATA TYPE date;

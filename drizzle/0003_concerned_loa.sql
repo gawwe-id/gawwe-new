@@ -1,0 +1,1 @@
+ALTER TABLE "profile_participants" DROP COLUMN "image_url";

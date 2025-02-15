@@ -15,6 +15,20 @@
       "when": 1738988343638,
       "tag": "0001_big_juggernaut",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1739587820578,
+      "tag": "0002_gifted_ghost_rider",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1739590873604,
+      "tag": "0003_concerned_loa",
+      "breakpoints": true
     }
   ]
 }
