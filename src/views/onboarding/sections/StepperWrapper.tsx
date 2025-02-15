@@ -1,22 +1,23 @@
-"use client";
+'use client';
 
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from 'react';
 
-import { Box, Button, Stack } from "@mui/joy";
-import { useOnboardingStore } from "@/store/useOnboardingStore";
-import { useQuery } from "@tanstack/react-query";
-import { client } from "@/lib/client";
+import { Box, Button, Stack } from '@mui/joy';
+import { useOnboardingStore } from '@/store/useOnboardingStore';
+import { useQuery } from '@tanstack/react-query';
+import { client } from '@/lib/client';
+import { useSession } from 'next-auth/react';
 
 // project import
-import StepperRole from "./stepper-item/StepperRole";
-import StepperFullname from "./stepper-item/StepperFullname";
-import StepperUploadImage from "./stepper-item/StepperUploadImage";
-import StepperDataParticipant from "./stepper-item/StepperDataParticipant";
-import StepperDataAgency from "./stepper-item/StepperDataAgency";
-import StepperAddressParticipant from "./stepper-item/StepperAddressParticipant";
-import StepperSummary from "./stepper-item/StepperSummary";
-import StepperAddressAgency from "./stepper-item/StepperAddressAgency";
-import StepperContent from "./StepperContent";
+import StepperRole from './stepper-item/StepperRole';
+import StepperFullname from './stepper-item/StepperFullname';
+import StepperUploadImage from './stepper-item/StepperUploadImage';
+import StepperDataParticipant from './stepper-item/StepperDataParticipant';
+import StepperDataAgency from './stepper-item/StepperDataAgency';
+import StepperAddressParticipant from './stepper-item/StepperAddressParticipant';
+import StepperSummary from './stepper-item/StepperSummary';
+import StepperAddressAgency from './stepper-item/StepperAddressAgency';
+import StepperContent from './StepperContent';
 
 interface StepWrapperProps {
   children: ReactNode;
@@ -48,7 +49,7 @@ function StepWrapper({ children, value, index, ...other }: StepWrapperProps) {
   );
 }
 
-type IconType = "admin" | "name" | "photo" | "data" | "address" | "summary";
+type IconType = 'admin' | 'name' | 'photo' | 'data' | 'address' | 'summary';
 
 // Types
 type Steps = {
@@ -59,42 +60,58 @@ type Steps = {
 const StepperWrapper = () => {
   const steps: Steps[] = [
     {
-      name: "Role",
-      iconType: "admin",
+      name: 'Role',
+      iconType: 'admin'
     },
     {
-      name: "Nama Lengkap",
-      iconType: "name",
+      name: 'Nama Lengkap',
+      iconType: 'name'
     },
     {
-      name: "Foto Profil",
-      iconType: "photo",
+      name: 'Foto Profil',
+      iconType: 'photo'
     },
     {
-      name: "Data Pribadi",
-      iconType: "data",
+      name: 'Data Pribadi',
+      iconType: 'data'
     },
     {
-      name: "Alamat",
-      iconType: "address",
+      name: 'Alamat',
+      iconType: 'address'
     },
     {
-      name: "Rangkuman",
-      iconType: "summary",
-    },
+      name: 'Rangkuman',
+      iconType: 'summary'
+    }
   ];
 
-  const user = useOnboardingStore((state) => state.user);
+  const { data: session } = useSession();
+  const setUser = useOnboardingStore((state) => state.setUser);
+  // const user = useOnboardingStore((state) => state.user);
   // const agency = useOnboardingStore((state) => state.profileAgency);
   // const participant = useOnboardingStore((state) => state.profileParticipant);
 
   const { data: roles } = useQuery({
-    queryKey: ["roles"],
+    queryKey: ['roles'],
     queryFn: async () => {
       const res = await client.roles.list.$get();
       return await res.json();
-    },
+    }
   });
+
+  const {} = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      const res = await client.users.single.$get();
+      return (await res.json()).data;
+    }
+  });
+
+  useEffect(() => {
+    if (session) {
+      setUser(session.user);
+    }
+  }, [session]);
 
   const [activeStep, setActiveStep] = useState<number>(0);
 
@@ -136,13 +153,13 @@ const StepperWrapper = () => {
             />
           </StepWrapper>
           <StepWrapper value={activeStep} index={3}>
-            {user?.role === "participant" && (
+            {session?.user?.role === 'participant' && (
               <StepperDataParticipant
                 handleNext={handleNext}
                 handleBack={handleBack}
               />
             )}
-            {user?.role === "agency" && (
+            {session?.user?.role === 'agency' && (
               <StepperDataAgency
                 handleNext={handleNext}
                 handleBack={handleBack}
@@ -150,13 +167,13 @@ const StepperWrapper = () => {
             )}
           </StepWrapper>
           <StepWrapper value={activeStep} index={4}>
-            {user?.role === "participant" && (
+            {session?.user?.role === 'participant' && (
               <StepperAddressParticipant
                 handleNext={handleNext}
                 handleBack={handleBack}
               />
             )}
-            {user?.role === "agency" && (
+            {session?.user?.role === 'agency' && (
               <StepperAddressAgency
                 handleNext={handleNext}
                 handleBack={handleBack}
