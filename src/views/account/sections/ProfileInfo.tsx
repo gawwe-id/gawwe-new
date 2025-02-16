@@ -5,6 +5,8 @@ import {
   Box,
   Button,
   Card,
+  CardActions,
+  CardOverflow,
   Divider,
   FormHelperText,
   FormLabel,
@@ -23,14 +25,18 @@ import DatePicker from 'react-datepicker';
 import { client } from '@/lib/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from '@/hooks/useSnackbar';
+import { ProfileParticipant } from '@/server/db/schema/profileParticipants';
+import { customHeader, customStyles } from '@/utils/dateSelection';
 
 // assets
-import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
-import NavigateBeforeRoundedIcon from '@mui/icons-material/NavigateBeforeRounded';
-import CalendarMonthRounded from '@mui/icons-material/CalendarMonthRounded';
+import {
+  LocalPhoneRounded,
+  SchoolRounded,
+  WcRounded,
+  CalendarMonthRounded
+} from '@mui/icons-material';
 
 // types
-import { ProfileParticipant } from '@/server/db/schema/profileParticipants';
 
 const ProfileInfo = () => {
   const queryClient = useQueryClient();
@@ -39,9 +45,8 @@ const ProfileInfo = () => {
   const {
     control,
     handleSubmit,
-    watch,
     reset,
-    formState: { errors }
+    formState: { errors, isDirty }
   } = useForm<ProfileParticipant>({
     defaultValues: {
       phone: '',
@@ -59,13 +64,8 @@ const ProfileInfo = () => {
     }
   });
 
-  console.log('watch brthdate : ', watch('birthDate'));
-  console.log(').format( : ', dayjs('13-03-2003').format('yyy-MMM-dd'));
-
   useEffect(() => {
     if (profile) {
-      console.log('Proffffe : ', profile);
-
       reset({
         phone: profile.phone,
         gender: profile.gender,
@@ -83,7 +83,16 @@ const ProfileInfo = () => {
     }
   });
 
-  const { mutate: mutateUpdateParticipant, isPending: isParticipant } =
+  const handleReset = () => {
+    reset({
+      phone: '',
+      gender: '',
+      birthDate: new Date(),
+      educationLevelId: ''
+    });
+  };
+
+  const { mutate: mutateUpdateParticipant, isPending: isUpdating } =
     useMutation({
       mutationFn: async ({
         updateProfile,
@@ -92,17 +101,9 @@ const ProfileInfo = () => {
         updateProfile: Partial<ProfileParticipant>;
         id: string;
       }) => {
-        // Convert date format before sending to server
-        // const formattedProfile = {
-        //   ...updateProfile,
-        //   birthDate: updateProfile.birthDate
-        //     ? dayjs(updateProfile.birthDate).format('DD-MM-YYYY')
-        //     : ''
-        // };
-
         const res = await client.profileParticipants.update.$post({
-          id: '',
-          updateProfile: updateProfile
+          id,
+          updateProfile
         });
         return await res.json();
       },
@@ -110,14 +111,10 @@ const ProfileInfo = () => {
         await queryClient.invalidateQueries({ queryKey: ['user'] });
         showSnackbar('User Profile berhasil diubah!', 'success');
 
-        const formattedDate = data?.birthDate
-          ? dayjs(data.birthDate, 'DD-MM-YYYY').format('YYYY-MM-DD')
-          : '';
-
         reset({
           phone: data?.phone,
           gender: data?.gender,
-          birthDate: new Date(formattedDate),
+          birthDate: data?.birthDate ? new Date(data.birthDate) : undefined,
           educationLevelId: data?.educationLevelId
         });
       }
@@ -135,12 +132,12 @@ const ProfileInfo = () => {
       <Box sx={{ mb: 1 }}>
         <Typography level="title-md">Profile</Typography>
         <Typography level="body-sm">
-          Write a short introduction to be displayed on your profile
+          Ubah identitas Profile Kamu bia memang diperlukan
         </Typography>
       </Box>
       <Divider />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} sx={{ my: 1 }}>
           <Grid xs={6}>
             <Stack spacing={1}>
               <FormLabel>Nomor HP</FormLabel>
@@ -161,6 +158,7 @@ const ProfileInfo = () => {
                     type="tel"
                     size="sm"
                     fullWidth
+                    startDecorator={<LocalPhoneRounded />}
                     value={field.value || ''}
                   />
                 )}
@@ -181,16 +179,22 @@ const ProfileInfo = () => {
               <Controller
                 name="gender"
                 control={control}
-                rules={{
-                  required: 'Jenis Kelamin harus dipilih'
-                }}
-                render={({ field }) => (
+                rules={{ required: 'Jenis Kelamin harus dipilih' }}
+                render={({ field: { onChange, value, ref } }) => (
                   <Select
-                    {...field}
+                    ref={ref}
                     size="sm"
                     placeholder="Pilih Jenis Kelamin"
-                    value={field.value || ''}
-                    onChange={(_, newValue) => field.onChange(newValue)}
+                    startDecorator={<WcRounded />}
+                    value={value || ''}
+                    onChange={(event, newValue) => {
+                      console.log('Select clicked', event, newValue);
+                      onChange(newValue);
+                    }}
+                    sx={{
+                      zIndex: 1000,
+                      position: 'relative'
+                    }}
                   >
                     <Option value="L">Laki-laki</Option>
                     <Option value="P">Perempuan</Option>
@@ -210,6 +214,7 @@ const ProfileInfo = () => {
           <Grid xs={6}>
             <Stack spacing={1}>
               <FormLabel>Tanggal Lahir</FormLabel>
+              <style>{customStyles}</style>
               <Controller
                 name="birthDate"
                 control={control}
@@ -231,14 +236,12 @@ const ProfileInfo = () => {
                   }
                 }}
                 render={({ field }) => {
-                  // const selected = dayjs(value);
                   return (
                     <DatePicker
                       onChange={field.onChange}
                       selected={new Date(field.value)}
-                      // onChange={(date: Date) => onChange(date)}
-                      // value={value}
                       dateFormat="yyyy-MM-dd"
+                      renderCustomHeader={customHeader}
                       placeholderText="Select date"
                       ref={field.ref}
                       customInput={
@@ -272,12 +275,14 @@ const ProfileInfo = () => {
                 rules={{
                   required: 'Pendidikan harus dipilih'
                 }}
-                render={({ field: { onChange, value } }) => (
+                render={({ field }) => (
                   <Select
+                    {...field}
                     size="sm"
                     placeholder="Pilih Pendidikan"
-                    value={value || ''}
-                    onChange={(_, newValue) => onChange(newValue)}
+                    startDecorator={<SchoolRounded />}
+                    value={field.value || ''}
+                    onChange={(_, newValue) => field.onChange(newValue)}
                   >
                     {educations?.data?.map((education) => (
                       <Option key={education.id} value={education.id}>
@@ -298,33 +303,29 @@ const ProfileInfo = () => {
             )}
           </Grid>
         </Grid>
-
-        <Stack
-          mt={10}
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Button
-            size="sm"
-            color="neutral"
-            variant="soft"
-            startDecorator={<NavigateBeforeRoundedIcon />}
-          >
-            Batalkan
-          </Button>
-          <Button
-            size="sm"
-            color="primary"
-            variant="soft"
-            type="submit"
-            disabled={isParticipant}
-            loading={isParticipant}
-            endDecorator={<NavigateNextRoundedIcon />}
-          >
-            Selanjutnya
-          </Button>
-        </Stack>
+        <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
+          <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
+            <Button
+              size="sm"
+              variant="outlined"
+              color="neutral"
+              disabled={!isDirty || isUpdating}
+              onClick={handleReset}
+              type="button"
+            >
+              Batalkan
+            </Button>
+            <Button
+              size="sm"
+              variant="soft"
+              loading={isUpdating}
+              disabled={!isDirty || isUpdating}
+              type="submit"
+            >
+              Simpan
+            </Button>
+          </CardActions>
+        </CardOverflow>
       </form>
     </Card>
   );
