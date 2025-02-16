@@ -1,36 +1,36 @@
-import { lazy, ReactNode } from "react";
+import { lazy, ReactNode } from 'react';
 
 // joy-ui
-import { Box } from "@mui/joy";
+import { Box } from '@mui/joy';
 
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import DialogAlert from "@/components/dialog/DialogAlert";
-import DynamicBreadcrumbs from "@/components/DynamicBreadcrumbs";
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+import DialogAlert from '@/components/dialog/DialogAlert';
+import DynamicBreadcrumbs from '@/components/DynamicBreadcrumbs';
 
 // project import
-const Sidebar = lazy(() => import("./Sidebar/index"));
-const Header = lazy(() => import("./Header/index"));
+const Sidebar = lazy(() => import('./Sidebar/index'));
+const Header = lazy(() => import('./Header/index'));
 
 export default async function DashboardLayout({
-  children,
+  children
 }: {
   children: ReactNode;
 }) {
   const session = await auth();
 
   if (!session) {
-    redirect("/auth/signin");
+    redirect('/auth/signin');
   }
 
   if (session?.user) {
     if (session.user.profileCompletion === 0) {
-      redirect("/onboarding");
+      redirect('/onboarding');
     }
   }
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100dvh" }}>
+    <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
       <Sidebar />
       <Header />
       <Box
@@ -45,7 +45,7 @@ export default async function DashboardLayout({
           minWidth: 0,
           height: '100dvh',
           gap: 1,
-          overflow: 'auto',
+          overflow: 'auto'
         }}
       >
         <Box sx={{ flex: 1, width: '100%' }}>
@@ -53,8 +53,7 @@ export default async function DashboardLayout({
             sx={{
               position: 'sticky',
               top: { sm: -100, md: -110 },
-              bgcolor: 'background.body',
-              zIndex: 9995,
+              bgcolor: 'background.body'
             }}
           >
             <Box sx={{ px: { xs: 2, md: 6 } }}>

@@ -37,8 +37,11 @@ import {
 } from '@mui/icons-material';
 
 // types
+interface ProfileInfoProps {
+  profile: ProfileParticipant;
+}
 
-const ProfileInfo = () => {
+const ProfileInfo = ({ profile }: ProfileInfoProps) => {
   const queryClient = useQueryClient();
   const { showSnackbar } = useSnackbar();
 
@@ -56,14 +59,6 @@ const ProfileInfo = () => {
     }
   });
 
-  const { data: profile, isPending } = useQuery({
-    queryKey: ['profile-participant'],
-    queryFn: async () => {
-      const res = await client.profileParticipants.single.$get();
-      return (await res.json()).data;
-    }
-  });
-
   useEffect(() => {
     if (profile) {
       reset({
@@ -73,7 +68,7 @@ const ProfileInfo = () => {
         educationLevelId: profile.educationLevelId
       });
     }
-  }, [profile, isPending]);
+  }, [profile]);
 
   const { data: educations } = useQuery({
     queryKey: ['educations'],
