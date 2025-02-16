@@ -38,9 +38,8 @@ export type ProfileParticipant = typeof profileParticipants.$inferSelect;
 export type NewProfileParticipant = typeof profileParticipants.$inferInsert;
 
 // Drizzle Zod Schema
-export const insertProfileParticipantSchema = createInsertSchema(
-  profileParticipants
-).omit({ id: true });
+export const insertProfileParticipantSchema =
+  createInsertSchema(profileParticipants);
 
 export const selectProfileParticipantSchema =
   createSelectSchema(profileParticipants);
