@@ -184,26 +184,19 @@ const AccountInfo = () => {
   return (
     <Card>
       <Box sx={{ mb: 1 }}>
-        <Typography level="title-md">Account Info</Typography>
-        <Typography level="body-sm">
-          Infromasi ini akan dilihat oleh pengguna lain, Kamu boleh mengubahnya
-          sesuai dengan identitas.
-        </Typography>
+        <Typography level="title-md">Account</Typography>
+        <Typography level="body-sm">Sesuaikan dengan identitas kamu</Typography>
       </Box>
       <Divider />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          spacing={{ xs: 2, md: 4 }}
-          sx={{ my: 1 }}
-        >
+        <Stack direction={{ xs: 'column' }} spacing={{ xs: 2 }} sx={{ my: 3 }}>
           <Stack
             direction="column"
             spacing={1}
             sx={{
-              alignItems: { xs: 'center', md: 'flex-start' },
+              alignItems: { xs: 'center' },
               position: 'relative',
-              width: { xs: '100%', md: 'auto' }
+              width: { xs: '100%' }
             }}
           >
             <AspectRatio
@@ -212,7 +205,7 @@ const AccountInfo = () => {
               sx={{
                 flex: 1,
                 minWidth: 100,
-                maxWidth: { xs: 200, md: 100 },
+                maxWidth: { xs: 200 },
                 borderRadius: '100%'
               }}
             >
@@ -242,8 +235,8 @@ const AccountInfo = () => {
                 zIndex: 2,
                 borderRadius: '50%',
                 boxShadow: 'sm',
-                right: { xs: '30%', md: '-10px' },
-                bottom: { xs: '0', md: '30px' }
+                right: { xs: '30%' },
+                bottom: { xs: '0' }
               }}
             >
               <EditRounded />
@@ -254,7 +247,7 @@ const AccountInfo = () => {
             spacing={2}
             sx={{
               flexGrow: 1,
-              width: { xs: '100%', md: 'auto' }
+              width: { xs: '100%' }
             }}
           >
             <Stack spacing={1}>
@@ -262,14 +255,15 @@ const AccountInfo = () => {
               <FormControl>
                 <Input
                   {...register('name')}
-                  size="lg"
+                  size="sm"
                   placeholder="Nama Lengkap"
-                  sx={{ width: '100%' }}
+                  fullWidth
                 />
               </FormControl>
             </Stack>
           </Stack>
         </Stack>
+
         <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
           <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
             <Button
