@@ -1,7 +1,6 @@
 export { accounts } from "./accounts";
 export { answerOptions } from "./answerOptions";
 export { assignments } from "./assignments";
-export { authenticators } from "./authenticators";
 export { calendars } from "./calendars";
 export { classes } from "./classes";
 export { classReviews } from "./classReviews";
@@ -23,12 +22,7 @@ export { profileDocumentAgencies } from "./profileDocumentAgencies";
 export { profileDocumentParticipants } from "./profileDocumentParticipants";
 export { questions } from "./questions";
 export { quiz } from "./quiz";
-export { resetTokens } from "./resetTokens";
 export { sessions } from "./sessions";
 export { roles } from "./roles";
 export { users } from "./users";
 export { verificationTokens } from "./verificationTokens";
-export { verifyEmailTokens } from "./verifyEmailTokens";
-
-//example
-export { posts } from "./posts";
