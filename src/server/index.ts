@@ -6,7 +6,6 @@ import {
   rolesRouter,
   regionsRouter,
   usersRouter,
-  postRouter,
 } from "./routers";
 
 /**
@@ -32,7 +31,6 @@ const appRouter = j.mergeRouters(api, {
   profileAgencies: profileAgenciesRouter,
   profileParticipants: profileParticipantsRouter,
   users: usersRouter,
-  post: postRouter,
 });
 
 export type AppRouter = typeof appRouter;
