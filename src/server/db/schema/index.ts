@@ -12,7 +12,6 @@ export { exams } from "./exams";
 export { languageClassEnrollments } from "./languageClassEnrollments";
 export { languageClasses } from "./languageClasses";
 export { notificationRecipients } from "./notificationRecipients";
-export { magicLinks } from "./magicLinks";
 export { notifications } from "./notifications";
 export { notificationTypes } from "./notificationTypes";
 export { payments } from "./payments";
