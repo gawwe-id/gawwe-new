@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   FormLabel,
   Radio,
   radioClasses,
@@ -18,7 +19,7 @@ import {
   SchoolRounded,
 } from "@mui/icons-material";
 
-import { useOnboardingStore } from "@/store/useOnboardingStore";
+import { useOnboardingState } from "@/store/useOnboardingState";
 
 // assets
 import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
@@ -28,12 +29,12 @@ import { Role } from "@/server/db/schema/roles";
 
 interface StepperRoleProps {
   roles: Role[] | undefined;
+  isLoading: boolean;
   handleNext: () => void;
 }
 
-const StepperRole = ({ roles, handleNext }: StepperRoleProps) => {
-  const user = useOnboardingStore((state) => state.user);
-  const updateUser = useOnboardingStore((state) => state.updateUser);
+const StepperRole = ({ roles, isLoading, handleNext }: StepperRoleProps) => {
+  const { updateUser, user } = useOnboardingState();
 
   const userRoles = roles?.filter((role) => role.code !== "admin");
 
@@ -50,68 +51,79 @@ const StepperRole = ({ roles, handleNext }: StepperRoleProps) => {
       <Typography textAlign="center" level="body-lg">
         Mendaftar Sebagai
       </Typography>
-      <RadioGroup
-        id="role"
-        aria-label="role"
-        value={value}
-        onChange={handleChange}
-        overlay
-        name="role"
-        sx={{
-          mt: 2,
-          flexDirection: "row",
-          gap: 2,
-          [`& .${radioClasses.checked}`]: {
-            [`& .${radioClasses.action}`]: {
-              inset: -1,
-              border: "3px solid",
-              borderColor: "primary.500",
+      {isLoading ? (
+        <Stack
+          mt={4}
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <CircularProgress size="sm" />
+        </Stack>
+      ) : (
+        <RadioGroup
+          id="role"
+          aria-label="role"
+          value={value}
+          onChange={handleChange}
+          overlay
+          name="role"
+          sx={{
+            mt: 2,
+            flexDirection: "row",
+            gap: 2,
+            [`& .${radioClasses.checked}`]: {
+              [`& .${radioClasses.action}`]: {
+                inset: -1,
+                border: "3px solid",
+                borderColor: "primary.500",
+              },
             },
-          },
-          [`& .${radioClasses.radio}`]: {
-            display: "contents",
-            "& > svg": {
-              zIndex: 2,
-              position: "absolute",
-              top: "-8px",
-              right: "-8px",
-              bgcolor: "background.surface",
-              borderRadius: "50%",
+            [`& .${radioClasses.radio}`]: {
+              display: "contents",
+              "& > svg": {
+                zIndex: 2,
+                position: "absolute",
+                top: "-8px",
+                right: "-8px",
+                bgcolor: "background.surface",
+                borderRadius: "50%",
+              },
             },
-          },
-        }}
-      >
-        {userRoles?.map((role) => {
-          return (
-            <Sheet
-              key={role.id}
-              variant="outlined"
-              sx={{
-                borderRadius: "md",
-                boxShadow: "sm",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 1.5,
-                p: 2,
-                width: 120,
-              }}
-            >
-              <Radio
-                id={role.id}
-                value={role.code}
-                checkedIcon={<CheckCircleRounded />}
-              />
-              {role.code === "agency" ? (
-                <SchoolRounded sx={{ fontSize: 24 }} />
-              ) : (
-                <PeopleAltRounded sx={{ fontSize: 24 }} />
-              )}
-              <FormLabel htmlFor={role.code}>{role.name}</FormLabel>
-            </Sheet>
-          );
-        })}
-      </RadioGroup>
+          }}
+        >
+          {userRoles?.map((role) => {
+            return (
+              <Sheet
+                key={role.id}
+                variant="outlined"
+                sx={{
+                  borderRadius: "md",
+                  boxShadow: "sm",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 1.5,
+                  p: 2,
+                  width: 120,
+                }}
+              >
+                <Radio
+                  id={role.id}
+                  value={role.code}
+                  checkedIcon={<CheckCircleRounded />}
+                />
+                {role.code === "agency" ? (
+                  <SchoolRounded sx={{ fontSize: 24 }} />
+                ) : (
+                  <PeopleAltRounded sx={{ fontSize: 24 }} />
+                )}
+                <FormLabel htmlFor={role.code}>{role.name}</FormLabel>
+              </Sheet>
+            );
+          })}
+        </RadioGroup>
+      )}
 
       <Stack
         mt={10}

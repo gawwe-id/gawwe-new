@@ -16,8 +16,8 @@ import {
 // third party
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { client } from "@/lib/client";
-import { useOnboardingStore } from "@/store/useOnboardingStore";
 import { useQuery } from "@tanstack/react-query";
+import { useOnboardingState } from "@/store/useOnboardingState";
 
 // assets
 import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
@@ -40,10 +40,7 @@ const StepperAddressAgency = ({
   handleBack,
   handleNext,
 }: StepperAddressProps) => {
-  const agency = useOnboardingStore((state) => state.profileAgency);
-  const setProfileAgency = useOnboardingStore(
-    (state) => state.setProfileAgency
-  );
+  const { profileAgency, setProfileAgency } = useOnboardingState();
 
   const {
     control,
@@ -52,11 +49,11 @@ const StepperAddressAgency = ({
     formState: { errors },
   } = useForm<ProfileAgencies>({
     defaultValues: {
-      address: agency?.address || "",
-      province: agency?.province || "",
-      regency: agency?.regency || "",
-      district: agency?.district || "",
-      village: agency?.village || "",
+      address: profileAgency?.address || "",
+      province: profileAgency?.province || "",
+      regency: profileAgency?.regency || "",
+      district: profileAgency?.district || "",
+      village: profileAgency?.village || "",
     },
   });
 
@@ -123,17 +120,48 @@ const StepperAddressAgency = ({
       village: findSelectedRegion(data, villages?.data, "village"),
     };
 
-    // Update store with selected region names
-    Object.entries(selectedRegions).forEach(([key, region]) => {
-      if (region) {
-        setProfileAgency({ [key]: region.name });
-        if (key === "village" && region.postal_code) {
-          setProfileAgency({ postalCode: region.postal_code });
-        }
+    // Create a single update object
+    let updatedProfile = { ...profileAgency };
+
+    // Process each region
+    Object.keys(selectedRegions).forEach((key) => {
+      const region = selectedRegions[key as keyof typeof selectedRegions];
+
+      switch (key) {
+        case "province":
+          if (region) {
+            updatedProfile.province = region.name;
+          }
+          break;
+
+        case "regency":
+          if (region) {
+            updatedProfile.regency = region.name;
+          }
+          break;
+
+        case "district":
+          if (region) {
+            updatedProfile.district = region.name;
+          }
+          break;
+
+        case "village":
+          if (region) {
+            updatedProfile.village = region.name;
+            if (region.postal_code) {
+              updatedProfile.postalCode = region.postal_code;
+            }
+          }
+          break;
       }
     });
 
-    setProfileAgency({ address: data.address });
+    // Update the address
+    updatedProfile.address = data.address;
+
+    // Single state update with all changes
+    setProfileAgency(updatedProfile);
     handleNext();
   };
 

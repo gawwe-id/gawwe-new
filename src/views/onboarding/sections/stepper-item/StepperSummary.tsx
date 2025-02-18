@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Avatar,
   Box,
@@ -8,31 +8,31 @@ import {
   Chip,
   Grid,
   Stack,
-  Typography
-} from '@mui/joy';
+  Typography,
+} from "@mui/joy";
 
 // project import
-import { useRouter } from 'next/navigation';
-import dayjs from 'dayjs';
-import { useOnboardingStore } from '@/store/useOnboardingStore';
-import { useSnackbar } from '@/hooks/useSnackbar';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { client } from '@/lib/client';
+import dayjs from "dayjs";
+import { client } from "@/lib/client";
+import { useRouter } from "next/navigation";
+import { useSnackbar } from "@/hooks/useSnackbar";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { useOnboardingState } from "@/store/useOnboardingState";
 
 // assets
-import SendRoundedIcon from '@mui/icons-material/SendRounded';
-import NavigateBeforeRoundedIcon from '@mui/icons-material/NavigateBeforeRounded';
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
+import NavigateBeforeRoundedIcon from "@mui/icons-material/NavigateBeforeRounded";
 import {
   LocationOnRounded,
   SchoolRounded,
-  PeopleAltRounded
-} from '@mui/icons-material';
+  PeopleAltRounded,
+} from "@mui/icons-material";
 
 // types
-import { User } from '@/server/db/schema/users';
-import { NewProfileParticipant } from '@/server/db/schema/profileParticipants';
-import { NewProfileAgencies } from '@/server/db/schema/profileAgencies';
-import { useSession } from 'next-auth/react';
+import { User } from "@/server/db/schema/users";
+import { NewProfileParticipant } from "@/server/db/schema/profileParticipants";
+import { NewProfileAgencies } from "@/server/db/schema/profileAgencies";
 
 // types
 
@@ -42,60 +42,70 @@ interface StepperSummaryProps {
 
 const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
   const { data: session } = useSession();
-  const user = useOnboardingStore((state) => state.user);
-  const agency = useOnboardingStore((state) => state.profileAgency);
-  const participant = useOnboardingStore((state) => state.profileParticipant);
+  const {
+    user,
+    profileAgency,
+    profileParticipant,
+    clearUser,
+    clearProfileAgency,
+    clearProfileParticipant,
+  } = useOnboardingState();
 
   const router = useRouter();
   const { showSnackbar } = useSnackbar();
 
   const { data: educationLevel } = useQuery({
-    queryKey: ['education-level'],
+    queryKey: ["education-level"],
     queryFn: async () => {
       const response = await client.educationLevels.single.$get({
-        educationId: participant?.educationLevelId as string
+        educationId: profileParticipant?.educationLevelId as string,
       });
       return await response.json();
-    }
+    },
+    enabled: user?.role === "participant",
   });
 
   // Function to get profile data based on role
   const getProfileData = () => {
-    const isParticipant = user?.role?.toLowerCase() === 'participant';
+    const isParticipant = user?.role?.toLowerCase() === "participant";
 
     return {
       account: {
-        role: user?.role || '-',
-        fullName: user?.name || '-'
+        role: user?.role || "-",
+        fullName: user?.name || "-",
       },
       profile: isParticipant
         ? {
-            phoneNumber: participant?.phone || '-',
-            gender: participant?.gender || '-',
-            birthDate: participant?.birthDate || '-',
-            education: educationLevel?.data?.name || '-'
+            phoneNumber: profileParticipant?.phone || "-",
+            gender: profileParticipant?.gender || "-",
+            birthDate: profileParticipant?.birthDate || "-",
+            education: educationLevel?.data?.name || "-",
           }
         : {
-            phoneNumber: agency?.phone || '-',
-            displayName: agency?.displayName || '-',
-            bio: agency?.bio || '-'
+            phoneNumber: profileAgency?.phone || "-",
+            displayName: profileAgency?.displayName || "-",
+            bio: profileAgency?.bio || "-",
           },
       address: {
         fullAddress: isParticipant
-          ? participant?.address
-          : agency?.address || '-',
+          ? profileParticipant?.address
+          : profileAgency?.address || "-",
         province: isParticipant
-          ? participant?.province
-          : agency?.province || '-',
-        regency: isParticipant ? participant?.regency : agency?.regency || '-',
+          ? profileParticipant?.province
+          : profileAgency?.province || "-",
+        regency: isParticipant
+          ? profileParticipant?.regency
+          : profileAgency?.regency || "-",
         district: isParticipant
-          ? participant?.district
-          : agency?.district || '-',
-        village: isParticipant ? participant?.village : agency?.village || '-',
+          ? profileParticipant?.district
+          : profileAgency?.district || "-",
+        village: isParticipant
+          ? profileParticipant?.village
+          : profileAgency?.village || "-",
         postalCode: isParticipant
-          ? participant?.postalCode
-          : agency?.postalCode || '-'
-      }
+          ? profileParticipant?.postalCode
+          : profileAgency?.postalCode || "-",
+      },
     };
   };
 
@@ -103,17 +113,17 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
 
   const SectionHeader = ({
     icon,
-    title
+    title,
   }: {
     icon: React.ReactElement;
     title: string;
   }) => (
     <Box
       sx={{
-        display: 'flex',
-        alignItems: 'center',
+        display: "flex",
+        alignItems: "center",
         gap: 2,
-        mb: 2
+        mb: 2,
       }}
     >
       {icon}
@@ -129,7 +139,7 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
         {label}
       </Typography>
       <Typography level="body-md" color="neutral">
-        {value || '-'}
+        {value || "-"}
       </Typography>
     </Box>
   );
@@ -138,54 +148,55 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
   const { mutate: muatateUpdateUser, isPending: isUser } = useMutation({
     mutationFn: async ({
       updateUser,
-      userId
+      userId,
     }: {
       updateUser: Partial<User>;
       userId: string;
     }) => {
       const res = await client.users.update.$post({
         updateUser,
-        userId
+        userId,
       });
       return await res.json();
     },
     onSuccess: async () => {
-      if (participant) {
+      if (user?.role === "participant") {
         createParticipant({
-          ...participant,
-          userId: session?.user.id ?? '',
-          gender: participant?.gender ?? '',
-          birthDate: participant?.birthDate!,
-          phone: participant?.phone ?? '',
-          address: participant?.address ?? '',
-          province: participant?.province ?? '',
-          regency: participant?.regency ?? '',
-          district: participant?.district ?? '',
-          village: participant?.village ?? '',
-          postalCode: participant?.postalCode ?? '',
-          educationLevelId: participant?.educationLevelId ?? ''
+          ...profileParticipant,
+          userId: session?.user.id ?? "",
+          gender: profileParticipant?.gender ?? "",
+          birthDate: profileParticipant?.birthDate!,
+          phone: profileParticipant?.phone ?? "",
+          address: profileParticipant?.address ?? "",
+          province: profileParticipant?.province ?? "",
+          regency: profileParticipant?.regency ?? "",
+          district: profileParticipant?.district ?? "",
+          village: profileParticipant?.village ?? "",
+          postalCode: profileParticipant?.postalCode ?? "",
+          educationLevelId: profileParticipant?.educationLevelId ?? "",
         });
-      } else if (agency) {
+      } else if (user?.role === "agency") {
         createAgency({
-          ...agency,
-          // id: agency?.id ?? "", // Ensure id is always a string
-          userId: session?.user.id ?? '',
-          displayName: agency?.displayName ?? '',
-          imageUrl: agency?.imageUrl ?? '',
-          phone: agency?.phone ?? '',
-          bio: agency?.bio ?? '',
-          address: agency?.address ?? '',
-          province: agency?.province ?? '',
-          regency: agency?.regency ?? '',
-          district: agency?.district ?? '',
-          village: agency?.village ?? '',
-          postalCode: agency?.postalCode ?? ''
+          ...profileAgency,
+          userId: session?.user.id ?? "",
+          displayName: profileAgency?.displayName ?? "",
+          imageUrl: profileAgency?.imageUrl ?? "",
+          phone: profileAgency?.phone ?? "",
+          bio: profileAgency?.bio ?? "",
+          address: profileAgency?.address ?? "",
+          province: profileAgency?.province ?? "",
+          regency: profileAgency?.regency ?? "",
+          district: profileAgency?.district ?? "",
+          village: profileAgency?.village ?? "",
+          postalCode: profileAgency?.postalCode ?? "",
         });
       }
+
+      clearUser();
     },
     onError: () => {
-      showSnackbar('Failed to update user profile!', 'danger');
-    }
+      showSnackbar("Failed to update user profile!", "danger");
+    },
   });
 
   // Mutate CREATE PARTICIPANT
@@ -195,12 +206,13 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
       return res.json();
     },
     onSuccess: () => {
-      showSnackbar('Profile created successfully!', 'success');
-      router.push('/dashboard');
+      showSnackbar("Profile created successfully!", "success");
+      clearProfileParticipant();
+      router.push("/dashboard");
     },
     onError: () => {
-      showSnackbar('Failed to create participant profile!', 'danger');
-    }
+      showSnackbar("Failed to create participant profile!", "danger");
+    },
   });
 
   const { mutate: createAgency, isPending: isAgency } = useMutation({
@@ -209,24 +221,25 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
       return res.json();
     },
     onSuccess: () => {
-      showSnackbar('Profile created successfully!', 'success');
-      router.push('/dashboard');
+      showSnackbar("Profile created successfully!", "success");
+      clearProfileAgency();
+      router.push("/agency/dashboard");
     },
     onError: () => {
-      showSnackbar('Failed to create agency profile!', 'danger');
-    }
+      showSnackbar("Failed to create agency profile!", "danger");
+    },
   });
 
   const handleRegisterDetail = () => {
     if (!user) {
-      showSnackbar('User data is required!', 'danger');
+      showSnackbar("User data is required!", "danger");
       return;
     }
 
-    if (!participant && !agency) {
+    if (!profileParticipant && !profileAgency) {
       showSnackbar(
-        'Either participant or agency profile is required!',
-        'danger'
+        "Either participant or agency profile is required!",
+        "danger"
       );
       return;
     }
@@ -236,19 +249,19 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
       role: user.role,
       image: user.image,
       name: user.name,
-      profileCompletion: 1
+      profileCompletion: 1,
     };
 
     muatateUpdateUser({
       updateUser: userPayload,
-      userId: session?.user.id ?? ''
+      userId: session?.user.id ?? "",
     });
   };
 
   const isLoading = isUser || isAgency || isParticipant;
 
   return (
-    <Box width={'100%'} mt={4}>
+    <Box width={"100%"} mt={4}>
       <Grid container spacing={2}>
         {/* Profile Section */}
         <Grid xs={12}>
@@ -259,7 +272,7 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
                   user?.image ? (
                     <Avatar
                       sx={{ height: 40, width: 40 }}
-                      src={user?.image ?? ''}
+                      src={user?.image ?? ""}
                     />
                   ) : (
                     <Avatar sx={{ height: 40, width: 40 }} />
@@ -280,9 +293,9 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
                     <Chip
                       variant="soft"
                       color="primary"
-                      sx={{ textTransform: 'capitalize' }}
+                      sx={{ textTransform: "capitalize" }}
                       startDecorator={
-                        userData?.account?.role === 'agency' ? (
+                        userData?.account?.role === "agency" ? (
                           <SchoolRounded />
                         ) : (
                           <PeopleAltRounded />
@@ -305,15 +318,15 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
                     value={userData.profile.phoneNumber}
                   />
                 </Grid>
-                {user?.role?.toLowerCase() === 'participant' ? (
+                {user?.role?.toLowerCase() === "participant" ? (
                   <>
                     <Grid xs={12} sm={6} md={3}>
                       <InfoItem
                         label="Jenis Kelamin"
                         value={
-                          userData.profile.gender === 'L'
-                            ? 'Laki-Laki'
-                            : 'Perempuan'
+                          userData.profile.gender === "L"
+                            ? "Laki-Laki"
+                            : "Perempuan"
                         }
                       />
                     </Grid>
@@ -322,15 +335,15 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
                         label="Tanggal Lahir"
                         value={
                           dayjs(userData.profile.birthDate).format(
-                            'DD MMMM YYYY'
-                          ) ?? ''
+                            "DD MMMM YYYY"
+                          ) ?? ""
                         }
                       />
                     </Grid>
                     <Grid xs={12} sm={6} md={3}>
                       <InfoItem
                         label="Pendidikan"
-                        value={userData.profile.education ?? ''}
+                        value={userData.profile.education ?? ""}
                       />
                     </Grid>
                   </>
@@ -339,13 +352,13 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
                     <Grid xs={12} sm={6} md={3}>
                       <InfoItem
                         label="Nama Agensi"
-                        value={userData.profile.displayName ?? ''}
+                        value={userData.profile.displayName ?? ""}
                       />
                     </Grid>
                     <Grid xs={12}>
                       <InfoItem
                         label="Bio"
-                        value={userData.profile.bio ?? ''}
+                        value={userData.profile.bio ?? ""}
                       />
                     </Grid>
                   </>
@@ -360,40 +373,40 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
           <Card variant="plain">
             <CardContent>
               <SectionHeader icon={<LocationOnRounded />} title="Domisili" />
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <InfoItem
                   label="Alamat Lengkap"
-                  value={userData.address.fullAddress ?? ''}
+                  value={userData.address.fullAddress ?? ""}
                 />
                 <Grid container spacing={2}>
                   <Grid xs={12} sm={6} md={3}>
                     <InfoItem
                       label="Provinsi"
-                      value={userData.address.province ?? ''}
+                      value={userData.address.province ?? ""}
                     />
                   </Grid>
                   <Grid xs={12} sm={6} md={3}>
                     <InfoItem
                       label="Kota/Kabupaten"
-                      value={userData.address.regency ?? ''}
+                      value={userData.address.regency ?? ""}
                     />
                   </Grid>
                   <Grid xs={12} sm={6} md={3}>
                     <InfoItem
                       label="Kecamatan"
-                      value={userData.address.district ?? ''}
+                      value={userData.address.district ?? ""}
                     />
                   </Grid>
                   <Grid xs={12} sm={6} md={3}>
                     <InfoItem
                       label="Kelurahan/Desa"
-                      value={userData.address.village ?? ''}
+                      value={userData.address.village ?? ""}
                     />
                   </Grid>
                   <Grid xs={12} sm={6} md={3}>
                     <InfoItem
                       label="Kode Pos"
-                      value={userData.address.postalCode ?? ''}
+                      value={userData.address.postalCode ?? ""}
                     />
                   </Grid>
                 </Grid>

@@ -17,7 +17,7 @@ import {
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { client } from "@/lib/client";
 import { useQuery } from "@tanstack/react-query";
-import { useOnboardingStore } from "@/store/useOnboardingStore";
+import { useOnboardingState } from "@/store/useOnboardingState";
 
 // assets
 import NavigateBeforeRoundedIcon from "@mui/icons-material/NavigateBeforeRounded";
@@ -40,10 +40,7 @@ const StepperAddressParticipant = ({
   handleBack,
   handleNext,
 }: StepperAddressProps) => {
-  const participant = useOnboardingStore((state) => state.profileParticipant);
-  const setProfileParticipant = useOnboardingStore(
-    (state) => state.setProfileParticipant
-  );
+  const { profileParticipant, setProfileParticipant } = useOnboardingState();
 
   const {
     control,
@@ -52,11 +49,11 @@ const StepperAddressParticipant = ({
     formState: { errors },
   } = useForm<ProfileParticipant>({
     defaultValues: {
-      address: participant?.address || "",
-      province: participant?.province || "",
-      regency: participant?.regency || "",
-      district: participant?.district || "",
-      village: participant?.village || "",
+      address: profileParticipant?.address || "",
+      province: profileParticipant?.province || "",
+      regency: profileParticipant?.regency || "",
+      district: profileParticipant?.district || "",
+      village: profileParticipant?.village || "",
     },
   });
 
@@ -123,17 +120,48 @@ const StepperAddressParticipant = ({
       village: findSelectedRegion(data, villages?.data, "village"),
     };
 
-    // Update store with selected region names
-    Object.entries(selectedRegions).forEach(([key, region]) => {
-      if (region) {
-        setProfileParticipant({ [key]: region.name });
-        if (key === "village" && region.postal_code) {
-          setProfileParticipant({ postalCode: region.postal_code });
-        }
+    // Create a single update object
+    let updatedProfile = { ...profileParticipant };
+
+    // Process each region
+    Object.keys(selectedRegions).forEach((key) => {
+      const region = selectedRegions[key as keyof typeof selectedRegions];
+
+      switch (key) {
+        case "province":
+          if (region) {
+            updatedProfile.province = region.name;
+          }
+          break;
+
+        case "regency":
+          if (region) {
+            updatedProfile.regency = region.name;
+          }
+          break;
+
+        case "district":
+          if (region) {
+            updatedProfile.district = region.name;
+          }
+          break;
+
+        case "village":
+          if (region) {
+            updatedProfile.village = region.name;
+            if (region.postal_code) {
+              updatedProfile.postalCode = region.postal_code;
+            }
+          }
+          break;
       }
     });
 
-    setProfileParticipant({ address: data.address });
+    // Update the address
+    updatedProfile.address = data.address;
+
+    // Single state update with all changes
+    setProfileParticipant(updatedProfile);
     handleNext();
   };
 

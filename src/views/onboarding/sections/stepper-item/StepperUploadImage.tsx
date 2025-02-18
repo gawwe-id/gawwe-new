@@ -4,7 +4,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import { Avatar, Box, Button, IconButton, Stack, styled } from "@mui/joy";
 
-import { useOnboardingStore } from "@/store/useOnboardingStore";
+import { useOnboardingState } from "@/store/useOnboardingState";
 
 import { useUploadFile } from "@/hooks/useUploadFile";
 import { useUpdateFile } from "@/hooks/useUpdateFile";
@@ -40,8 +40,7 @@ const StepperUploadImage = ({
   handleBack,
   handleNext,
 }: StepperUploadImageProps) => {
-  const user = useOnboardingStore((state) => state.user);
-  const updateImageUser = useOnboardingStore((state) => state.updateImageUser);
+  const { updateImageUser, user } = useOnboardingState();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { showSnackbar } = useSnackbar();

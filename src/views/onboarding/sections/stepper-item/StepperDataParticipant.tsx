@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 import {
   Box,
   Button,
@@ -11,25 +11,25 @@ import {
   Input,
   Option,
   Select,
-  Stack
-} from '@mui/joy';
+  Stack,
+} from "@mui/joy";
 
 //thrd party
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import dayjs from 'dayjs';
-import DatePicker from 'react-datepicker';
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import dayjs from "dayjs";
+import DatePicker from "react-datepicker";
 
 // import
-import { useOnboardingStore } from '@/store/useOnboardingStore';
-import { ProfileParticipant } from '@/server/db/schema/profileParticipants';
-import { useQuery } from '@tanstack/react-query';
-import { client } from '@/lib/client';
-import { customHeader, customStyles } from '@/utils/dateSelection';
+import { useOnboardingState } from "@/store/useOnboardingState";
+import { ProfileParticipant } from "@/server/db/schema/profileParticipants";
+import { useQuery } from "@tanstack/react-query";
+import { client } from "@/lib/client";
+import { customHeader, customStyles } from "@/utils/dateSelection";
 
 // assets
-import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
-import NavigateBeforeRoundedIcon from '@mui/icons-material/NavigateBeforeRounded';
-import CalendarMonthRounded from '@mui/icons-material/CalendarMonthRounded';
+import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
+import NavigateBeforeRoundedIcon from "@mui/icons-material/NavigateBeforeRounded";
+import CalendarMonthRounded from "@mui/icons-material/CalendarMonthRounded";
 
 //types
 
@@ -40,42 +40,46 @@ interface StepperDataParticipantProps {
 
 const StepperDataParticipant = ({
   handleBack,
-  handleNext
+  handleNext,
 }: StepperDataParticipantProps) => {
-  const participant = useOnboardingStore((state) => state.profileParticipant);
-  const setProfileParticipant = useOnboardingStore(
-    (state) => state.setProfileParticipant
-  );
+  const { profileParticipant, setProfileParticipant } = useOnboardingState();
 
   const {
     control,
-    watch,
     handleSubmit,
-    formState: { errors }
-  } = useForm<ProfileParticipant>({
+    formState: { errors },
+  } = useForm<Partial<ProfileParticipant>>({
     defaultValues: {
-      phone: participant?.phone || '',
-      gender: participant?.gender || '',
-      birthDate: participant?.birthDate || new Date(),
-      educationLevelId: participant?.educationLevelId || ''
-    }
+      phone: profileParticipant?.phone || "",
+      gender: profileParticipant?.gender || "",
+      birthDate: profileParticipant?.birthDate || new Date(),
+      educationLevelId: profileParticipant?.educationLevelId || "",
+    },
   });
 
   const { data: educations } = useQuery({
-    queryKey: ['educations'],
+    queryKey: ["educations"],
     queryFn: async () => {
       const res = await client.educationLevels.list.$get();
       return await res.json();
-    }
+    },
   });
 
-  const onSubmit: SubmitHandler<ProfileParticipant> = (data) => {
-    setProfileParticipant(data);
-    handleNext();
+  const onSubmit: SubmitHandler<Partial<ProfileParticipant>> = (data) => {
+    if (data) {
+      setProfileParticipant({
+        ...profileParticipant,
+        phone: data?.phone,
+        gender: data?.gender,
+        birthDate: data?.birthDate,
+        educationLevelId: data?.educationLevelId,
+      });
+      handleNext();
+    }
   };
 
   return (
-    <Box mt={4} width={'50%'}>
+    <Box mt={4} width={"50%"}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={3}>
           <Grid xs={6}>
@@ -85,11 +89,11 @@ const StepperDataParticipant = ({
                 name="phone"
                 control={control}
                 rules={{
-                  required: 'No HP harus diisi',
+                  required: "No HP harus diisi",
                   pattern: {
                     value: /^[0-9]{10,14}$/,
-                    message: 'No HP harus berupa angka dan minimal 10 digit'
-                  }
+                    message: "No HP harus berupa angka dan minimal 10 digit",
+                  },
                 }}
                 render={({ field }) => (
                   <Input
@@ -98,14 +102,14 @@ const StepperDataParticipant = ({
                     type="tel"
                     size="sm"
                     fullWidth
-                    value={field.value || ''}
+                    value={field.value || ""}
                   />
                 )}
               />
             </Stack>
             {errors.phone && (
               <FormHelperText
-                sx={{ color: 'red', fontSize: 12, mt: 1 }}
+                sx={{ color: "red", fontSize: 12, mt: 1 }}
                 id="helper-text-phone"
               >
                 * {errors?.phone?.message}
@@ -119,14 +123,14 @@ const StepperDataParticipant = ({
                 name="gender"
                 control={control}
                 rules={{
-                  required: 'Jenis Kelamin harus dipilih'
+                  required: "Jenis Kelamin harus dipilih",
                 }}
                 render={({ field }) => (
                   <Select
                     {...field}
                     size="sm"
                     placeholder="Pilih Jenis Kelamin"
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(_, newValue) => field.onChange(newValue)}
                   >
                     <Option value="L">Laki-laki</Option>
@@ -137,7 +141,7 @@ const StepperDataParticipant = ({
             </Stack>
             {errors.gender && (
               <FormHelperText
-                sx={{ color: 'red', fontSize: 12, mt: 1 }}
+                sx={{ color: "red", fontSize: 12, mt: 1 }}
                 id="helper-text-gender"
               >
                 * {errors?.gender?.message}
@@ -152,27 +156,27 @@ const StepperDataParticipant = ({
                 name="birthDate"
                 control={control}
                 rules={{
-                  required: 'Tanggal lahir harus diisi',
+                  required: "Tanggal lahir harus diisi",
                   validate: {
                     notFuture: (value) => {
                       if (value && dayjs(value) > dayjs()) {
-                        return 'Tanggal lahir tidak boleh lebih dari hari ini';
+                        return "Tanggal lahir tidak boleh lebih dari hari ini";
                       }
                       return true;
                     },
                     notTooOld: (value) => {
-                      if (value && dayjs(value) < dayjs('1900-01-01')) {
-                        return 'Tanggal lahir tidak valid';
+                      if (value && dayjs(value) < dayjs("1900-01-01")) {
+                        return "Tanggal lahir tidak valid";
                       }
                       return true;
-                    }
-                  }
+                    },
+                  },
                 }}
                 render={({ field }) => {
                   return (
                     <DatePicker
                       onChange={field.onChange}
-                      selected={new Date(field.value)}
+                      selected={field.value}
                       dateFormat="yyyy-MM-dd"
                       renderCustomHeader={customHeader}
                       placeholderText="Select date"
@@ -192,7 +196,7 @@ const StepperDataParticipant = ({
             </Stack>
             {errors.birthDate && (
               <FormHelperText
-                sx={{ color: 'red', fontSize: 12, mt: 1 }}
+                sx={{ color: "red", fontSize: 12, mt: 1 }}
                 id="helper-text-birthDate"
               >
                 * {errors?.birthDate?.message}
@@ -206,13 +210,13 @@ const StepperDataParticipant = ({
                 name="educationLevelId"
                 control={control}
                 rules={{
-                  required: 'Pendidikan harus dipilih'
+                  required: "Pendidikan harus dipilih",
                 }}
                 render={({ field: { onChange, value } }) => (
                   <Select
                     size="sm"
                     placeholder="Pilih Pendidikan"
-                    value={value || ''}
+                    value={value || ""}
                     onChange={(_, newValue) => onChange(newValue)}
                   >
                     {educations?.data?.map((education) => (
@@ -226,7 +230,7 @@ const StepperDataParticipant = ({
             </Stack>
             {errors.educationLevelId && (
               <FormHelperText
-                sx={{ color: 'red', fontSize: 12, mt: 1 }}
+                sx={{ color: "red", fontSize: 12, mt: 1 }}
                 id="helper-text-educationLevelId"
               >
                 * {errors?.educationLevelId?.message}

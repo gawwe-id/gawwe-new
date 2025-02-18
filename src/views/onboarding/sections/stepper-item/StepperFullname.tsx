@@ -10,7 +10,7 @@ import {
   Stack,
 } from "@mui/joy";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { useOnboardingStore } from "@/store/useOnboardingStore";
+import { useOnboardingState } from "@/store/useOnboardingState";
 
 // assets
 import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
@@ -22,8 +22,7 @@ interface StepperFullnameProps {
 }
 
 const StepperFullname = ({ handleBack, handleNext }: StepperFullnameProps) => {
-  const user = useOnboardingStore((state) => state.user);
-  const updateUser = useOnboardingStore((state) => state.updateUser);
+  const { updateUser, user } = useOnboardingState();
 
   const {
     control,

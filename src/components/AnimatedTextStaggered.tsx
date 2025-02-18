@@ -36,7 +36,7 @@ export const AnimatedTextStaggered = ({
   className,
   once,
   repeatDelay,
-  loop = false, // Default false
+  loop = false,
   animation = defaultAnimations,
 }: AnimatedTextStaggeredProps) => {
   const controls = useAnimation();
@@ -44,53 +44,57 @@ export const AnimatedTextStaggered = ({
   const ref = useRef(null);
   const isInView = useInView(ref, { amount: 0.5, once });
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMountedRef = useRef(false);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   const animate = async () => {
+    if (!isMountedRef.current) return;
+
     try {
       await controls.start("visible");
-      if (loop && repeatDelay) {
+      if (loop && repeatDelay && isMountedRef.current) {
         timeoutRef.current = setTimeout(async () => {
-          await controls.start("hidden");
-          animate(); // Recursively call animate for loop
+          if (isMountedRef.current) {
+            await controls.start("hidden");
+            animate();
+          }
         }, repeatDelay);
       }
     } catch (error) {
-      // Handle any animation errors
-      console.error("Animation error:", error);
+      if (isMountedRef.current) {
+        console.error("Animation error:", error);
+      }
     }
   };
 
   useEffect(() => {
-    controls.set("hidden");
+    if (!isMountedRef.current) return;
 
-    if (isInView) {
-      animate();
-    }
+    const initializeAnimation = async () => {
+      await controls.set("hidden");
+      if (isInView) {
+        animate();
+      }
+    };
+
+    initializeAnimation();
 
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [isInView]);
+  }, [isInView, controls]);
 
   return (
     <Wrapper className={className}>
-      <span
-        style={{
-          position: "absolute",
-          width: 1,
-          height: 1,
-          padding: 0,
-          margin: -1,
-          overflow: "hidden",
-          clip: "rect(0, 0, 0, 0)",
-          whiteSpace: "nowrap",
-          borderWidth: 0,
-        }}
-      >
-        {textArray.join(" ")}
-      </span>
+      <span className="sr-only">{textArray.join(" ")}</span>
       <motion.span
         ref={ref}
         initial="hidden"

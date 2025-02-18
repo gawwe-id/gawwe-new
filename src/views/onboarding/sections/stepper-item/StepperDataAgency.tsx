@@ -16,7 +16,7 @@ import {
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 // import
-import { useOnboardingStore } from "@/store/useOnboardingStore";
+import { useOnboardingState } from "@/store/useOnboardingState";
 
 // assets
 import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
@@ -34,26 +34,30 @@ const StepperDataAgency = ({
   handleBack,
   handleNext,
 }: StepperDataAgencyProps) => {
-  const agency = useOnboardingStore((state) => state.profileAgency);
-  const setProfileAgency = useOnboardingStore(
-    (state) => state.setProfileAgency
-  );
+  const { profileAgency, setProfileAgency } = useOnboardingState();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<ProfileAgencies>({
+  } = useForm<Partial<ProfileAgencies>>({
     defaultValues: {
-      phone: agency?.phone || "",
-      displayName: agency?.displayName || "",
-      bio: agency?.bio || "",
+      phone: profileAgency?.phone || "",
+      displayName: profileAgency?.displayName || "",
+      bio: profileAgency?.bio || "",
     },
   });
 
-  const onSubmit: SubmitHandler<ProfileAgencies> = (data) => {
-    setProfileAgency(data);
-    handleNext();
+  const onSubmit: SubmitHandler<Partial<ProfileAgencies>> = (data) => {
+    if (data) {
+      setProfileAgency({
+        ...profileAgency,
+        displayName: data.displayName,
+        phone: data.phone,
+        bio: data.bio,
+      });
+      handleNext();
+    }
   };
 
   return (

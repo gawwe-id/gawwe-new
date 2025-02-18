@@ -1,11 +1,13 @@
-import { users, profileParticipants } from '@/server/db/schema';
+import { profileParticipants } from "@/server/db/schema";
 import {
   insertProfileParticipantSchema,
-  updateProfileParticipantSchema
-} from '@/server/db/schema/profileParticipants';
-import { eq } from 'drizzle-orm';
-import { j, privateProcedure } from '../jstack';
-import { z } from 'zod';
+  updateProfileParticipantSchema,
+} from "@/server/db/schema/profileParticipants";
+import { eq } from "drizzle-orm";
+import { j, privateProcedure } from "../jstack";
+import { z } from "zod";
+import { errorHandler } from "@/utils/error-handler";
+import { AppError } from "@/types/error";
 
 export const profileParticipantsRouter = j.router({
   /** ========================================
@@ -14,17 +16,40 @@ export const profileParticipantsRouter = j.router({
   create: privateProcedure
     .input(insertProfileParticipantSchema)
     .mutation(async ({ c, ctx, input }) => {
-      const { db } = ctx;
+      const { db, user } = ctx;
+
+      // Check if profile already exists
+      const existingProfile = await db
+        .select()
+        .from(profileParticipants)
+        .where(eq(profileParticipants.userId, user.id as string))
+        .limit(1);
+
+      if (existingProfile.length > 0) {
+        throw new AppError(
+          409,
+          "Profile already exists for this user",
+          "PROFILE_EXISTS"
+        );
+      }
 
       const [participant] = await db
         .insert(profileParticipants)
         .values(input)
         .returning();
 
+      if (!participant) {
+        throw new AppError(
+          500,
+          "Gagal membuat profile",
+          "PROFILE_CREATION_FAILED"
+        );
+      }
+
       return c.json(
         {
-          message: 'Berhasil membuat Profile',
-          data: participant
+          message: "Berhasil membuat Profile",
+          data: participant,
         },
         200
       );
@@ -35,16 +60,10 @@ export const profileParticipantsRouter = j.router({
  ======================================== */
   single: privateProcedure.query(async ({ c, ctx }) => {
     const { db, user } = ctx;
-    const userId = user.id;
+    const userId = user.id as string | undefined;
 
     if (!userId) {
-      return c.json(
-        {
-          message: 'User Not Fount',
-          data: null
-        },
-        404
-      );
+      throw new AppError(404, "Profile tidak ditemukan", "PROFILE_NOT_FOUND");
     }
 
     const [participant] = await db
@@ -55,8 +74,9 @@ export const profileParticipantsRouter = j.router({
 
     return c.json(
       {
-        message: 'Success',
-        data: participant
+        status: "success",
+        message: "Berhasil menampilkan profile",
+        data: participant,
       },
       200
     );
@@ -69,7 +89,7 @@ export const profileParticipantsRouter = j.router({
     .input(
       z.object({
         id: z.string(),
-        updateProfile: updateProfileParticipantSchema
+        updateProfile: updateProfileParticipantSchema,
       })
     )
     .mutation(async ({ c, ctx, input }) => {
@@ -84,10 +104,10 @@ export const profileParticipantsRouter = j.router({
 
       return c.json(
         {
-          message: 'Berhasil update Profile',
-          data: participant
+          message: "Berhasil update Profile",
+          data: participant,
         },
         200
       );
-    })
+    }),
 });

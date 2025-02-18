@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import {
   Box,
   Button,
@@ -15,30 +15,30 @@ import {
   Option,
   Select,
   Stack,
-  Typography
-} from '@mui/joy';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import dayjs from 'dayjs';
-import DatePicker from 'react-datepicker';
+  Typography,
+} from "@mui/joy";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import dayjs from "dayjs";
+import DatePicker from "react-datepicker";
 
 // import
-import { client } from '@/lib/client';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useSnackbar } from '@/hooks/useSnackbar';
-import { ProfileParticipant } from '@/server/db/schema/profileParticipants';
-import { customHeader, customStyles } from '@/utils/dateSelection';
+import { client } from "@/lib/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSnackbar } from "@/hooks/useSnackbar";
+import { ProfileParticipant } from "@/server/db/schema/profileParticipants";
+import { customHeader, customStyles } from "@/utils/dateSelection";
 
 // assets
 import {
   LocalPhoneRounded,
   SchoolRounded,
   WcRounded,
-  CalendarMonthRounded
-} from '@mui/icons-material';
+  CalendarMonthRounded,
+} from "@mui/icons-material";
 
 // types
 interface ProfileInfoProps {
-  profile: ProfileParticipant;
+  profile: ProfileParticipant | undefined;
 }
 
 const ProfileInfo = ({ profile }: ProfileInfoProps) => {
@@ -49,14 +49,14 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isDirty }
+    formState: { errors, isDirty },
   } = useForm<ProfileParticipant>({
     defaultValues: {
-      phone: '',
-      gender: '',
+      phone: "",
+      gender: "",
       birthDate: new Date(),
-      educationLevelId: ''
-    }
+      educationLevelId: "",
+    },
   });
 
   useEffect(() => {
@@ -65,25 +65,25 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
         phone: profile.phone,
         gender: profile.gender,
         birthDate: new Date(profile?.birthDate),
-        educationLevelId: profile.educationLevelId
+        educationLevelId: profile.educationLevelId,
       });
     }
   }, [profile]);
 
   const { data: educations } = useQuery({
-    queryKey: ['educations'],
+    queryKey: ["educations"],
     queryFn: async () => {
       const res = await client.educationLevels.list.$get();
       return await res.json();
-    }
+    },
   });
 
   const handleReset = () => {
     reset({
-      phone: '',
-      gender: '',
+      phone: "",
+      gender: "",
       birthDate: new Date(),
-      educationLevelId: ''
+      educationLevelId: "",
     });
   };
 
@@ -91,34 +91,34 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
     useMutation({
       mutationFn: async ({
         updateProfile,
-        id
+        id,
       }: {
         updateProfile: Partial<ProfileParticipant>;
         id: string;
       }) => {
         const res = await client.profileParticipants.update.$post({
           id,
-          updateProfile
+          updateProfile,
         });
         return await res.json();
       },
       onSuccess: async ({ data }) => {
-        await queryClient.invalidateQueries({ queryKey: ['user'] });
-        showSnackbar('User Profile berhasil diubah!', 'success');
+        await queryClient.invalidateQueries({ queryKey: ["user"] });
+        showSnackbar("User Profile berhasil diubah!", "success");
 
         reset({
           phone: data?.phone,
           gender: data?.gender,
           birthDate: data?.birthDate ? new Date(data.birthDate) : undefined,
-          educationLevelId: data?.educationLevelId
+          educationLevelId: data?.educationLevelId,
         });
-      }
+      },
     });
 
   const onSubmit: SubmitHandler<ProfileParticipant> = (data) => {
     mutateUpdateParticipant({
       id: profile?.id as string,
-      updateProfile: data
+      updateProfile: data,
     });
   };
 
@@ -140,11 +140,11 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
                 name="phone"
                 control={control}
                 rules={{
-                  required: 'No HP harus diisi',
+                  required: "No HP harus diisi",
                   pattern: {
                     value: /^[0-9]{10,14}$/,
-                    message: 'No HP harus berupa angka dan minimal 10 digit'
-                  }
+                    message: "No HP harus berupa angka dan minimal 10 digit",
+                  },
                 }}
                 render={({ field }) => (
                   <Input
@@ -154,14 +154,14 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
                     size="sm"
                     fullWidth
                     startDecorator={<LocalPhoneRounded />}
-                    value={field.value || ''}
+                    value={field.value || ""}
                   />
                 )}
               />
             </Stack>
             {errors.phone && (
               <FormHelperText
-                sx={{ color: 'red', fontSize: 12, mt: 1 }}
+                sx={{ color: "red", fontSize: 12, mt: 1 }}
                 id="helper-text-phone"
               >
                 * {errors?.phone?.message}
@@ -174,21 +174,21 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
               <Controller
                 name="gender"
                 control={control}
-                rules={{ required: 'Jenis Kelamin harus dipilih' }}
+                rules={{ required: "Jenis Kelamin harus dipilih" }}
                 render={({ field: { onChange, value, ref } }) => (
                   <Select
                     ref={ref}
                     size="sm"
                     placeholder="Pilih Jenis Kelamin"
                     startDecorator={<WcRounded />}
-                    value={value || ''}
+                    value={value || ""}
                     onChange={(event, newValue) => {
-                      console.log('Select clicked', event, newValue);
+                      console.log("Select clicked", event, newValue);
                       onChange(newValue);
                     }}
                     sx={{
                       zIndex: 1000,
-                      position: 'relative'
+                      position: "relative",
                     }}
                   >
                     <Option value="L">Laki-laki</Option>
@@ -199,7 +199,7 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
             </Stack>
             {errors.gender && (
               <FormHelperText
-                sx={{ color: 'red', fontSize: 12, mt: 1 }}
+                sx={{ color: "red", fontSize: 12, mt: 1 }}
                 id="helper-text-gender"
               >
                 * {errors?.gender?.message}
@@ -214,21 +214,21 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
                 name="birthDate"
                 control={control}
                 rules={{
-                  required: 'Tanggal lahir harus diisi',
+                  required: "Tanggal lahir harus diisi",
                   validate: {
                     notFuture: (value) => {
                       if (value && dayjs(value) > dayjs()) {
-                        return 'Tanggal lahir tidak boleh lebih dari hari ini';
+                        return "Tanggal lahir tidak boleh lebih dari hari ini";
                       }
                       return true;
                     },
                     notTooOld: (value) => {
-                      if (value && dayjs(value) < dayjs('1900-01-01')) {
-                        return 'Tanggal lahir tidak valid';
+                      if (value && dayjs(value) < dayjs("1900-01-01")) {
+                        return "Tanggal lahir tidak valid";
                       }
                       return true;
-                    }
-                  }
+                    },
+                  },
                 }}
                 render={({ field }) => {
                   return (
@@ -254,7 +254,7 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
             </Stack>
             {errors.birthDate && (
               <FormHelperText
-                sx={{ color: 'red', fontSize: 12, mt: 1 }}
+                sx={{ color: "red", fontSize: 12, mt: 1 }}
                 id="helper-text-birthDate"
               >
                 * {errors?.birthDate?.message}
@@ -268,7 +268,7 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
                 name="educationLevelId"
                 control={control}
                 rules={{
-                  required: 'Pendidikan harus dipilih'
+                  required: "Pendidikan harus dipilih",
                 }}
                 render={({ field }) => (
                   <Select
@@ -276,7 +276,7 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
                     size="sm"
                     placeholder="Pilih Pendidikan"
                     startDecorator={<SchoolRounded />}
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(_, newValue) => field.onChange(newValue)}
                   >
                     {educations?.data?.map((education) => (
@@ -290,7 +290,7 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
             </Stack>
             {errors.educationLevelId && (
               <FormHelperText
-                sx={{ color: 'red', fontSize: 12, mt: 1 }}
+                sx={{ color: "red", fontSize: 12, mt: 1 }}
                 id="helper-text-educationLevelId"
               >
                 * {errors?.educationLevelId?.message}
@@ -298,8 +298,8 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
             )}
           </Grid>
         </Grid>
-        <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
-          <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
+        <CardOverflow sx={{ borderTop: "1px solid", borderColor: "divider" }}>
+          <CardActions sx={{ alignSelf: "flex-end", pt: 2 }}>
             <Button
               size="sm"
               variant="outlined"
