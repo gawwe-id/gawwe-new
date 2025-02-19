@@ -9,9 +9,8 @@ import {
   NotificationsActiveRounded,
   PaymentRounded,
   ManageAccountsRounded,
-  ReceiptLongRounded
-} from "@mui/icons-material"
-
+  ReceiptLongRounded,
+} from "@mui/icons-material";
 
 const icon: Record<string, SvgIconComponent> = {
   dashboard: DashboardRounded,
@@ -23,17 +22,16 @@ const icon: Record<string, SvgIconComponent> = {
   payments: PaymentRounded,
   accounts: ManageAccountsRounded,
   transactions: ReceiptLongRounded,
-  students: GroupRounded
-}
+  students: GroupRounded,
+};
 
 export type Menu = {
-  id: string
-  title: string
-  url: string
-  icon?: SvgIconComponent
-  children?: Menu[] | null
-}
-
+  id: string;
+  title: string;
+  url: string;
+  icon?: SvgIconComponent;
+  children?: Menu[] | null;
+};
 
 export const participant: Menu[] = [
   {
@@ -82,7 +80,7 @@ export const participant: Menu[] = [
         title: "Nilai & Catatan",
         url: "/grades",
       },
-    ]
+    ],
   },
   {
     id: "calendar",
@@ -101,15 +99,15 @@ export const participant: Menu[] = [
     title: "Payments",
     icon: icon.payments!,
     url: "/payments",
-  }
-]
+  },
+];
 
 export const agency: Menu[] = [
   {
     id: "dashboard",
     title: "Dashboard",
     icon: icon?.dashboard!,
-    url: "/agency/dashboard",
+    url: "/dashboard",
     children: null,
   },
   {
@@ -121,22 +119,22 @@ export const agency: Menu[] = [
       {
         id: "class_setting",
         title: "Pengaturan Kelas",
-        url: "/agency/class-setting",
+        url: "/class-setting",
       },
       {
         id: "schedule",
         title: "Jadwal Kelas",
-        url: "/agency/schedule",
+        url: "/schedule",
       },
       {
         id: "batch",
         title: "Kelola Batch",
-        url: "/agency/batch",
+        url: "/batch",
       },
       {
         id: "enrollments",
         title: "Enrollment Status",
-        url: "/agency/enrollments",
+        url: "/enrollments",
       },
     ],
   },
@@ -149,50 +147,50 @@ export const agency: Menu[] = [
       {
         id: "assignments",
         title: "Kelola Tugas",
-        url: "/agency/assignments",
+        url: "/assignments",
       },
       {
         id: "exams",
         title: "Kelola Ujian",
-        url: "/agency/exams",
+        url: "/exams",
       },
       {
         id: "quizzes",
         title: "Manajemen Quis",
-        url: "/agency/quizzes",
+        url: "/quizzes",
       },
       {
         id: "grades",
         title: "Manajemen Nilai",
-        url: "/agency/grades",
+        url: "/grades",
       },
-    ]
+    ],
   },
   {
     id: "calendar",
     title: "Calendar & Events",
     icon: icon.calendar!,
-    url: "/agency/calendar",
+    url: "/calendar",
   },
   {
     id: "students",
     title: "Student Management",
     icon: icon.students!,
-    url: "/agency/students",
+    url: "/students",
   },
   {
     id: "notifications",
     title: "Notifications",
     icon: icon.notifications!,
-    url: "/agency/notifications",
+    url: "/notifications",
   },
   {
     id: "transactions",
     title: "Transactions",
     icon: icon.transactions!,
-    url: "/agency/transactions",
+    url: "/transactions",
   },
-]
+];
 
 export const participant_bottom: Menu[] = [
   {
@@ -201,13 +199,13 @@ export const participant_bottom: Menu[] = [
     icon: icon.accounts!,
     url: "/account",
   },
-]
+];
 
 export const agency_bottom: Menu[] = [
   {
     id: "accounts",
     title: "Account Setting",
     icon: icon.accounts!,
-    url: "/agency/account",
+    url: "/account",
   },
-]
+];
