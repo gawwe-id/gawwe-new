@@ -223,7 +223,7 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
     onSuccess: () => {
       showSnackbar("Profile created successfully!", "success");
       clearProfileAgency();
-      router.push("/agency/dashboard");
+      router.push("/dashboard");
     },
     onError: () => {
       showSnackbar("Failed to create agency profile!", "danger");

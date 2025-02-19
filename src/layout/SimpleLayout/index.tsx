@@ -16,12 +16,7 @@ export default async function SimpleLayout({
     if (session.user.profileCompletion === 0) {
       redirect("/onboarding");
     } else {
-      if (session.user.role === "agency") {
-        redirect("/agency/dashboard");
-      }
-      if (session.user.role === "participant") {
-        redirect("/dashboard");
-      }
+      redirect("/dashboard");
     }
   }
 

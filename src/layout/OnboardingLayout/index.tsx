@@ -16,12 +16,7 @@ export default async function OnboardingLayout({
 
   if (session.user) {
     if (session.user.profileCompletion > 0) {
-      if (session.user.role === "agency") {
-        redirect("/agency/dashboard");
-      }
-      if (session.user.role === "participant") {
-        redirect("/dashboard");
-      }
+      redirect("/dashboard");
     }
   }
 
