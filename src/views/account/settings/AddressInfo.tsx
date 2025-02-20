@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import { ProfileParticipant } from '@/server/db/schema/profileParticipants';
-import { useDialogEditAddressParticipantStore } from '@/store/useDialogEditAdressParticipantStore';
+import { ProfileAgencies } from "@/server/db/schema/profileAgencies";
+import { ProfileParticipant } from "@/server/db/schema/profileParticipants";
+import { useDialogEditAddressStore } from "@/store/useDialogEditAddressStore";
 import {
   Box,
   Button,
@@ -11,19 +12,19 @@ import {
   Divider,
   Grid,
   Stack,
-  Typography
-} from '@mui/joy';
+  Typography,
+} from "@mui/joy";
 
 interface AddressInfoProps {
-  profile: ProfileParticipant | undefined | null;
+  profile: ProfileParticipant | ProfileAgencies | undefined | null;
 }
 
 const AddressInfo = ({ profile }: AddressInfoProps) => {
-  const { openDialog } = useDialogEditAddressParticipantStore();
+  const { openDialog } = useDialogEditAddressStore();
 
   const AdressItem = ({
     title,
-    value
+    value,
   }: {
     title: string;
     value: string | undefined;
@@ -69,8 +70,8 @@ const AddressInfo = ({ profile }: AddressInfoProps) => {
         </Grid>
       </Grid>
 
-      <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
-        <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
+      <CardOverflow sx={{ borderTop: "1px solid", borderColor: "divider" }}>
+        <CardActions sx={{ alignSelf: "flex-end", pt: 2 }}>
           <Button size="sm" variant="soft" onClick={handleOpenDialog}>
             Ubah
           </Button>
