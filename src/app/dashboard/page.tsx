@@ -1,5 +1,6 @@
 import DasbhboardLayout from "@/layout/DashboardLayout";
 import { auth } from "@/lib/auth";
+import DashboardAgency from "@/views/dashboard/agency";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -7,7 +8,7 @@ export default async function DashboardPage() {
   return (
     <DasbhboardLayout>
       {session?.user.role === "agency" ? (
-        <h2>HHAHA AGENCY</h2>
+        <DashboardAgency />
       ) : (
         <h2>HHEHE PARTICIPANT</h2>
       )}

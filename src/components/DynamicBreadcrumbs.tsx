@@ -1,15 +1,20 @@
-"use client"
+"use client";
 
-import React from 'react';
-import { Breadcrumbs, Link, Typography, Box } from '@mui/joy';
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import { SxProps } from '@mui/joy/styles/types';
-import { Menu, agency, agency_bottom, participant, participant_bottom } from '@/layout/DashboardLayout/menu-items';
-import { usePathname } from 'next/navigation';
+import React from "react";
+import { Breadcrumbs, Link, Typography, Box } from "@mui/joy";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import { SxProps } from "@mui/joy/styles/types";
+import {
+  Menu,
+  agency,
+  agency_bottom,
+  participant,
+  participant_bottom,
+} from "@/layout/DashboardLayout/menu-items";
+import { usePathname } from "next/navigation";
 
 // Define interfaces for our menu structure
-
 
 interface BreadcrumbItem {
   title: string;
@@ -23,18 +28,25 @@ interface DynamicBreadcrumbsProps {
 
 const DynamicBreadcrumbs: React.FC<DynamicBreadcrumbsProps> = ({ sx }) => {
   // Combine all menus
-  const allMenus: Menu[] = [...participant, ...agency, ...participant_bottom, ...agency_bottom];
+  const allMenus: Menu[] = [
+    ...participant,
+    ...agency,
+    ...participant_bottom,
+    ...agency_bottom,
+  ];
 
   // Function to find menu item by URL
-  const findMenuItemByUrl = (url: string): (Menu & { parent?: Menu }) | undefined => {
+  const findMenuItemByUrl = (
+    url: string
+  ): (Menu & { parent?: Menu }) | undefined => {
     // First try direct match
-    let item = allMenus.find(menu => menu.url === url);
+    let item = allMenus.find((menu) => menu.url === url);
 
     // If not found, check children
     if (!item) {
       for (const menu of allMenus) {
         if (menu.children) {
-          const child = menu.children.find(child => child.url === url);
+          const child = menu.children.find((child) => child.url === url);
           if (child) {
             return { ...child, parent: menu };
           }
@@ -47,16 +59,16 @@ const DynamicBreadcrumbs: React.FC<DynamicBreadcrumbsProps> = ({ sx }) => {
 
   // Generate breadcrumb items
   const generateBreadcrumbs = (): BreadcrumbItem[] => {
-    const pathname = usePathname()
-    const paths = pathname.split('/').filter(Boolean);
-    let currentPath = '';
+    const pathname = usePathname();
+    const paths = pathname.split("/").filter(Boolean);
+    let currentPath = "";
     const breadcrumbs: BreadcrumbItem[] = [];
 
     // Add home
     breadcrumbs.push({
-      title: 'Home',
-      url: '/',
-      icon: <HomeRoundedIcon />
+      title: "Home",
+      url: "/",
+      icon: <HomeRoundedIcon />,
     });
 
     // Generate rest of the breadcrumbs
@@ -65,11 +77,11 @@ const DynamicBreadcrumbs: React.FC<DynamicBreadcrumbsProps> = ({ sx }) => {
       const menuItem = findMenuItemByUrl(currentPath);
 
       if (menuItem) {
-        if ('parent' in menuItem && menuItem.parent) {
+        if ("parent" in menuItem && menuItem.parent) {
           // Add parent if it's a child menu item
           breadcrumbs.push({
             title: menuItem.parent.title,
-            url: menuItem.parent.url || '#',
+            url: menuItem.parent.url || "#",
             // icon: menuItem.parent.icon
           });
         }
@@ -87,7 +99,7 @@ const DynamicBreadcrumbs: React.FC<DynamicBreadcrumbsProps> = ({ sx }) => {
   const breadcrumbs = generateBreadcrumbs();
 
   return (
-    <Box sx={{ px: { xs: 2, md: 6 }, ...sx }}>
+    <Box sx={{ ...sx }}>
       <Breadcrumbs
         size="sm"
         aria-label="breadcrumbs"
@@ -104,9 +116,9 @@ const DynamicBreadcrumbs: React.FC<DynamicBreadcrumbsProps> = ({ sx }) => {
               sx={{
                 fontSize: 12,
                 fontWeight: 500,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.5
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
               }}
             >
               {item.icon}
@@ -121,9 +133,9 @@ const DynamicBreadcrumbs: React.FC<DynamicBreadcrumbsProps> = ({ sx }) => {
               sx={{
                 fontSize: 12,
                 fontWeight: 500,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.5
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
               }}
             >
               {item.icon}
