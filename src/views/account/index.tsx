@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
 import {
   Box,
   CircularProgress,
@@ -12,6 +11,7 @@ import {
 } from "@mui/joy";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 import TabsAccount from "./settings/TabsAccount";
 import AccountInfo from "./settings/AccountInfo";
 import ProfileInfoParticipant from "./participant/ProfileInfo";
@@ -99,7 +99,19 @@ const transformAgencyData = (data: any): ProfileAgencies | undefined => {
 const Account = () => {
   const { data: session } = useSession();
   const role = session?.user?.role;
-  const [activeTab, setActiveTab] = useState(0);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const activeTab = searchParams.get("activetab") || "0";
+
+  const handleTabChange = (
+    event: React.SyntheticEvent | null,
+    newValue: string | number | null
+  ) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("activetab", newValue?.toString() || "0");
+    router.push(`/account?${params.toString()}`);
+  };
 
   const { participant, agency, isLoading } = useProfileData(role);
 
@@ -113,21 +125,6 @@ const Account = () => {
   const profile =
     role === "participant" ? profileData.participant : profileData.agency;
 
-  // if (isLoading) {
-  //   return (
-  //     <Box
-  //       sx={{
-  //         display: "flex",
-  //         justifyContent: "center",
-  //         alignItems: "center",
-  //         minHeight: "60vh",
-  //       }}
-  //     >
-  //       <CircularProgress size="md" />
-  //     </Box>
-  //   );
-  // }
-
   return (
     <Box sx={{ px: { xs: 2, md: 6 } }}>
       <Typography level="h2" component="h1" sx={{ mt: 1, mb: 2 }}>
@@ -135,8 +132,8 @@ const Account = () => {
       </Typography>
 
       <Tabs
-        value={activeTab.toString()}
-        onChange={(_, value) => setActiveTab(Number(value))}
+        value={activeTab}
+        onChange={handleTabChange}
         sx={{ bgcolor: "transparent" }}
       >
         <TabsAccount />

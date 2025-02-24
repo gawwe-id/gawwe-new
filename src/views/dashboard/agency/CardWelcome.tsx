@@ -1,10 +1,12 @@
-import { auth } from "@/lib/auth";
+"use client";
+
 import { EditRounded } from "@mui/icons-material";
 import { Avatar, Button, Sheet, Stack, Typography } from "@mui/joy";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 
-export default async function CardWelcome() {
-  const session = await auth();
+export default function CardWelcome() {
+  const { data: session } = useSession();
 
   return (
     <Sheet
@@ -71,7 +73,7 @@ export default async function CardWelcome() {
           </Typography>
         </Stack>
       </Stack>
-      <Link href="/account" style={{ textDecoration: "none" }}>
+      <Link href="/account?activetab=1" style={{ textDecoration: "none" }}>
         <Button
           variant="soft"
           color="primary"
