@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { EditRounded } from "@mui/icons-material";
 import { Avatar, Button, Sheet, Stack, Typography } from "@mui/joy";
+import Link from "next/link";
 
 export default async function CardWelcome() {
   const session = await auth();
@@ -70,17 +71,20 @@ export default async function CardWelcome() {
           </Typography>
         </Stack>
       </Stack>
-      <Button
-        variant="soft"
-        color="primary"
-        startDecorator={<EditRounded />}
-        sx={{
-          width: { xs: "100%", sm: "auto" },
-          mt: { xs: 1, sm: 0 },
-        }}
-      >
-        Lengkapi
-      </Button>
+      <Link href="/account" style={{ textDecoration: "none" }}>
+        <Button
+          variant="soft"
+          color="primary"
+          startDecorator={<EditRounded />}
+          sx={{
+            width: { xs: "100%", sm: "auto" },
+            mt: { xs: 1, sm: 0 },
+            cursor: "pointer",
+          }}
+        >
+          Lengkapi
+        </Button>
+      </Link>
     </Sheet>
   );
 }
