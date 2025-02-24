@@ -1,6 +1,6 @@
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
-import { IconButton } from '@mui/joy';
-import dayjs from 'dayjs';
+import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
+import { IconButton } from "@mui/joy";
+import dayjs from "dayjs";
 
 const range = (start: number, end: number, step: number = 1): number[] => {
   const length = Math.floor((end - start) / step) + 1;
@@ -9,18 +9,18 @@ const range = (start: number, end: number, step: number = 1): number[] => {
 
 const years = range(1950, dayjs().year() + 1);
 const months = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 export const customStyles = `
@@ -28,10 +28,15 @@ export const customStyles = `
     font-family: var(--joy-fontFamily-body);
     border: 1px solid var(--joy-palette-neutral-outlinedBorder);
     border-radius: var(--joy-radius-sm);
+    background-color: var(--joy-palette-background-surface);
   }
   .react-datepicker__header {
     background-color: var(--joy-palette-background-level1);
     border-bottom: 1px solid var(--joy-palette-neutral-outlinedBorder);
+  }
+  .react-datepicker__current-month,
+  .react-datepicker__day-name {
+    color: var(--joy-palette-text-primary);
   }
   .react-datepicker__day {
     color: var(--joy-palette-text-primary);
@@ -42,12 +47,25 @@ export const customStyles = `
   }
   .react-datepicker__day--selected {
     background-color: var(--joy-palette-primary-500);
-    color: white;
+    color: var(--joy-palette-common-white);
   }
   .react-datepicker__day--keyboard-selected {
     background-color: var(--joy-palette-primary-300);
+    color: var(--joy-palette-primary-contrastText);
   }
   .react-datepicker__day--disabled {
+    color: var(--joy-palette-text-tertiary);
+  }
+  .react-datepicker__navigation-icon::before {
+    border-color: var(--joy-palette-text-secondary);
+  }
+  .react-datepicker__navigation:hover *::before {
+    border-color: var(--joy-palette-primary-main);
+  }
+  .react-datepicker__month {
+    margin: 0.4em;
+  }
+  .react-datepicker__day--outside-month {
     color: var(--joy-palette-text-tertiary);
   }
 `;
@@ -59,7 +77,7 @@ export const customHeader = ({
   decreaseMonth,
   increaseMonth,
   prevMonthButtonDisabled,
-  nextMonthButtonDisabled
+  nextMonthButtonDisabled,
 }: {
   date: Date;
   changeYear: (year: number) => void;
@@ -71,11 +89,11 @@ export const customHeader = ({
 }) => (
   <div
     style={{
-      margin: '8px',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      gap: '8px'
+      margin: "8px",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: "8px",
     }}
   >
     <IconButton
@@ -88,7 +106,7 @@ export const customHeader = ({
       <KeyboardArrowLeft />
     </IconButton>
 
-    <div style={{ display: 'flex', gap: '8px' }}>
+    <div style={{ display: "flex", gap: "8px" }}>
       <select
         value={dayjs(date).month()}
         onChange={(e) => {
@@ -97,13 +115,13 @@ export const customHeader = ({
           changeMonth(Number(e.target.value));
         }}
         style={{
-          padding: '4px 8px',
-          borderRadius: '6px',
-          border: '1px solid var(--joy-palette-neutral-outlinedBorder)',
-          backgroundColor: 'var(--joy-palette-background-surface)',
-          color: 'var(--joy-palette-text-primary)',
-          fontSize: '0.875rem',
-          cursor: 'pointer'
+          padding: "4px 8px",
+          borderRadius: "6px",
+          border: "1px solid var(--joy-palette-neutral-outlinedBorder)",
+          backgroundColor: "var(--joy-palette-background-surface)",
+          color: "var(--joy-palette-text-primary)",
+          fontSize: "0.875rem",
+          cursor: "pointer",
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -122,13 +140,13 @@ export const customHeader = ({
           changeYear(Number(e.target.value));
         }}
         style={{
-          padding: '4px 8px',
-          borderRadius: '6px',
-          border: '1px solid var(--joy-palette-neutral-outlinedBorder)',
-          backgroundColor: 'var(--joy-palette-background-surface)',
-          color: 'var(--joy-palette-text-primary)',
-          fontSize: '0.875rem',
-          cursor: 'pointer'
+          padding: "4px 8px",
+          borderRadius: "6px",
+          border: "1px solid var(--joy-palette-neutral-outlinedBorder)",
+          backgroundColor: "var(--joy-palette-background-surface)",
+          color: "var(--joy-palette-text-primary)",
+          fontSize: "0.875rem",
+          cursor: "pointer",
         }}
         onClick={(e) => e.stopPropagation()}
       >
