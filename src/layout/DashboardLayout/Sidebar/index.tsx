@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { memo } from 'react';
+import { memo } from "react";
 import {
   Box,
   Divider,
@@ -8,23 +8,23 @@ import {
   Input,
   List,
   Sheet,
-  listItemButtonClasses
-} from '@mui/joy';
-import { useSession } from 'next-auth/react';
-import { KeyboardCommandKeyRounded, SearchRounded } from '@mui/icons-material';
+  listItemButtonClasses,
+} from "@mui/joy";
+import { useSession } from "next-auth/react";
+import { KeyboardCommandKeyRounded, SearchRounded } from "@mui/icons-material";
 
 // Project imports
-import TitleLogo from './TitleLogo';
-import UserDisplay from './UserDisplay';
-import ListMenuItem from './ListMenuItem';
-import { closeSidebar } from '../utils';
+import TitleLogo from "./TitleLogo";
+import UserDisplay from "./UserDisplay";
+import ListMenuItem from "./ListMenuItem";
+import { closeSidebar } from "../utils";
 import {
   Menu,
   participant,
   participant_bottom,
   agency,
-  agency_bottom
-} from '../menu-items';
+  agency_bottom,
+} from "../menu-items";
 
 // Types
 interface SidebarProps {
@@ -33,42 +33,42 @@ interface SidebarProps {
 
 // Constants
 const SIDEBAR_WIDTH = {
-  default: '220px',
-  lg: '240px'
+  default: "240px",
+  lg: "245px",
 };
 
-const TRANSITION_DURATION = '0.4s';
+const TRANSITION_DURATION = "0.4s";
 
 // Styled components
 const SidebarOverlay = memo(({ onClick }: { onClick: () => void }) => (
   <Box
     className="Sidebar-overlay"
     sx={{
-      position: 'fixed',
+      position: "fixed",
       top: 0,
       left: 0,
-      width: '100vw',
-      height: '100vh',
-      opacity: 'var(--SideNavigation-slideIn)',
-      backgroundColor: 'var(--joy-palette-background-backdrop)',
+      width: "100vw",
+      height: "100vh",
+      opacity: "var(--SideNavigation-slideIn)",
+      backgroundColor: "var(--joy-palette-background-backdrop)",
       transition: `opacity ${TRANSITION_DURATION}`,
       transform: {
-        xs: 'translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1) + var(--SideNavigation-slideIn, 0) * var(--Sidebar-width, 0px)))',
-        lg: 'translateX(-100%)'
-      }
+        xs: "translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1) + var(--SideNavigation-slideIn, 0) * var(--Sidebar-width, 0px)))",
+        lg: "translateX(-100%)",
+      },
     }}
     onClick={onClick}
   />
 ));
-SidebarOverlay.displayName = 'SidebarOverlay';
+SidebarOverlay.displayName = "SidebarOverlay";
 
 const MenuList = memo(({ items }: { items: Menu[] }) => (
   <List
     size="sm"
     sx={{
       gap: 1,
-      '--List-nestedInsetStart': '30px',
-      '--ListItem-radius': (theme) => theme.vars.radius.sm
+      "--List-nestedInsetStart": "30px",
+      "--ListItem-radius": (theme) => theme.vars.radius.sm,
     }}
   >
     {items.map((menu) => (
@@ -76,16 +76,16 @@ const MenuList = memo(({ items }: { items: Menu[] }) => (
     ))}
   </List>
 ));
-MenuList.displayName = 'MenuList';
+MenuList.displayName = "MenuList";
 
 const BottomMenuList = memo(({ items }: { items: Menu[] }) => (
   <List
     size="sm"
     sx={{
-      mt: 'auto',
+      mt: "auto",
       flexGrow: 0,
-      '--ListItem-radius': (theme) => theme.vars.radius.sm,
-      '--List-gap': '8px'
+      "--ListItem-radius": (theme) => theme.vars.radius.sm,
+      "--List-gap": "8px",
     }}
   >
     {items.map((menu) => (
@@ -93,7 +93,7 @@ const BottomMenuList = memo(({ items }: { items: Menu[] }) => (
     ))}
   </List>
 ));
-BottomMenuList.displayName = 'BottomMenuList';
+BottomMenuList.displayName = "BottomMenuList";
 
 const SearchInput = memo(() => (
   <Input
@@ -103,49 +103,50 @@ const SearchInput = memo(() => (
     placeholder="Cari..."
   />
 ));
-SearchInput.displayName = 'SearchInput';
+SearchInput.displayName = "SearchInput";
 
 // Main component
 const Sidebar = ({ className }: SidebarProps) => {
   const { data: session } = useSession();
   const role = session?.user.role;
 
-  const menuItems = role === 'participant' ? participant : agency;
+  const menuItems = role === "participant" ? participant : agency;
   const bottomMenuItems =
-    role === 'participant' ? participant_bottom : agency_bottom;
+    role === "participant" ? participant_bottom : agency_bottom;
 
   if (!role) return null;
 
   return (
     <Sheet
-      className={`Sidebar ${className || ''}`}
+      className={`Sidebar ${className || ""}`}
       sx={{
-        position: { xs: 'fixed', md: 'sticky' },
+        position: { xs: "fixed", md: "sticky" },
         transform: {
-          xs: 'translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1)))',
-          md: 'none'
+          xs: "translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1)))",
+          md: "none",
         },
         transition: `transform ${TRANSITION_DURATION}, width ${TRANSITION_DURATION}`,
-        height: '100dvh',
-        width: 'var(--Sidebar-width)',
+        zIndex: 1,
+        height: "100dvh",
+        width: "var(--Sidebar-width)",
         top: 0,
         p: 2,
         flexShrink: 0,
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
         gap: 2,
-        borderRight: '1px solid',
-        borderColor: 'divider'
+        borderRight: "1px solid",
+        borderColor: "divider",
       }}
     >
       <GlobalStyles
         styles={(theme) => ({
-          ':root': {
-            '--Sidebar-width': SIDEBAR_WIDTH.default,
-            [theme.breakpoints.up('lg')]: {
-              '--Sidebar-width': SIDEBAR_WIDTH.lg
-            }
-          }
+          ":root": {
+            "--Sidebar-width": SIDEBAR_WIDTH.default,
+            [theme.breakpoints.up("lg")]: {
+              "--Sidebar-width": SIDEBAR_WIDTH.lg,
+            },
+          },
         })}
       />
       <SidebarOverlay onClick={closeSidebar} />
@@ -156,13 +157,13 @@ const Sidebar = ({ className }: SidebarProps) => {
         mt={1}
         sx={{
           minHeight: 0,
-          overflow: 'hidden auto',
+          overflow: "hidden auto",
           flexGrow: 1,
-          display: 'flex',
-          flexDirection: 'column',
+          display: "flex",
+          flexDirection: "column",
           [`& .${listItemButtonClasses?.root}`]: {
-            gap: 1.5
-          }
+            gap: 1.5,
+          },
         }}
       >
         <MenuList items={menuItems} />
