@@ -22,7 +22,7 @@ export const usersRouter = j.router({
       throwApiError(404, "User not found");
     }
 
-    return c.json(
+    return c.superjson(
       {
         message: "Success",
         data,
@@ -38,7 +38,7 @@ export const usersRouter = j.router({
     const { db } = ctx;
     const users = await db.query.users.findMany();
 
-    return c.json(
+    return c.superjson(
       {
         message: "Success",
         data: users,
@@ -74,7 +74,7 @@ export const usersRouter = j.router({
         .where(eq(users.id, userId))
         .returning();
 
-      return c.json(
+      return c.superjson(
         {
           message: "Berhasil Update User",
           data: user[0],

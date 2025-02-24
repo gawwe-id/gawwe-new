@@ -13,7 +13,7 @@ export const rolesRouter = j.router({
 
       const role = await db.insert(roles).values(input).returning();
 
-      return c.json(
+      return c.superjson(
         {
           message: "Berhasil menambahkan Role",
           data: role,
@@ -29,7 +29,7 @@ export const rolesRouter = j.router({
     const { db } = ctx;
     const rolesList = await db.select().from(roles);
 
-    return c.json(
+    return c.superjson(
       {
         message: "Success",
         data: rolesList,

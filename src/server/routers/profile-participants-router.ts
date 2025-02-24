@@ -46,7 +46,7 @@ export const profileParticipantsRouter = j.router({
         );
       }
 
-      return c.json(
+      return c.superjson(
         {
           message: "Berhasil membuat Profile",
           data: participant,
@@ -72,7 +72,7 @@ export const profileParticipantsRouter = j.router({
       .where(eq(profileParticipants.userId, userId))
       .execute();
 
-    return c.json(
+    return c.superjson(
       {
         status: "success",
         message: "Berhasil menampilkan profile",
@@ -102,7 +102,7 @@ export const profileParticipantsRouter = j.router({
         .where(eq(profileParticipants.id, id))
         .returning();
 
-      return c.json(
+      return c.superjson(
         {
           message: "Berhasil update Profile",
           data: participant,

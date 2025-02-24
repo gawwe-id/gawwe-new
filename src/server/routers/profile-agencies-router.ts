@@ -45,7 +45,7 @@ export const profileAgenciesRouter = j.router({
         );
       }
 
-      return c.json(
+      return c.superjson(
         {
           status: "success",
           message: "Berhasil membuat Profile",
@@ -71,7 +71,7 @@ export const profileAgenciesRouter = j.router({
       throw new AppError(404, "Profile not found", "PROFILE_NOT_FOUND");
     }
 
-    return c.json(
+    return c.superjson(
       {
         status: "success",
         message: "Berhasil menampilkan Profile",
@@ -127,7 +127,7 @@ export const profileAgenciesRouter = j.router({
         );
       }
 
-      return c.json(
+      return c.superjson(
         {
           status: "success",
           message: "Berhasil update Profile",

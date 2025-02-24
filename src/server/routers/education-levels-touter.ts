@@ -22,7 +22,7 @@ export const educationLevelsRouter = j.router({
         .values(input)
         .returning();
 
-      return c.json(
+      return c.superjson(
         {
           message: "Berhasil membuat jenjang pendidikan",
           data: level,
@@ -38,7 +38,7 @@ export const educationLevelsRouter = j.router({
     const { db } = ctx;
     const levels = await db.select().from(educationLevels).execute();
 
-    return c.json(
+    return c.superjson(
       {
         message: "Success",
         data: levels,
@@ -68,7 +68,7 @@ export const educationLevelsRouter = j.router({
         .where(eq(educationLevels.id, educationId))
         .execute();
 
-      return c.json(
+      return c.superjson(
         {
           message: "Success",
           data: level,
@@ -97,7 +97,7 @@ export const educationLevelsRouter = j.router({
         .where(eq(educationLevels.id, educationId))
         .returning();
 
-      return c.json(
+      return c.superjson(
         {
           message: "BErhasil update jenjang pendidikan",
           data: level,
@@ -120,7 +120,7 @@ export const educationLevelsRouter = j.router({
         .where(eq(educationLevels.id, educationId))
         .execute();
 
-      return c.json({
+      return c.superjson({
         message: "Berhasil menghapus jenjang pendidikan",
         data: null,
       });
