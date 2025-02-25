@@ -1,6 +1,8 @@
 import { j } from "./jstack";
 import {
+  classesRouter,
   educationLevelsRouter,
+  languageClassesRouter,
   profileAgenciesRouter,
   profileParticipantsRouter,
   rolesRouter,
@@ -25,9 +27,11 @@ const api = j
  * All routers in /server/routers should be added here manually.
  */
 const appRouter = j.mergeRouters(api, {
+  classes: classesRouter,
+  educationLevels: educationLevelsRouter,
+  languageClasses: languageClassesRouter,
   roles: rolesRouter,
   regions: regionsRouter,
-  educationLevels: educationLevelsRouter,
   profileAgencies: profileAgenciesRouter,
   profileParticipants: profileParticipantsRouter,
   users: usersRouter,

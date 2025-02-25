@@ -10,7 +10,11 @@ import {
 import { relations } from "drizzle-orm";
 
 import { assignments, calendars, exams, languageClasses, payments } from ".";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 
 // Classes Table
 export const classes = pgTable(
@@ -58,3 +62,4 @@ export const createClassSchema = createInsertSchema(classes).omit({
 
 export const insertClassSchema = createInsertSchema(classes);
 export const selectClassSchema = createSelectSchema(classes);
+export const updateClassSchema = createUpdateSchema(classes);
