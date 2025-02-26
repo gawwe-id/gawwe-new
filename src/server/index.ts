@@ -1,14 +1,5 @@
 import { j } from "./jstack";
-import {
-  classesRouter,
-  educationLevelsRouter,
-  languageClassesRouter,
-  profileAgenciesRouter,
-  profileParticipantsRouter,
-  rolesRouter,
-  regionsRouter,
-  usersRouter,
-} from "./routers";
+import { dynamic } from "jstack";
 
 /**
  * This is your base API.
@@ -27,14 +18,16 @@ const api = j
  * All routers in /server/routers should be added here manually.
  */
 const appRouter = j.mergeRouters(api, {
-  classes: classesRouter,
-  educationLevels: educationLevelsRouter,
-  languageClasses: languageClassesRouter,
-  roles: rolesRouter,
-  regions: regionsRouter,
-  profileAgencies: profileAgenciesRouter,
-  profileParticipants: profileParticipantsRouter,
-  users: usersRouter,
+  classes: dynamic(() => import("./routers/classes-router")),
+  educationLevels: dynamic(() => import("./routers/education-levels-router")),
+  languageClasses: dynamic(() => import("./routers/language-classes-router")),
+  roles: dynamic(() => import("./routers/roles-router")),
+  regions: dynamic(() => import("./routers/region-router")),
+  profileAgencies: dynamic(() => import("./routers/profile-agencies-router")),
+  profileParticipants: dynamic(
+    () => import("./routers/profile-participants-router")
+  ),
+  users: dynamic(() => import("./routers/users-router")),
 });
 
 export type AppRouter = typeof appRouter;
