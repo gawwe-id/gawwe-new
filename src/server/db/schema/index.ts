@@ -11,6 +11,7 @@ export { eventTypes } from "./eventTypes";
 export { exams } from "./exams";
 export { languageClassEnrollments } from "./languageClassEnrollments";
 export { languageClasses } from "./languageClasses";
+export { languages } from "./languages";
 export { notificationRecipients } from "./notificationRecipients";
 export { notifications } from "./notifications";
 export { notificationTypes } from "./notificationTypes";

@@ -1,11 +1,9 @@
-// File: /components/class-management/AddLanguageModal.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import {
   Modal,
   ModalDialog,
-  ModalClose,
   Typography,
   Button,
   Box,
@@ -18,6 +16,21 @@ import {
   Divider,
 } from "@mui/joy";
 import { Language as LanguageIcon } from "@mui/icons-material";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { client } from "@/lib/client";
+import { useSession } from "next-auth/react";
+import { useSnackbar } from "@/hooks/useSnackbar";
+
+// Define schema for form validation
+const languageFormSchema = z.object({
+  languageId: z.string().min(1, "Silakan pilih bahasa"),
+  level: z.enum(["Beginner", "Intermediate", "Advanced", "All Levels"]),
+});
+
+type LanguageFormValues = z.infer<typeof languageFormSchema>;
 
 interface AddLanguageDialogProps {
   open: boolean;
@@ -28,86 +41,78 @@ export default function AddLanguageDialog({
   open,
   onClose,
 }: AddLanguageDialogProps) {
-  const [formData, setFormData] = useState({
-    languageName: "",
-    level: "Beginner",
+  const queryClient = useQueryClient();
+  const { data: session } = useSession();
+  const { showSnackbar } = useSnackbar();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<LanguageFormValues>({
+    resolver: zodResolver(languageFormSchema),
+    defaultValues: {
+      languageId: "",
+      level: "Beginner",
+    },
   });
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({
-    languageName: "",
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-
-    // Clear error when user types
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-  };
-
-  const handleLevelChange = (
-    event: React.SyntheticEvent | null,
-    newValue: string | null
-  ) => {
-    if (newValue) {
-      setFormData((prev) => ({ ...prev, level: newValue }));
-    }
-  };
-
-  const validateForm = () => {
-    let isValid = true;
-    const newErrors = { ...errors };
-
-    if (!formData.languageName.trim()) {
-      newErrors.languageName = "Nama bahasa tidak boleh kosong";
-      isValid = false;
-    }
-
-    setErrors(newErrors);
-    return isValid;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (validateForm()) {
-      // Here you would typically call your API to save the new language
-      console.log("Submitting new language:", formData);
-
-      // Reset form and close modal
-      setFormData({
-        languageName: "",
+  // Reset form when modal opens
+  useEffect(() => {
+    if (open) {
+      reset({
+        languageId: "",
         level: "Beginner",
       });
-      onClose();
     }
+  }, [open, reset]);
+
+  // Fetch available languages
+  const { data: languages, isLoading: isLanguages } = useQuery({
+    queryKey: ["languages"],
+    queryFn: async () => {
+      const res = await client.languages.list.$get();
+      return await res.json();
+    },
+  });
+
+  // Setup mutation
+  const { mutate: createLanguageClass, isPending } = useMutation({
+    mutationFn: async (data: LanguageFormValues) => {
+      const languageName = languages?.data?.find(
+        (language) => language.id === data.languageId
+      )?.name as string;
+
+      const res = await client.languageClasses.create.$post({
+        languageName,
+        level: data.level,
+        languageId: data.languageId,
+        userId: session?.user.id as string,
+      });
+      return await res.json();
+    },
+    onSuccess: async (data) => {
+      // Invalidate and refetch language classes
+      await queryClient.invalidateQueries({
+        queryKey: ["language-classes"],
+      });
+      showSnackbar(data.message, "success");
+      onClose();
+    },
+    onError: (error) => {
+      console.error("Error creating language class:", error);
+      showSnackbar(error.message, "danger");
+    },
+  });
+
+  const onSubmit = (data: LanguageFormValues) => {
+    createLanguageClass(data);
   };
 
   return (
     <Modal open={open} onClose={onClose}>
-      <ModalDialog
-        aria-labelledby="add-language-modal-title"
-        aria-describedby="add-language-modal-description"
-        sx={{
-          maxWidth: 500,
-          borderRadius: "md",
-          p: 3,
-          boxShadow: "lg",
-        }}
-      >
-        <ModalClose
-          variant="outlined"
-          sx={{
-            top: "calc(-1/4 * var(--IconButton-size))",
-            right: "calc(-1/4 * var(--IconButton-size))",
-            boxShadow: "0 2px 12px 0 rgba(0,0,0,0.2)",
-            borderRadius: "50%",
-            bgcolor: "background.body",
-          }}
-        />
-
+      <ModalDialog>
         <Box
           sx={{
             display: "flex",
@@ -145,34 +150,56 @@ export default function AddLanguageDialog({
 
         <Divider sx={{ my: 2 }} />
 
-        <Box component="form" onSubmit={handleSubmit}>
-          <FormControl error={!!errors.languageName} sx={{ mb: 2 }} required>
+        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+          <FormControl sx={{ mb: 2 }} required>
             <FormLabel>Nama Bahasa</FormLabel>
-            <Input
-              name="languageName"
-              value={formData.languageName}
-              onChange={handleChange}
-              placeholder="Contoh: Bahasa Jepang"
-              autoFocus
-              fullWidth
+            <Controller
+              name="languageId"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  size="sm"
+                  placeholder="Pilih Bahasa"
+                  value={field.value || ""}
+                  onChange={(event, newValue) => {
+                    field.onChange(newValue);
+                  }}
+                >
+                  {languages?.data?.map((language, index) => (
+                    <Option key={index} value={language.id}>
+                      {language.name}
+                    </Option>
+                  ))}
+                </Select>
+              )}
             />
-            {errors.languageName && (
-              <FormHelperText>{errors.languageName}</FormHelperText>
+            {errors.languageId && (
+              <FormHelperText>{errors.languageId.message}</FormHelperText>
             )}
           </FormControl>
 
           <FormControl sx={{ mb: 3 }}>
             <FormLabel>Level</FormLabel>
-            <Select
-              value={formData.level}
-              onChange={handleLevelChange}
-              sx={{ width: "100%" }}
-            >
-              <Option value="Beginner">Beginner</Option>
-              <Option value="Intermediate">Intermediate</Option>
-              <Option value="Advanced">Advanced</Option>
-              <Option value="All Levels">All Levels</Option>
-            </Select>
+            <Controller
+              name="level"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  size="sm"
+                  onChange={(_, newValue) => {
+                    field.onChange(newValue);
+                  }}
+                  sx={{ width: "100%" }}
+                >
+                  <Option value="Beginner">Beginner</Option>
+                  <Option value="Intermediate">Intermediate</Option>
+                  <Option value="Advanced">Advanced</Option>
+                  <Option value="All Levels">All Levels</Option>
+                </Select>
+              )}
+            />
             <FormHelperText>Pilih level umum untuk bahasa ini</FormHelperText>
           </FormControl>
 
@@ -180,7 +207,9 @@ export default function AddLanguageDialog({
             <Button variant="plain" color="neutral" onClick={onClose}>
               Batal
             </Button>
-            <Button type="submit">Simpan</Button>
+            <Button type="submit" loading={isPending}>
+              Simpan
+            </Button>
           </Box>
         </Box>
       </ModalDialog>

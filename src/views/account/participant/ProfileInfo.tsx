@@ -183,7 +183,6 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
                     startDecorator={<WcRounded />}
                     value={value || ""}
                     onChange={(event, newValue) => {
-                      console.log("Select clicked", event, newValue);
                       onChange(newValue);
                     }}
                     sx={{

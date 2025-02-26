@@ -21,6 +21,7 @@ const appRouter = j.mergeRouters(api, {
   classes: dynamic(() => import("./routers/classes-router")),
   educationLevels: dynamic(() => import("./routers/education-levels-router")),
   languageClasses: dynamic(() => import("./routers/language-classes-router")),
+  languages: dynamic(() => import("./routers/languages-router")),
   roles: dynamic(() => import("./routers/roles-router")),
   regions: dynamic(() => import("./routers/region-router")),
   profileAgencies: dynamic(() => import("./routers/profile-agencies-router")),

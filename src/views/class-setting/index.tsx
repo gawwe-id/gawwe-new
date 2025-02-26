@@ -41,6 +41,8 @@ import { useLanguageStore } from "@/store/useLanguageStore";
 import AddLanguageDialog from "./dialog/AddLanguageDialog";
 import PageHeader from "@/components/common/PageHeader";
 import EmptyState from "@/components/common/EmptyState";
+import { useQuery } from "@tanstack/react-query";
+import { client } from "@/lib/client";
 
 // Mocked data for UI preview
 const mockLanguages = [
@@ -121,6 +123,14 @@ export default function ClassSettingsPage() {
     openAddLanguageModal,
     closeAddLanguageModal,
   } = useLanguageStore();
+
+  const { data: languagesClasses, isPending } = useQuery({
+    queryKey: ["language-classes"],
+    queryFn: async () => {
+      const res = await client.languageClasses.list.$get();
+      return await res.json();
+    },
+  });
 
   return (
     <Box sx={{ py: 4, px: { xs: 2, md: 4 } }}>
