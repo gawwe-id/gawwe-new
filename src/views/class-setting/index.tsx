@@ -24,14 +24,14 @@ import {
 } from "@mui/joy";
 
 import {
-  Add as AddIcon,
-  School as SchoolIcon,
-  MoreVert as MoreIcon,
-  Language as LanguageIcon,
-  GridView as GridViewIcon,
-  TableRows as TableRowsIcon,
-  Edit as EditIcon,
-  Visibility as VisibilityIcon,
+  AddRounded as AddIcon,
+  SchoolRounded as SchoolIcon,
+  MoreVertRounded as MoreIcon,
+  LanguageRounded as LanguageIcon,
+  GridViewRounded as GridViewIcon,
+  TableRowsRounded as TableRowsIcon,
+  EditRounded as EditIcon,
+  VisibilityRounded as VisibilityIcon,
 } from "@mui/icons-material";
 
 // Zustand store

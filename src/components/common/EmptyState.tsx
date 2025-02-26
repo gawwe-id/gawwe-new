@@ -1,6 +1,6 @@
 // File: /components/common/EmptyState.tsx
 import { ReactNode } from "react";
-import { Box, Card, Typography } from "@mui/joy";
+import { Box, Typography } from "@mui/joy";
 
 interface EmptyStateProps {
   icon?: ReactNode;
@@ -16,10 +16,9 @@ export default function EmptyState({
   action,
 }: EmptyStateProps) {
   return (
-    <Card
-      variant="outlined"
+    <Box
       sx={{
-        p: 4,
+        pt: 8,
         textAlign: "center",
         maxWidth: 600,
         mx: "auto",
@@ -39,18 +38,18 @@ export default function EmptyState({
         </Box>
       )}
 
-      <Typography level="title-lg" sx={{ mb: 1 }}>
+      <Typography level="title-md" sx={{ mb: 1 }}>
         {title}
       </Typography>
 
       <Typography
-        level="body-md"
+        level="body-sm"
         sx={{ color: "text.secondary", mb: action ? 3 : 0 }}
       >
         {description}
       </Typography>
 
       {action && <Box sx={{ mt: 2 }}>{action}</Box>}
-    </Card>
+    </Box>
   );
 }
