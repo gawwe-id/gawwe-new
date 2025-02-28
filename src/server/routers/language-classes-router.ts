@@ -4,7 +4,7 @@ import {
   selectLanguageClassesSchema,
   updateLanguageClassesSchema,
 } from "@/server/db/schema/languageClasses";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { j, privateProcedure, publicProcedure } from "../jstack";
 import { z } from "zod";
 import { throwApiError } from "@/utils/api-error";
@@ -61,10 +61,25 @@ export const languageClassesRouter = j.router({
       .leftJoin(languages, eq(languageClasses.languageId, languages.id))
       .execute();
 
+    const classCounts = await db
+      .select({
+        languageClassId: classes.languageClassId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(classes)
+      .groupBy(classes.languageClassId)
+      .execute();
+
+    const countMap = new Map();
+    classCounts.forEach((item) => {
+      countMap.set(item.languageClassId, item.count);
+    });
+
     // Transform results to include language info within each class
     const allLanguageClasses = results.map((result) => ({
       ...result.languageClass,
       language: result.language,
+      classCount: countMap.get(result.languageClass.id) || 0,
     }));
 
     return c.superjson(

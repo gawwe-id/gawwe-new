@@ -4,6 +4,7 @@ export { assignments } from "./assignments";
 export { calendars } from "./calendars";
 export { classes } from "./classes";
 export { classReviews } from "./classReviews";
+export { classSchedules } from "./classSchedules";
 export { educationLevels } from "./educationLevels";
 export { essayAnswers } from "./essayAnswers";
 export { essayQuestions } from "./essayQuestions";

@@ -23,13 +23,12 @@ export const classes = pgTable(
     id: uuid("id").primaryKey().defaultRandom().notNull(),
     name: varchar("name").notNull(),
     description: varchar("description").notNull(),
-    schedule: varchar("schedule").notNull(),
     languageClassId: uuid("language_class_id")
       .references(() => languageClasses.id, { onDelete: "cascade" })
       .notNull(),
     batch: integer("batch").notNull(),
-    startDate: date("start_date").notNull(),
-    endDate: date("end_date").notNull(),
+    startDate: date("start_date", { mode: "date" }).notNull(),
+    endDate: date("end_date", { mode: "date" }).notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
       .notNull()
@@ -54,12 +53,9 @@ export const classRelations = relations(classes, ({ many }) => ({
 
 // Class Type
 export type Class = typeof classes.$inferSelect;
+export type NewClass = typeof classes.$inferInsert;
 
 // Drizzle Zod Schema
-export const createClassSchema = createInsertSchema(classes).omit({
-  id: true,
-});
-
 export const insertClassSchema = createInsertSchema(classes);
 export const selectClassSchema = createSelectSchema(classes);
 export const updateClassSchema = createUpdateSchema(classes);

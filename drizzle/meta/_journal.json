@@ -36,6 +36,20 @@
       "when": 1740582491595,
       "tag": "0004_curvy_typhoid_mary",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1740673034868,
+      "tag": "0005_hard_ozymandias",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1740673276077,
+      "tag": "0006_opposite_wendigo",
+      "breakpoints": true
     }
   ]
 }

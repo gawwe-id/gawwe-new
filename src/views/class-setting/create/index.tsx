@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm, Controller } from "react-hook-form";
@@ -20,132 +19,92 @@ import {
   Textarea,
   Alert,
   IconButton,
-  CircularProgress,
   Stack,
   Chip,
+  List,
+  ListItem,
+  FormHelperText,
 } from "@mui/joy";
 
 import {
-  ArrowBack as ArrowBackIcon,
-  Save as SaveIcon,
-  CalendarMonth as CalendarIcon,
-  School as SchoolIcon,
-  Language as LanguageIcon,
-  Info as InfoIcon,
+  ArrowBackRounded as ArrowBackIcon,
+  SaveRounded as SaveIcon,
+  CalendarMonthRounded as CalendarIcon,
+  LanguageRounded as LanguageIcon,
+  InfoRounded as InfoIcon,
 } from "@mui/icons-material";
-
-// Types from schema
-type ClassFormData = {
-  name: string;
-  description: string;
-  schedule: string;
-  languageClassId: string;
-  batch: number;
-  startDate: Date;
-  endDate: Date;
-};
+import { customStyles } from "@/utils/dateSelection";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { NewClass } from "@/server/db/schema/classes";
+import { client } from "@/lib/client";
+import { useSnackbar } from "@/hooks/useSnackbar";
+import ClassScheduleManager from "../sections/ClassScheduleManager";
 
 export default function CreateClass() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
-  const languageId = searchParams.get("languageId");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [languageData, setLanguageData] = useState<{
-    id: string;
-    languageName: string;
-    level: string;
-  } | null>(null);
+  const languageId = searchParams.get("languageId") as string;
+  const { showSnackbar } = useSnackbar();
 
-  // Form setup with react-hook-form
+  const { data: languageData } = useQuery({
+    queryKey: ["language-class", languageId],
+    queryFn: async () => {
+      const response = await client.languageClasses.single.$get({
+        languageClassId: languageId,
+      });
+      return await response.json();
+    },
+  });
+
   const {
     control,
     register,
     handleSubmit,
     formState: { errors },
     watch,
-    setValue,
-  } = useForm<ClassFormData>({
+  } = useForm<NewClass>({
     defaultValues: {
       name: "",
       description: "",
-      schedule: "",
-      languageClassId: languageId || "",
+      languageClassId: languageId,
       batch: 1,
       startDate: new Date(),
-      endDate: new Date(new Date().setMonth(new Date().getMonth() + 3)), // Default to 3 months from now
+      endDate: new Date(new Date().setMonth(new Date().getMonth() + 3)),
     },
   });
 
-  // Watch startDate to validate endDate
   const startDate = watch("startDate");
 
-  // Mock function to fetch language data
-  useEffect(() => {
-    if (!languageId) {
+  const {
+    mutate: mutateClass,
+    data: classData,
+    isPending,
+  } = useMutation({
+    mutationFn: async (data: NewClass) => {
+      const response = await client.classes.create.$post(data);
+      return await response.json();
+    },
+    onSuccess: async ({ message, data }) => {
+      await queryClient.invalidateQueries({
+        queryKey: ["classes-by-language", data?.languageClassId],
+      });
+      showSnackbar(message, "success");
       router.push("/class-setting");
-      return;
-    }
-
-    // Simulate API call to get language details
-    // In real implementation, replace with actual API call
-    setTimeout(() => {
-      const mockLanguages = [
-        {
-          id: "1",
-          languageName: "Bahasa Jepang",
-          level: "Intermediate",
-        },
-        {
-          id: "2",
-          languageName: "Bahasa Mandarin",
-          level: "Beginner",
-        },
-        {
-          id: "3",
-          languageName: "Bahasa Jerman",
-          level: "Advanced",
-        },
-      ];
-
-      const language = mockLanguages.find((lang) => lang.id === languageId);
-      if (language) {
-        setLanguageData(language);
-      } else {
-        router.push("/class-setting");
-      }
-    }, 500);
-  }, [languageId, router]);
-
-  const onSubmit = async (data: ClassFormData) => {
-    setIsSubmitting(true);
-
-    // Simulate API call for creating class
-    // In real implementation, replace with actual API call
-    try {
-      console.log("Submitting data:", data);
-
-      // Simulate server delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Success! Redirect back
-      router.push("/class-setting?success=true&message=Kelas berhasil dibuat");
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error("Error creating class:", error);
-      setIsSubmitting(false);
-    }
+      showSnackbar(error.message, "danger");
+    },
+  });
+
+  const onSubmit = async (data: NewClass) => {
+    mutateClass(data);
   };
 
-  if (!languageData) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 5 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return (
-    <Box sx={{ py: 4, px: { xs: 2, md: 4 } }}>
-      {/* Page Header */}
+    <Box sx={{ py: 4, px: { xs: 2, md: 6 }, maxWidth: "1000px", mx: "auto" }}>
+      <style>{customStyles}</style>
       <Box
         sx={{
           display: "flex",
@@ -173,27 +132,54 @@ export default function CreateClass() {
         <Grid container spacing={3}>
           {/* Left Column - Main Form */}
           <Grid xs={12} md={8}>
-            <Card variant="outlined" sx={{ p: 3 }}>
+            <Card variant="outlined">
               <Typography level="title-lg" sx={{ mb: 2 }}>
                 Informasi Kelas
               </Typography>
 
               <Grid container spacing={2}>
-                <Grid xs={12}>
+                <Grid xs={12} sm={6}>
                   <FormControl error={!!errors.name} required>
                     <FormLabel>Nama Kelas</FormLabel>
                     <Input
+                      size="sm"
+                      fullWidth
                       placeholder="Contoh: Kelas Bahasa Jepang Batch 1"
                       {...register("name", {
                         required: "Nama kelas harus diisi",
                       })}
                     />
-                    {errors.name && (
-                      <Typography level="body-xs" color="danger">
-                        {errors.name.message}
-                      </Typography>
-                    )}
                   </FormControl>
+                  {errors.name && (
+                    <FormHelperText sx={{ color: "red", fontSize: 12, mt: 1 }}>
+                      * {errors.name.message}
+                    </FormHelperText>
+                  )}
+                </Grid>
+
+                <Grid xs={12} sm={6}>
+                  <FormControl error={!!errors.batch} required>
+                    <FormLabel>Batch</FormLabel>
+                    <Input
+                      type="number"
+                      placeholder="1"
+                      size="sm"
+                      slotProps={{ input: { min: 1 } }}
+                      {...register("batch", {
+                        required: "Batch harus diisi",
+                        min: {
+                          value: 1,
+                          message: "Batch minimal 1",
+                        },
+                        valueAsNumber: true,
+                      })}
+                    />
+                  </FormControl>
+                  {errors.batch && (
+                    <FormHelperText sx={{ color: "red", fontSize: 12, mt: 1 }}>
+                      {errors.batch.message}
+                    </FormHelperText>
+                  )}
                 </Grid>
 
                 <Grid xs={12}>
@@ -206,53 +192,12 @@ export default function CreateClass() {
                         required: "Deskripsi kelas harus diisi",
                       })}
                     />
-                    {errors.description && (
-                      <Typography level="body-xs" color="danger">
-                        {errors.description.message}
-                      </Typography>
-                    )}
                   </FormControl>
-                </Grid>
-
-                <Grid xs={12} sm={6}>
-                  <FormControl error={!!errors.schedule} required>
-                    <FormLabel>Jadwal</FormLabel>
-                    <Input
-                      placeholder="Contoh: Senin & Rabu, 19:00-21:00"
-                      {...register("schedule", {
-                        required: "Jadwal kelas harus diisi",
-                      })}
-                    />
-                    {errors.schedule && (
-                      <Typography level="body-xs" color="danger">
-                        {errors.schedule.message}
-                      </Typography>
-                    )}
-                  </FormControl>
-                </Grid>
-
-                <Grid xs={12} sm={6}>
-                  <FormControl error={!!errors.batch} required>
-                    <FormLabel>Batch</FormLabel>
-                    <Input
-                      type="number"
-                      placeholder="1"
-                      slotProps={{ input: { min: 1 } }}
-                      {...register("batch", {
-                        required: "Batch harus diisi",
-                        min: {
-                          value: 1,
-                          message: "Batch minimal 1",
-                        },
-                        valueAsNumber: true,
-                      })}
-                    />
-                    {errors.batch && (
-                      <Typography level="body-xs" color="danger">
-                        {errors.batch.message}
-                      </Typography>
-                    )}
-                  </FormControl>
+                  {errors.description && (
+                    <FormHelperText sx={{ color: "red", fontSize: 12, mt: 1 }}>
+                      {errors.description.message}
+                    </FormHelperText>
+                  )}
                 </Grid>
 
                 <Grid xs={12} sm={6}>
@@ -263,27 +208,26 @@ export default function CreateClass() {
                       control={control}
                       rules={{ required: "Tanggal mulai harus diisi" }}
                       render={({ field }) => (
-                        <Box sx={{ position: "relative" }}>
-                          <DatePicker
-                            selected={field.value}
-                            onChange={(date) => field.onChange(date)}
-                            dateFormat="dd/MM/yyyy"
-                            customInput={
-                              <Input
-                                placeholder="DD/MM/YYYY"
-                                endDecorator={<CalendarIcon />}
-                              />
-                            }
-                          />
-                        </Box>
+                        <DatePicker
+                          selected={field.value}
+                          onChange={(date) => field.onChange(date)}
+                          dateFormat="dd/MM/yyyy"
+                          customInput={
+                            <Input
+                              size="sm"
+                              fullWidth
+                              endDecorator={<CalendarIcon />}
+                            />
+                          }
+                        />
                       )}
                     />
-                    {errors.startDate && (
-                      <Typography level="body-xs" color="danger">
-                        {errors.startDate.message}
-                      </Typography>
-                    )}
                   </FormControl>
+                  {errors.startDate && (
+                    <FormHelperText sx={{ color: "red", fontSize: 12, mt: 1 }}>
+                      {errors.startDate.message}
+                    </FormHelperText>
+                  )}
                 </Grid>
 
                 <Grid xs={12} sm={6}>
@@ -299,40 +243,39 @@ export default function CreateClass() {
                           "Tanggal selesai harus setelah tanggal mulai",
                       }}
                       render={({ field }) => (
-                        <Box sx={{ position: "relative" }}>
-                          <DatePicker
-                            selected={field.value}
-                            onChange={(date) => field.onChange(date)}
-                            dateFormat="dd/MM/yyyy"
-                            minDate={startDate}
-                            customInput={
-                              <Input
-                                placeholder="DD/MM/YYYY"
-                                endDecorator={<CalendarIcon />}
-                              />
-                            }
-                          />
-                        </Box>
+                        <DatePicker
+                          selected={field.value}
+                          onChange={(date) => field.onChange(date)}
+                          dateFormat="dd/MM/yyyy"
+                          minDate={startDate}
+                          customInput={
+                            <Input
+                              size="sm"
+                              fullWidth
+                              endDecorator={<CalendarIcon />}
+                            />
+                          }
+                        />
                       )}
                     />
-                    {errors.endDate && (
-                      <Typography level="body-xs" color="danger">
-                        {errors.endDate.message}
-                      </Typography>
-                    )}
                   </FormControl>
+                  {errors.endDate && (
+                    <FormHelperText sx={{ color: "red", fontSize: 12, mt: 1 }}>
+                      {errors.endDate.message}
+                    </FormHelperText>
+                  )}
                 </Grid>
               </Grid>
             </Card>
 
-            <Card variant="outlined" sx={{ p: 3, mt: 3 }}>
+            <Card variant="outlined" sx={{ mt: 3 }}>
               <Typography level="title-lg" sx={{ mb: 2 }}>
                 Materi & Kurikulum
               </Typography>
 
               <Alert
                 size="sm"
-                color="neutral"
+                color="secondary"
                 variant="soft"
                 startDecorator={<InfoIcon />}
                 sx={{ mb: 2 }}
@@ -342,34 +285,27 @@ export default function CreateClass() {
             </Card>
           </Grid>
 
-          {/* Right Column - Summary & Actions */}
           <Grid xs={12} md={4}>
-            <Card variant="outlined" sx={{ p: 3, mb: 3 }}>
+            <Card variant="soft" color="primary" sx={{ mb: 3 }}>
               <Typography level="title-lg" sx={{ mb: 2 }}>
                 Bahasa
               </Typography>
 
               <Box
-                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}
+                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
               >
                 <LanguageIcon color="primary" />
                 <Typography level="title-md">
-                  {languageData.languageName}
+                  Bahasa {languageData?.data?.languageClass?.languageName}
                 </Typography>
               </Box>
 
-              <Chip size="sm" variant="soft">
-                Level: {languageData.level}
+              <Chip size="sm" variant="outlined" color="primary">
+                {languageData?.data?.languageClass?.level}
               </Chip>
-
-              <Input
-                type="hidden"
-                {...register("languageClassId")}
-                value={languageId || ""}
-              />
             </Card>
 
-            <Card variant="outlined" sx={{ p: 3, mb: 3 }}>
+            <Card variant="outlined" sx={{ mb: 3 }}>
               <Typography level="title-lg" sx={{ mb: 2 }}>
                 Tindakan
               </Typography>
@@ -378,44 +314,57 @@ export default function CreateClass() {
                 <Button
                   type="submit"
                   fullWidth
+                  size="sm"
                   startDecorator={<SaveIcon />}
-                  loading={isSubmitting}
+                  disabled={isPending}
+                  loading={isPending}
                 >
                   Simpan Kelas
                 </Button>
 
                 <Button
                   component={Link}
+                  size="sm"
                   href="/class-setting"
                   variant="outlined"
                   color="neutral"
                   fullWidth
+                  disabled={isPending}
                 >
                   Batal
                 </Button>
               </Stack>
             </Card>
 
-            <Card variant="outlined" sx={{ p: 3 }}>
-              <Typography level="title-lg" sx={{ mb: 2 }}>
-                Tips
-              </Typography>
+            <Card variant="outlined">
+              <Typography level="title-lg">Tips</Typography>
 
-              <Typography level="body-sm">
-                • Nama kelas sebaiknya mencakup nama bahasa dan batch
-              </Typography>
-
-              <Typography level="body-sm">
-                • Pastikan jadwal mencakup hari dan waktu
-              </Typography>
-
-              <Typography level="body-sm">
-                • Deskripsi yang baik meningkatkan ketertarikan siswa
-              </Typography>
+              <List marker={"disc"}>
+                <ListItem>
+                  <Typography level="body-xs">
+                    Nama kelas sebaiknya mencakup nama bahasa dan batch
+                  </Typography>
+                </ListItem>
+                <ListItem>
+                  <Typography level="body-xs">
+                    Pastikan jadwal mencakup hari dan waktu
+                  </Typography>
+                </ListItem>
+                <ListItem>
+                  <Typography level="body-xs">
+                    Deskripsi yang baik meningkatkan ketertarikan siswa
+                  </Typography>
+                </ListItem>
+              </List>
             </Card>
           </Grid>
         </Grid>
       </form>
+
+      <ClassScheduleManager
+        classId={classData?.data?.id as string}
+        readOnly={false}
+      />
     </Box>
   );
 }

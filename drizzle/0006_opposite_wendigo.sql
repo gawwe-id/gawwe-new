@@ -1,0 +1,2 @@
+ALTER TABLE "class_schedules" DROP CONSTRAINT "class_schedules_class_id_day_pk";--> statement-breakpoint
+CREATE UNIQUE INDEX "class_schedules_day_class_unique" ON "class_schedules" USING btree ("class_id","day");
