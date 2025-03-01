@@ -44,7 +44,7 @@ export default function ClassSettingsPage() {
       });
       return await res.json();
     },
-    // enabled: !!selectedLanguage,
+    enabled: !!selectedLanguage,
   });
 
   // Get the name of the selected language

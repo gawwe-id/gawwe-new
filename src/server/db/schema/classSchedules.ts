@@ -16,13 +16,13 @@ import {
 
 // Schedule days enum
 export enum ScheduleDay {
-  MONDAY = "MONDAY",
-  TUESDAY = "TUESDAY",
-  WEDNESDAY = "WEDNESDAY",
-  THURSDAY = "THURSDAY",
-  FRIDAY = "FRIDAY",
-  SATURDAY = "SATURDAY",
-  SUNDAY = "SUNDAY",
+  SENIN = "SENIN",
+  SELASA = "SELASA",
+  RABU = "RABU",
+  KAMIS = "KAMIS",
+  JUMAT = "JUMAT",
+  SABTU = "SABTU",
+  MINGGU = "MINGGU",
 }
 
 // Class Schedules Table

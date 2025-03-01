@@ -85,29 +85,46 @@ export const classSchedulesRouter = j.router({
     .input(z.object({ classId: z.string() }))
     .query(async ({ c, ctx, input }) => {
       const { db } = ctx;
-      const { classId } = input;
+      let classId = input.classId;
 
+      try {
+        const parsed = JSON.parse(classId);
+        if (parsed && typeof parsed === "object" && parsed.json) {
+          classId = parsed.json;
+        }
+      } catch (e) {
+        // If it's not valid JSON, just use it as is
+      }
+
+      // Use a safer approach for the ORDER BY clause
+      const dayOrder = {
+        [ScheduleDay.SENIN]: 1,
+        [ScheduleDay.SELASA]: 2,
+        [ScheduleDay.RABU]: 3,
+        [ScheduleDay.KAMIS]: 4,
+        [ScheduleDay.JUMAT]: 5,
+        [ScheduleDay.SABTU]: 6,
+        [ScheduleDay.MINGGU]: 7,
+      };
+
+      // First fetch the schedules without the complex ORDER BY
       const schedules = await db
         .select()
         .from(classSchedules)
         .where(eq(classSchedules.classId, classId))
-        .orderBy(
-          sql`CASE 
-              WHEN ${classSchedules.day} = '${ScheduleDay.MONDAY}' THEN 1 
-              WHEN ${classSchedules.day} = '${ScheduleDay.TUESDAY}' THEN 2 
-              WHEN ${classSchedules.day} = '${ScheduleDay.WEDNESDAY}' THEN 3 
-              WHEN ${classSchedules.day} = '${ScheduleDay.THURSDAY}' THEN 4 
-              WHEN ${classSchedules.day} = '${ScheduleDay.FRIDAY}' THEN 5 
-              WHEN ${classSchedules.day} = '${ScheduleDay.SATURDAY}' THEN 6 
-              WHEN ${classSchedules.day} = '${ScheduleDay.SUNDAY}' THEN 7 
-              ELSE 8 END`
-        )
         .execute();
+
+      // Then sort them in JavaScript
+      const sortedSchedules = schedules.sort((a, b) => {
+        const orderA = dayOrder[a.day as ScheduleDay] || 8;
+        const orderB = dayOrder[b.day as ScheduleDay] || 8;
+        return orderA - orderB;
+      });
 
       return c.superjson(
         {
           message: "Berhasil mendapatkan jadwal",
-          data: schedules,
+          data: sortedSchedules,
         },
         200
       );

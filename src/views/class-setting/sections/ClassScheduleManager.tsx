@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Typography,
@@ -10,35 +10,68 @@ import {
   Select,
   Option,
   Stack,
-  Chip,
-  IconButton,
   Card,
+  Box,
+  Grid,
+  Divider,
+  FormHelperText,
+  Input,
+  Link,
+  Alert,
 } from "@mui/joy";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import {
   useClassSchedules,
   useCreateClassSchedule,
   useUpdateClassSchedule,
   useDeleteClassSchedule,
-  formatSchedule,
 } from "@/hooks/useClassSchedule";
-import { ScheduleDay } from "@/server/db/schema/classSchedules";
+import { ClassSchedule, ScheduleDay } from "@/server/db/schema/classSchedules";
+import {
+  ArrowBackRounded,
+  CheckCircleRounded,
+  EventRounded,
+  InfoRounded,
+  MoreTimeRounded,
+  ScheduleRounded,
+} from "@mui/icons-material";
+import { Class } from "@/server/db/schema/classes";
+import { Controller, useForm } from "react-hook-form";
+import dayjs from "dayjs";
+import DatePicker from "react-datepicker";
+import { useRouter } from "next/navigation";
+import { useSnackbar } from "@/hooks/useSnackbar";
 
 interface ClassScheduleManagerProps {
   classId: string;
+  data: Class | undefined;
   readOnly?: boolean;
 }
 
 const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
   classId,
+  data,
   readOnly = false,
 }) => {
-  const [showForm, setShowForm] = useState(false);
+  const router = useRouter();
+  const { showSnackbar } = useSnackbar();
+
   const [editingSchedule, setEditingSchedule] = useState<any>(null);
-  const [day, setDay] = useState<ScheduleDay>(ScheduleDay.MONDAY);
-  const [startTime, setStartTime] = useState("08:00");
-  const [endTime, setEndTime] = useState("10:00");
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<ClassSchedule>({
+    defaultValues: {
+      day: ScheduleDay.SENIN,
+      startTime: "08:00",
+      endTime: "10:00",
+    },
+  });
+
+  const watchDay = watch("day");
 
   const { data: schedulesData, isLoading } = useClassSchedules(classId);
 
@@ -46,10 +79,10 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
     useCreateClassSchedule(
       () => {
         resetForm();
+        showSnackbar("Berhasil membuat jadwal", "success");
       },
       (error) => {
-        console.error("Failed to create schedule:", error);
-        // Show error notification
+        showSnackbar(error.message, "danger");
       }
     );
 
@@ -57,226 +90,410 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
     useUpdateClassSchedule(
       () => {
         resetForm();
+        showSnackbar("Berhasil mengubah jadwal", "success");
       },
       (error) => {
-        console.error("Failed to update schedule:", error);
-        // Show error notification
+        showSnackbar(error.message, "danger");
       }
     );
 
-  const { mutate: deleteSchedule } = useDeleteClassSchedule(
-    () => {
-      // No need to do anything specific on success
-    },
-    (error) => {
-      console.error("Failed to delete schedule:", error);
-      // Show error notification
-    }
-  );
+  const { mutate: deleteSchedule, isPending: isDeleteing } =
+    useDeleteClassSchedule(
+      () => {
+        showSnackbar("Berhasil menghapus jadwal", "success");
+      },
+      (error) => {
+        showSnackbar(error.message, "danger");
+      }
+    );
 
   const resetForm = () => {
-    setShowForm(false);
+    reset({
+      day: "",
+      startTime: "08:00",
+      endTime: "10:00",
+    });
     setEditingSchedule(null);
-    setDay(ScheduleDay.MONDAY);
-    setStartTime("08:00");
-    setEndTime("10:00");
   };
 
-  const handleAddSchedule = () => {
-    setEditingSchedule(null);
-    setShowForm(true);
-  };
+  useEffect(() => {
+    if (editingSchedule) {
+      const formatTime = (time: string) => {
+        return time.substring(0, 5);
+      };
 
-  const handleEditSchedule = (schedule: any) => {
+      reset({
+        day: editingSchedule.day,
+        startTime: formatTime(editingSchedule.startTime),
+        endTime: formatTime(editingSchedule.endTime),
+      });
+    }
+  }, [editingSchedule, reset]);
+
+  const handleEditSchedule = (schedule: ClassSchedule) => {
     setEditingSchedule(schedule);
-    setDay(schedule.day);
-
-    // Format startTime and endTime (assuming they come in as HH:MM:SS)
-    const formatTime = (time: string) => {
-      return time.substring(0, 5); // Get just HH:MM
-    };
-
-    setStartTime(formatTime(schedule.startTime));
-    setEndTime(formatTime(schedule.endTime));
-    setShowForm(true);
   };
 
   const handleDeleteSchedule = (scheduleId: string) => {
-    if (confirm("Apakah Anda yakin ingin menghapus jadwal ini?")) {
-      deleteSchedule({ scheduleId, classId });
-    }
+    deleteSchedule({ scheduleId, classId });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Add seconds to the time for PostgreSQL time format
-    const formatTimeForDB = (time: string) => {
-      return `${time}:00`;
-    };
-
+  const onSubmit = (data: ClassSchedule) => {
     if (editingSchedule) {
       updateSchedule({
         scheduleId: editingSchedule.id,
         classId,
         updateSchedule: {
-          startTime: formatTimeForDB(startTime),
-          endTime: formatTimeForDB(endTime),
+          startTime: data.startTime,
+          endTime: data.endTime,
         },
       });
     } else {
       createSchedule({
         classId,
-        day,
-        startTime: formatTimeForDB(startTime),
-        endTime: formatTimeForDB(endTime),
+        day: data.day as ScheduleDay,
+        startTime: data.startTime,
+        endTime: data.endTime,
       });
     }
   };
 
-  // Check if a day is already scheduled
   const isDayScheduled = (checkDay: ScheduleDay) => {
     return schedulesData?.data?.some(
       (schedule: any) => schedule.day === checkDay
     );
   };
 
-  // Filter out days that already have schedules (except when editing)
+  const isDayDuplicate = isDayScheduled(watchDay as ScheduleDay);
+
   const availableDays = Object.values(ScheduleDay).filter(
     (d) => !isDayScheduled(d) || (editingSchedule && editingSchedule.day === d)
   );
 
+  const formatDate = (dateString: Date) => {
+    return dayjs(dateString).format("D MMMM YYYY");
+  };
+
+  const timeStringToDate = (timeStr: string) => {
+    const now = new Date();
+    const [hours, minutes] = timeStr.split(":");
+    now.setHours(parseInt(hours || "0", 10));
+    now.setMinutes(parseInt(minutes || "0", 10));
+    now.setSeconds(0);
+    return now;
+  };
+
+  const dateToTimeString = (date: Date) => {
+    return `${date.getHours().toString().padStart(2, "0")}:${date
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}:00`;
+  };
+
+  const handleBack = () => router.back();
+
   return (
-    <Card sx={{ mt: 3 }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "1rem",
-        }}
+    <>
+      <Card
+        sx={{ mt: 3, mb: 3, borderWidth: 2 }}
+        color="success"
+        variant="outlined"
       >
-        <Typography level="title-lg">Jadwal Kelas</Typography>
-        {!readOnly && (
-          <Button
-            onClick={handleAddSchedule}
-            disabled={availableDays.length === 0 || showForm}
-          >
-            Tambah Jadwal
-          </Button>
-        )}
-      </div>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+          <CheckCircleRounded color="success" sx={{ mr: 1, fontSize: 24 }} />
+          <Typography level="title-sm" color="success">
+            Kelas Berhasil Dibuat!
+          </Typography>
+        </Box>
 
-      {isLoading ? (
-        <CircularProgress />
-      ) : (
-        <>
-          {!schedulesData?.data || schedulesData.data.length === 0 ? (
-            <Typography>Belum ada jadwal yang ditambahkan.</Typography>
+        <Box mb={3}>
+          <Typography level="title-md" sx={{ textDecoration: "underline" }}>
+            {data?.name}
+          </Typography>
+          <Grid container mt={1}>
+            <Grid xs={12} md={4}>
+              <Typography level="title-sm">Batch</Typography>
+              <Typography level="body-sm">Batch: {data?.batch}</Typography>
+            </Grid>
+            <Grid xs={12} md={4}>
+              <Typography level="title-sm">Tanggal Mulai</Typography>
+              <Typography level="body-sm">
+                {formatDate(data?.startDate as Date)}
+              </Typography>
+            </Grid>
+            <Grid xs={12} md={4}>
+              <Typography level="title-sm">Tanggal Selesai</Typography>
+              <Typography level="body-sm">
+                {formatDate(data?.endDate as Date)}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Box>
+
+        <Box>
+          <Typography level="title-md">Jadwal Kelas</Typography>
+          {isLoading ? (
+            <CircularProgress />
           ) : (
-            <Stack spacing={1} direction="row" flexWrap="wrap" useFlexGap>
-              {schedulesData.data.map((schedule: any) => (
-                <Chip
-                  key={schedule.id}
-                  color="primary"
-                  variant="soft"
-                  endDecorator={
-                    !readOnly && (
-                      <>
-                        <IconButton
-                          variant="plain"
-                          color="neutral"
-                          size="sm"
-                          onClick={() => handleEditSchedule(schedule)}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          variant="plain"
-                          color="danger"
-                          size="sm"
-                          onClick={() => handleDeleteSchedule(schedule.id)}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </>
-                    )
-                  }
+            <>
+              {!schedulesData?.data || schedulesData.data.length === 0 ? (
+                <Alert
+                  size="sm"
+                  color="danger"
+                  variant="plain"
+                  startDecorator={<InfoRounded />}
+                  sx={{ mt: 1 }}
                 >
-                  {formatSchedule(schedule)}
-                </Chip>
-              ))}
-            </Stack>
+                  Belum ada Jadwal, tambahkan Jadwal sebelum kembali ke halaman
+                  Pengaturan Kelas
+                </Alert>
+              ) : (
+                <>
+                  <Grid container mt={1}>
+                    <Grid xs={12} md={3}>
+                      <Typography level="title-sm">Hari</Typography>
+                    </Grid>
+                    <Grid xs={12} md={3}>
+                      <Typography level="title-sm">Waktu Mulai</Typography>
+                    </Grid>
+                    <Grid xs={12} md={3}>
+                      <Typography level="title-sm">Waktu Selesai</Typography>
+                    </Grid>
+                    <Grid xs={12} md={3}>
+                      <Typography level="title-sm">Aksi</Typography>
+                    </Grid>
+                  </Grid>
+                  {schedulesData?.data.map((schedule: ClassSchedule) => (
+                    <Grid container>
+                      <Grid xs={12} md={3}>
+                        <Typography level="body-sm">
+                          {schedule.day.charAt(0) +
+                            schedule.day.slice(1).toLowerCase()}
+                        </Typography>
+                      </Grid>
+                      <Grid xs={12} md={3}>
+                        <Typography level="body-sm">
+                          {schedule.startTime}
+                        </Typography>
+                      </Grid>
+                      <Grid xs={12} md={3}>
+                        <Typography level="body-sm">
+                          {schedule.endTime}
+                        </Typography>
+                      </Grid>
+                      <Grid xs={12} md={3}>
+                        <Stack direction="row" spacing={2}>
+                          <Link
+                            level="body-sm"
+                            color="secondary"
+                            disabled={isCreating || isUpdating || isDeleteing}
+                            onClick={() => handleEditSchedule(schedule)}
+                          >
+                            Edit
+                          </Link>
+                          <Link
+                            level="body-sm"
+                            color="danger"
+                            disabled={isCreating || isUpdating || isDeleteing}
+                            onClick={() => handleDeleteSchedule(schedule.id)}
+                          >
+                            Hapus
+                          </Link>
+                        </Stack>
+                      </Grid>
+                    </Grid>
+                  ))}
+                </>
+              )}
+            </>
           )}
-        </>
-      )}
+        </Box>
+      </Card>
 
-      {showForm && !readOnly && (
-        <form onSubmit={handleSubmit} style={{ marginTop: "1.5rem" }}>
-          <Stack spacing={2}>
-            <FormControl>
-              <FormLabel>Hari</FormLabel>
-              <Select
-                value={day}
-                onChange={(_, value) => value && setDay(value as ScheduleDay)}
-                disabled={!!editingSchedule}
+      <Card>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <Typography level="title-lg">
+            {editingSchedule ? "Edit Jadwal Kelas" : "Tambah Jadwal Kelas"}
+          </Typography>
+        </Box>
+        {!readOnly && (
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid container spacing={2} sx={{ mb: 2 }}>
+              <Grid xs={12} md={4}>
+                <FormControl error={isDayDuplicate && !editingSchedule}>
+                  <FormLabel>Hari</FormLabel>
+                  <Controller
+                    name="day"
+                    control={control}
+                    rules={{ required: "Hari harus dipilih" }}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        disabled={!!editingSchedule}
+                        value={field.value}
+                        onChange={(_, newValue) => {
+                          if (newValue) {
+                            field.onChange(newValue);
+                          }
+                        }}
+                        size="sm"
+                        startDecorator={<EventRounded />}
+                      >
+                        {availableDays.map((d) => (
+                          <Option key={d} value={d}>
+                            {d.charAt(0) + d.slice(1).toLowerCase()}
+                          </Option>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                  {isDayDuplicate && !editingSchedule && (
+                    <FormHelperText>
+                      Jadwal untuk hari ini sudah ada
+                    </FormHelperText>
+                  )}
+                  {errors.day && (
+                    <Typography level="body-xs" color="danger">
+                      * {errors.day.message}
+                    </Typography>
+                  )}
+                </FormControl>
+              </Grid>
+
+              <Grid xs={12} md={4}>
+                <FormControl>
+                  <FormLabel>Waktu Mulai</FormLabel>
+                  <Controller
+                    name="startTime"
+                    control={control}
+                    rules={{ required: "Waktu mulai harus diisi" }}
+                    render={({ field }) => (
+                      <DatePicker
+                        selected={timeStringToDate(field.value)}
+                        onChange={(date) => {
+                          if (date) {
+                            field.onChange(dateToTimeString(date));
+                          }
+                        }}
+                        showTimeSelect
+                        showTimeSelectOnly
+                        timeIntervals={15}
+                        dateFormat="HH:mm"
+                        timeFormat="HH:mm"
+                        placeholderText="Pilih Waktu"
+                        showTimeCaption={false}
+                        customInput={
+                          <Input
+                            size="sm"
+                            fullWidth
+                            startDecorator={<ScheduleRounded />}
+                          />
+                        }
+                      />
+                    )}
+                  />
+                </FormControl>
+                {errors.startTime && (
+                  <Typography level="body-xs" color="danger">
+                    * {errors.startTime.message}
+                  </Typography>
+                )}
+              </Grid>
+
+              <Grid xs={12} md={4}>
+                <FormControl>
+                  <FormLabel>Waktu Selesai</FormLabel>
+                  <Controller
+                    name="endTime"
+                    control={control}
+                    rules={{ required: "Waktu selesai harus diisi" }}
+                    render={({ field }) => (
+                      <DatePicker
+                        selected={timeStringToDate(field.value)}
+                        onChange={(date) => {
+                          if (date) {
+                            field.onChange(dateToTimeString(date));
+                          }
+                        }}
+                        showTimeSelect
+                        showTimeSelectOnly
+                        timeIntervals={15}
+                        dateFormat="HH:mm"
+                        timeFormat="HH:mm"
+                        placeholderText="Pilih Waktu"
+                        showTimeCaption={false}
+                        customInput={
+                          <Input
+                            size="sm"
+                            fullWidth
+                            startDecorator={<ScheduleRounded />}
+                          />
+                        }
+                      />
+                    )}
+                  />
+                </FormControl>
+                {errors.endTime && (
+                  <Typography level="body-xs" color="danger">
+                    * {errors.endTime.message}
+                  </Typography>
+                )}
+              </Grid>
+            </Grid>
+
+            <Stack direction="row" spacing={1} justifyContent="flex-end">
+              <Button
+                type="submit"
+                disabled={
+                  isCreating ||
+                  isUpdating ||
+                  isDeleteing ||
+                  (isDayDuplicate && !editingSchedule)
+                }
+                color={editingSchedule ? "primary" : "success"}
+                startDecorator={<MoreTimeRounded />}
               >
-                {availableDays.map((d) => (
-                  <Option key={d} value={d}>
-                    {d.charAt(0) + d.slice(1).toLowerCase()}
-                  </Option>
-                ))}
-              </Select>
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Waktu Mulai</FormLabel>
-              <input
-                type="time"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-                required
-                style={{
-                  padding: "0.5rem",
-                  borderRadius: "0.25rem",
-                  border: "1px solid #ccc",
-                }}
-              />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Waktu Selesai</FormLabel>
-              <input
-                type="time"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-                required
-                style={{
-                  padding: "0.5rem",
-                  borderRadius: "0.25rem",
-                  border: "1px solid #ccc",
-                }}
-              />
-            </FormControl>
-
-            <Stack direction="row" spacing={1}>
-              <Button type="submit" disabled={isCreating || isUpdating}>
                 {isCreating || isUpdating ? (
                   <CircularProgress size="sm" />
                 ) : editingSchedule ? (
-                  "Update"
+                  "Update Jadwal"
                 ) : (
-                  "Simpan"
+                  "Tambah Jadwal"
                 )}
               </Button>
-              <Button variant="outlined" color="neutral" onClick={resetForm}>
-                Batal
-              </Button>
+
+              {editingSchedule && (
+                <Button variant="outlined" color="neutral" onClick={resetForm}>
+                  Batal Edit
+                </Button>
+              )}
             </Stack>
-          </Stack>
-        </form>
-      )}
-    </Card>
+          </form>
+        )}
+
+        <Divider sx={{ my: 1 }} />
+
+        {/* Back Button */}
+        <Box display="flex" justifyContent="center">
+          <Button
+            startDecorator={<ArrowBackRounded />}
+            onClick={handleBack}
+            variant="plain"
+            disabled={schedulesData?.data?.length === 0}
+            sx={{ ":hover": { textDecoration: "underline" } }}
+          >
+            Kembali ke Pengaturan Kelas
+          </Button>
+        </Box>
+      </Card>
+    </>
   );
 };
 
