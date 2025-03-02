@@ -81,7 +81,7 @@ export default function ClassCard({ classItem }: ClassCardProps) {
           <Button
             variant="plain"
             color="primary"
-            onClick={() => router.push(`/class-setting/detail/${classItem.id}`)}
+            onClick={() => router.push(`/class-setting/${classItem.id}`)}
             sx={{ flex: 1 }}
           >
             Detail
