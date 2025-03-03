@@ -115,21 +115,12 @@ export function useDeleteClass(
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      classId,
-      languageClassId,
-    }: {
-      classId: string;
-      languageClassId: string;
-    }) => {
+    mutationFn: async ({ classId }: { classId: string }) => {
       const res = await client.classes.delete.$post({ classId });
       return res.json();
     },
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["classes"] });
-      queryClient.invalidateQueries({
-        queryKey: ["classes-by-language", variables.languageClassId],
-      });
       if (onSuccess) onSuccess();
     },
     onError: (error: Error) => {

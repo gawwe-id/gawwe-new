@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useClass } from "@/hooks/useClass";
+import { useClass, useDeleteClass } from "@/hooks/useClass";
 import {
   ArrowBackRounded,
+  CheckRounded,
   DeleteRounded,
   EditRounded,
   EventRounded,
@@ -21,19 +22,39 @@ import {
   Typography,
 } from "@mui/joy";
 import dayjs from "dayjs";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import EditClassDialog from "./EditClassDialog";
 import { useEditClassStore } from "@/store/useEditClassStore";
+import { useDialogAlertStore } from "@/store/useDialogAlertStore";
+import { useSnackbar } from "@/hooks/useSnackbar";
+import FormSchedule from "./FormSchedule";
+import ListSchedule from "./ListSchedule";
 
 const ClassDetail = () => {
   const params = useParams();
+  const router = useRouter();
   const classId = params.classId as string;
-  const { data: classData, isLoading } = useClass(classId);
+  const { showSnackbar } = useSnackbar();
+
   const open = useEditClassStore((state) => state.isOpen);
   const onClose = useEditClassStore((state) => state.closeDialog);
   const onOpenEdit = useEditClassStore((state) => state.openDialog);
+  const { openDialog, setLoading } = useDialogAlertStore();
 
   const [showScheduleManager, setShowScheduleManager] = useState(false);
+
+  const { data: classData, isLoading } = useClass(classId);
+
+  const { mutate: mutateDelete } = useDeleteClass(
+    () => {
+      setLoading(false);
+      showSnackbar("Berhasil mengapus Kelas", "success");
+      router.back();
+    },
+    (error) => {
+      showSnackbar(error.message, "danger");
+    }
+  );
 
   const cls = classData?.data;
 
@@ -42,27 +63,36 @@ const ClassDetail = () => {
     return dayjs(dateString).format("D MMMM YYYY");
   };
 
+  const handleDeleteClass = async () => {
+    setLoading(true);
+    mutateDelete({ classId });
+  };
+
+  const openDialogDelete = () => {
+    openDialog({
+      title: "Hapus Kelas",
+      description: "Apakah Kamu yakin ingin menghapus Kelas ini?",
+      textCancel: "Batal",
+      textAction: "Hapus",
+      onAction: handleDeleteClass,
+    });
+  };
+
   return (
     <Box sx={{ maxWidth: 1200, mx: "auto", p: 2 }}>
-      {/* Header with back button */}
       <Stack direction="row" spacing={1} sx={{ mb: 3, alignItems: "center" }}>
-        <IconButton
-          //   onClick={handleBackClick}
-          variant="outlined"
-        >
+        <IconButton onClick={() => router.back()} variant="plain">
           <ArrowBackRounded />
         </IconButton>
         <Typography level="h3">Class Detail</Typography>
       </Stack>
 
-      {/* Class Information Card */}
       <Card sx={{ mb: 3 }}>
         <Box
           sx={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            mb: 2,
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -72,8 +102,8 @@ const ClassDetail = () => {
           <Stack direction="row" spacing={1}>
             <Button
               size="sm"
-              variant="outlined"
-              color="primary"
+              variant="soft"
+              color="secondary"
               startDecorator={<EditRounded />}
               onClick={() => onOpenEdit({ class: cls })}
             >
@@ -81,26 +111,17 @@ const ClassDetail = () => {
             </Button>
             <Button
               size="sm"
-              variant="outlined"
+              variant="soft"
               color="danger"
               startDecorator={<DeleteRounded />}
-              //   onClick={() => setShowDeleteDialog(true)}
+              onClick={openDialogDelete}
             >
-              Delete
-            </Button>
-            <Button
-              size="sm"
-              variant="outlined"
-              color="neutral"
-              startDecorator={<EventRounded />}
-              //   onClick={() => setShowScheduleManager(true)}
-            >
-              Manage Schedule
+              Hapus
             </Button>
           </Stack>
         </Box>
 
-        <Divider sx={{ my: 2 }} />
+        <Divider sx={{ my: 1 }} />
 
         <Grid container spacing={2}>
           <Grid xs={12} md={6}>
@@ -194,77 +215,13 @@ const ClassDetail = () => {
         </Grid>
       </Card>
 
-      {/* Schedule management section - shown directly on the page */}
-      {!showScheduleManager && (
-        <Card>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 2,
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <EventRounded sx={{ mr: 1 }} />
-              <Typography level="title-lg">Class Schedules</Typography>
-            </Box>
-            <Button
-              size="sm"
-              variant="solid"
-              color="primary"
-              onClick={() => setShowScheduleManager(true)}
-            >
-              Manage Schedules
-            </Button>
-          </Box>
-
-          <Divider sx={{ my: 2 }} />
-
-          {/* Basic schedule display - you can enhance this with your ClassScheduleManager in read-only mode */}
-          {/* <ClassScheduleManager
-            classId={classId}
-            data={cls}
-            readOnly={true}
-          /> */}
-        </Card>
-      )}
-
-      {/* Schedule management full display - shown when user clicks on Manage Schedule */}
-      {showScheduleManager && (
-        <Card>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 2,
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <EventRounded sx={{ mr: 1 }} />
-              <Typography level="title-lg">Manage Class Schedules</Typography>
-            </Box>
-            <Button
-              variant="outlined"
-              color="neutral"
-              onClick={() => setShowScheduleManager(false)}
-            >
-              Done
-            </Button>
-          </Box>
-
-          <Divider sx={{ my: 2 }} />
-
-          {/* Full schedule manager */}
-          {/* <ClassScheduleManager
-            classId={classId}
-            data={cls}
-            readOnly={false}
-            onBack={() => setShowScheduleManager(false)}
-          /> */}
-        </Card>
-      )}
+      <Grid container spacing={2}>
+        <Grid xs={12} sm={2} md={4}>
+          <FormSchedule classId={classId} />
+        </Grid>
+        <Grid xs={12} sm={2} md={4}></Grid>
+        <Grid xs={12} sm={2} md={4}></Grid>
+      </Grid>
 
       <EditClassDialog open={open} onClose={onClose} />
     </Box>
