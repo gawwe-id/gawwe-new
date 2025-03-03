@@ -4,10 +4,11 @@ import { useUpdateClass } from "@/hooks/useClass";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import { Class } from "@/server/db/schema/classes";
 import { useEditClassStore } from "@/store/useEditClassStore";
-import { CalendarMonthRounded, SchoolRounded } from "@mui/icons-material";
+import { CalendarMonthRounded } from "@mui/icons-material";
 import {
-  Box,
   Button,
+  DialogContent,
+  DialogTitle,
   Divider,
   FormControl,
   FormHelperText,
@@ -18,7 +19,6 @@ import {
   ModalDialog,
   Stack,
   Textarea,
-  Typography,
 } from "@mui/joy";
 import dayjs from "dayjs";
 import { useEffect } from "react";
@@ -97,47 +97,15 @@ const EditClassDialog = ({ open, onClose }: EditClassDialogProps) => {
 
   return (
     <Modal open={open} onClose={onClose}>
-      <ModalDialog>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            alignItems: "center",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "50%",
-              width: 60,
-              height: 60,
-              bgcolor: "primary.softBg",
-              color: "primary.500",
-              mb: 1,
-            }}
-          >
-            <SchoolRounded sx={{ fontSize: 30 }} />
-          </Box>
-
-          <Typography
-            component="h2"
-            id="add-language-modal-title"
-            level="h4"
-            textColor="inherit"
-            fontWeight="lg"
-          >
-            Tambah Bahasa Baru
-          </Typography>
-        </Box>
+      <ModalDialog variant="outlined">
+        <DialogTitle>Edit Kelas</DialogTitle>
+        <DialogContent>Ubah informasi mengenai Kelas Kamu</DialogContent>
 
         <Divider sx={{ my: 2 }} />
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
-            <Grid xs={12} md={6}>
+            <Grid xs={12} md={10}>
               <Controller
                 name="name"
                 control={control}
@@ -156,7 +124,7 @@ const EditClassDialog = ({ open, onClose }: EditClassDialogProps) => {
               />
             </Grid>
 
-            <Grid xs={12} md={6}>
+            <Grid xs={12} md={2}>
               <Controller
                 name="batch"
                 control={control}
