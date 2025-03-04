@@ -160,8 +160,6 @@ const FormSchedule = ({ classId }: FormScheduleProps) => {
 
   const isLoading = isCreating || isUpdating || isDeleteing;
 
-  console.log("schedulesData : ", schedulesData);
-
   return (
     <Card>
       <Box sx={{ display: "flex", alignItems: "center" }}>

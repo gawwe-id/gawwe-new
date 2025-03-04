@@ -1,10 +1,10 @@
-import { classes, languageClasses } from "@/server/db/schema";
+import { classes, classSchedules, languageClasses } from "@/server/db/schema";
 import {
   insertClassSchema,
   selectClassSchema,
   updateClassSchema,
 } from "@/server/db/schema/classes";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { j, privateProcedure, publicProcedure } from "../jstack";
 import { z } from "zod";
 import { throwApiError } from "@/utils/api-error";
@@ -57,10 +57,34 @@ export const classesRouter = j.router({
 
     const allClasses = await db.select().from(classes).execute();
 
+    // Get schedules for all classes in a single query
+    const schedulesResult = await db
+      .select()
+      .from(classSchedules)
+      .where(
+        inArray(
+          classSchedules.classId,
+          allClasses.map((cls) => cls.id)
+        )
+      )
+      .execute();
+
+    // Map schedules to their classes
+    const classesWithSchedules = allClasses.map((cls) => {
+      const classSchedules = schedulesResult.filter(
+        (schedule) => schedule.classId === cls.id
+      );
+
+      return {
+        ...cls,
+        schedules: classSchedules,
+      };
+    });
+
     return c.superjson(
       {
         message: "Berhasil mendapatkan daftar kelas",
-        data: allClasses,
+        data: classesWithSchedules,
       },
       200
     );

@@ -29,6 +29,7 @@ import { useDialogAlertStore } from "@/store/useDialogAlertStore";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import FormSchedule from "./FormSchedule";
 import ListSchedule from "./ListSchedule";
+import CalendarSchedule from "./CalendarSchedule";
 
 const ClassDetail = () => {
   const params = useParams();
@@ -219,7 +220,9 @@ const ClassDetail = () => {
         <Grid xs={12} sm={2} md={4}>
           <FormSchedule classId={classId} />
         </Grid>
-        <Grid xs={12} sm={2} md={4}></Grid>
+        <Grid xs={12} sm={2} md={4}>
+          <CalendarSchedule classData={classData?.data} />
+        </Grid>
         <Grid xs={12} sm={2} md={4}></Grid>
       </Grid>
 
