@@ -11,6 +11,7 @@ import {
   Box,
   Button,
   Card,
+  CircularProgress,
   Divider,
   Grid,
   IconButton,
@@ -73,6 +74,21 @@ const ClassDetail = () => {
       onAction: handleDeleteClass,
     });
   };
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "70vh",
+        }}
+      >
+        <CircularProgress size="sm" />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ maxWidth: 1200, mx: "auto", p: 2 }}>
