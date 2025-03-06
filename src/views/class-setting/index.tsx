@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect } from "react";
 
 // UI Components
 import { Box, Button, Grid, Divider } from "@mui/joy";
@@ -17,16 +17,57 @@ import { useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/client";
 import LanguageSection from "./sections/LanguageSection";
 import ClassesSection from "./sections/ClassesSection";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function ClassSettingsPage() {
-  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"card" | "table">("card");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Get state from URL
+  const selectedLanguage = searchParams.get("language");
+  const viewMode = (searchParams.get("view") || "card") as "card" | "table";
 
   const {
     isAddLanguageModalOpen,
     openAddLanguageModal,
     closeAddLanguageModal,
   } = useLanguageStore();
+
+  const createQueryString = useCallback(
+    (name: string, value: string | null) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (value === null) {
+        params.delete(name);
+      } else {
+        params.set(name, value);
+      }
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+
+  // Handler to update selectedLanguage
+  const handleLanguageSelect = useCallback(
+    (id: string | null) => {
+      router.push(`${pathname}?${createQueryString("language", id)}`, {
+        scroll: false,
+      });
+    },
+    [pathname, router, createQueryString]
+  );
+
+  // Handler for view mode toggle
+  const handleViewModeChange = useCallback(
+    (mode: "card" | "table") => {
+      router.push(`${pathname}?${createQueryString("view", mode)}`, {
+        scroll: false,
+      });
+    },
+    [pathname, router, createQueryString]
+  );
 
   const { data: languagesClasses, isPending: isPendingLanguages } = useQuery({
     queryKey: ["language-classes"],
@@ -35,6 +76,32 @@ export default function ClassSettingsPage() {
       return await res.json();
     },
   });
+
+  useEffect(() => {
+    if (
+      !selectedLanguage &&
+      languagesClasses &&
+      languagesClasses?.data?.length > 0 &&
+      !isPendingLanguages
+    ) {
+      // Select the first language in the list
+      const firstLanguageId = languagesClasses?.data?.[0]?.id as string;
+      router.push(
+        `${pathname}?${createQueryString(
+          "language",
+          firstLanguageId
+        )}&${createQueryString("view", "card")}`,
+        { scroll: false }
+      );
+    }
+  }, [
+    languagesClasses,
+    selectedLanguage,
+    isPendingLanguages,
+    router,
+    pathname,
+    createQueryString,
+  ]);
 
   const { data: classes, isPending: isPendingClasses } = useQuery({
     queryKey: ["classes-by-language", selectedLanguage],
@@ -51,11 +118,6 @@ export default function ClassSettingsPage() {
   const selectedLanguageName = languagesClasses?.data?.find(
     (lang) => lang.id === selectedLanguage
   )?.languageName;
-
-  // Handler for view mode toggle
-  const handleViewModeChange = (mode: "card" | "table") => {
-    setViewMode(mode);
-  };
 
   return (
     <Box sx={{ py: 4, px: { xs: 2, md: 4 }, maxWidth: "1300px", mx: "auto" }}>
@@ -82,7 +144,7 @@ export default function ClassSettingsPage() {
           <LanguageSection
             languages={languagesClasses?.data}
             selectedLanguageId={selectedLanguage}
-            onSelectLanguage={setSelectedLanguage}
+            onSelectLanguage={handleLanguageSelect}
             onOpenAddLanguageModal={openAddLanguageModal}
             isPending={isPendingLanguages}
           />
