@@ -212,13 +212,13 @@ const CalendarSchedule = ({ classData }: CalendarScheduleProps) => {
       .wednesday-highlight {
         background-color: ${
           isDarkMode
-            ? "var(--joy-palette-warning-700)"
-            : "var(--joy-palette-warning-100)"
+            ? "var(--joy-palette-success-700)"
+            : "var(--joy-palette-success-100)"
         };
         color: ${
           isDarkMode
-            ? "var(--joy-palette-warning-100)"
-            : "var(--joy-palette-warning-800)"
+            ? "var(--joy-palette-success-100)"
+            : "var(--joy-palette-success-800)"
         };
         position: relative;
       }
@@ -229,7 +229,7 @@ const CalendarSchedule = ({ classData }: CalendarScheduleProps) => {
         bottom: 7px;
         width: 20px;
         height: 3px;
-        background-color: var(--joy-palette-warning-500);
+        background-color: var(--joy-palette-success-500);
         border-radius: 1.5px;
       }
       
