@@ -264,7 +264,7 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
                     </Grid>
                   </Grid>
                   {schedulesData?.data.map((schedule: ClassSchedule) => (
-                    <Grid container>
+                    <Grid container key={schedule.id}>
                       <Grid xs={12} md={3}>
                         <Typography level="body-sm">
                           {schedule.day.charAt(0) +

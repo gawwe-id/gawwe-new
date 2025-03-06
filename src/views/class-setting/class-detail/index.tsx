@@ -39,7 +39,7 @@ const ClassDetail = () => {
   const open = useEditClassStore((state) => state.isOpen);
   const onClose = useEditClassStore((state) => state.closeDialog);
   const onOpenEdit = useEditClassStore((state) => state.openDialog);
-  const { openDialog, setLoading } = useDialogAlertStore();
+  const { openDialog, setLoading, closeDialog } = useDialogAlertStore();
 
   const { data: classData, isLoading } = useClass(classId);
 
@@ -48,6 +48,7 @@ const ClassDetail = () => {
       setLoading(false);
       showSnackbar("Berhasil mengapus Kelas", "success");
       router.back();
+      closeDialog();
     },
     (error) => {
       showSnackbar(error.message, "danger");
