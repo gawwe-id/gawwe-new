@@ -11,6 +11,7 @@ import {
   Box,
   Button,
   Card,
+  Chip,
   CircularProgress,
   Divider,
   Grid,
@@ -135,40 +136,28 @@ const ClassDetail = () => {
 
         <Divider sx={{ my: 1 }} />
 
+        <Sheet variant="outlined" sx={{ p: 2, borderRadius: "sm" }}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="start"
+          >
+            <Typography level="body-md" fontWeight="bold">
+              {cls?.name}
+            </Typography>
+            <Chip size="sm" variant="soft" color="primary">
+              Batch: {cls?.batch}
+            </Chip>
+          </Stack>
+        </Sheet>
+
         <Grid container spacing={2}>
           <Grid xs={12} md={6}>
             <Sheet variant="outlined" sx={{ p: 2, borderRadius: "sm" }}>
               <Typography level="title-sm" sx={{ mb: 1 }}>
                 Description
               </Typography>
-              <Grid container spacing={2}>
-                <Grid xs={12} md={4}>
-                  <Typography level="body-sm" fontWeight="bold">
-                    Name:
-                  </Typography>
-                </Grid>
-                <Grid xs={12} md={8}>
-                  <Typography level="body-sm">{cls?.name}</Typography>
-                </Grid>
-
-                <Grid xs={12} md={4}>
-                  <Typography level="body-sm" fontWeight="bold">
-                    Batch:
-                  </Typography>
-                </Grid>
-                <Grid xs={12} md={8}>
-                  <Typography level="body-sm">{cls?.batch}</Typography>
-                </Grid>
-
-                <Grid xs={12} md={4}>
-                  <Typography level="body-sm" fontWeight="bold">
-                    Description:
-                  </Typography>
-                </Grid>
-                <Grid xs={12} md={8}>
-                  <Typography level="body-sm">{cls?.description}</Typography>
-                </Grid>
-              </Grid>
+              <Typography level="body-sm">{cls?.description}</Typography>
             </Sheet>
           </Grid>
 
@@ -177,25 +166,25 @@ const ClassDetail = () => {
               <Typography level="title-sm" sx={{ mb: 1 }}>
                 Schedule Information
               </Typography>
-              <Grid container spacing={2}>
+              <Grid container spacing={0.3}>
                 <Grid xs={12} md={4}>
-                  <Typography level="body-sm" fontWeight="bold">
+                  <Typography level="body-xs" fontWeight="bold">
                     Start Date:
                   </Typography>
                 </Grid>
                 <Grid xs={12} md={8}>
-                  <Typography level="body-sm">
+                  <Typography level="body-xs">
                     {formatDate(cls?.startDate)}
                   </Typography>
                 </Grid>
 
                 <Grid xs={12} md={4}>
-                  <Typography level="body-sm" fontWeight="bold">
+                  <Typography level="body-xs" fontWeight="bold">
                     End Date:
                   </Typography>
                 </Grid>
                 <Grid xs={12} md={8}>
-                  <Typography level="body-sm">
+                  <Typography level="body-xs">
                     {formatDate(cls?.endDate)}
                   </Typography>
                 </Grid>
