@@ -1,4 +1,3 @@
-import { classSchedules } from "./db/schema";
 import { j } from "./jstack";
 import { dynamic } from "jstack";
 
@@ -21,6 +20,9 @@ const api = j
 const appRouter = j.mergeRouters(api, {
   classes: dynamic(() => import("./routers/classes-router")),
   classSchedules: dynamic(() => import("./routers/class-schedules-router")),
+  classParticipants: dynamic(
+    () => import("./routers/class-participants-router")
+  ),
   educationLevels: dynamic(() => import("./routers/education-levels-router")),
   languageClasses: dynamic(() => import("./routers/language-classes-router")),
   languages: dynamic(() => import("./routers/languages-router")),

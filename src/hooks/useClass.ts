@@ -128,3 +128,17 @@ export function useDeleteClass(
     },
   });
 }
+
+export const useClassParticipants = (classId: string, limit: number = 5) => {
+  return useQuery({
+    queryKey: ["class-participants", classId, limit],
+    queryFn: async () => {
+      const res = await client.classParticipants.listByClassId.$get({
+        classId,
+        limit,
+      });
+      return res.json();
+    },
+    enabled: !!classId,
+  });
+};

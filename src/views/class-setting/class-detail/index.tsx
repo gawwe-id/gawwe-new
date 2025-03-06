@@ -1,13 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { useClass, useDeleteClass } from "@/hooks/useClass";
 import {
   ArrowBackRounded,
-  CheckRounded,
   DeleteRounded,
   EditRounded,
-  EventRounded,
   SchoolRounded,
 } from "@mui/icons-material";
 import {
@@ -28,8 +25,8 @@ import { useEditClassStore } from "@/store/useEditClassStore";
 import { useDialogAlertStore } from "@/store/useDialogAlertStore";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import FormSchedule from "./FormSchedule";
-import ListSchedule from "./ListSchedule";
 import CalendarSchedule from "./CalendarSchedule";
+import ClassParticipants from "./ClassParticipants";
 
 const ClassDetail = () => {
   const params = useParams();
@@ -41,8 +38,6 @@ const ClassDetail = () => {
   const onClose = useEditClassStore((state) => state.closeDialog);
   const onOpenEdit = useEditClassStore((state) => state.openDialog);
   const { openDialog, setLoading } = useDialogAlertStore();
-
-  const [showScheduleManager, setShowScheduleManager] = useState(false);
 
   const { data: classData, isLoading } = useClass(classId);
 
@@ -128,7 +123,7 @@ const ClassDetail = () => {
           <Grid xs={12} md={6}>
             <Sheet variant="outlined" sx={{ p: 2, borderRadius: "sm" }}>
               <Typography level="title-sm" sx={{ mb: 1 }}>
-                Basic Information
+                Description
               </Typography>
               <Grid container spacing={2}>
                 <Grid xs={12} md={4}>
@@ -188,28 +183,6 @@ const ClassDetail = () => {
                     {formatDate(cls?.endDate)}
                   </Typography>
                 </Grid>
-
-                <Grid xs={12} md={4}>
-                  <Typography level="body-sm" fontWeight="bold">
-                    Created At:
-                  </Typography>
-                </Grid>
-                <Grid xs={12} md={8}>
-                  <Typography level="body-sm">
-                    {formatDate(cls?.createdAt)}
-                  </Typography>
-                </Grid>
-
-                <Grid xs={12} md={4}>
-                  <Typography level="body-sm" fontWeight="bold">
-                    Updated At:
-                  </Typography>
-                </Grid>
-                <Grid xs={12} md={8}>
-                  <Typography level="body-sm">
-                    {formatDate(cls?.updatedAt)}
-                  </Typography>
-                </Grid>
               </Grid>
             </Sheet>
           </Grid>
@@ -217,13 +190,15 @@ const ClassDetail = () => {
       </Card>
 
       <Grid container spacing={2}>
-        <Grid xs={12} sm={2} md={4}>
+        <Grid xs={12} sm={6} md={4}>
           <FormSchedule classId={classId} />
         </Grid>
-        <Grid xs={12} sm={2} md={4}>
+        <Grid xs={12} sm={6} md={4}>
           <CalendarSchedule classData={classData?.data} />
         </Grid>
-        <Grid xs={12} sm={2} md={4}></Grid>
+        <Grid xs={12} sm={6} md={4}>
+          <ClassParticipants classId={classId} />
+        </Grid>
       </Grid>
 
       <EditClassDialog open={open} onClose={onClose} />
