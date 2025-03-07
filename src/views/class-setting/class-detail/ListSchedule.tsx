@@ -52,13 +52,13 @@ const ListSchedule = ({
 
   const getDayColor = (day: string) => {
     const colorMap: Record<string, string> = {
-      MONDAY: "primary",
-      TUESDAY: "success",
-      WEDNESDAY: "neutral",
-      THURSDAY: "warning",
-      FRIDAY: "danger",
-      SATURDAY: "secondary",
-      SUNDAY: "success",
+      SENIN: "primary",
+      SELASA: "success",
+      RABU: "neutral",
+      KAMIS: "warning",
+      JUMAT: "danger",
+      SABTU: "secondary",
+      MINGGU: "success",
     };
     return colorMap[day];
   };

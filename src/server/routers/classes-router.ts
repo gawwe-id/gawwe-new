@@ -8,6 +8,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { j, privateProcedure, publicProcedure } from "../jstack";
 import { z } from "zod";
 import { throwApiError } from "@/utils/api-error";
+import { ClassSchedule } from "../db/schema/classSchedules";
 
 export const classesRouter = j.router({
   /** ========================================
@@ -127,16 +128,51 @@ export const classesRouter = j.router({
       const { db } = ctx;
       const { languageClassId } = input;
 
-      const classesByLanguage = await db
+      // Get all classes for the language
+      const classesList = await db
         .select()
         .from(classes)
         .where(eq(classes.languageClassId, languageClassId))
         .execute();
 
+      if (classesList.length === 0) {
+        return c.superjson(
+          {
+            message: "Berhasil mendapatkan daftar kelas",
+            data: [],
+          },
+          200
+        );
+      }
+
+      // Get all schedules for these classes in a single query
+      const classIds = classesList.map((cls) => cls.id);
+      const schedules = await db
+        .select()
+        .from(classSchedules)
+        .where(inArray(classSchedules.classId, classIds))
+        .execute();
+
+      // Organize schedules by class id
+      const schedulesByClassId: Record<string, typeof schedules> = {};
+
+      for (const schedule of schedules) {
+        if (!schedulesByClassId[schedule.classId]) {
+          schedulesByClassId[schedule.classId] = [];
+        }
+        schedulesByClassId[schedule?.classId]!.push(schedule);
+      }
+
+      // Combine classes with their schedules
+      const classesWithSchedules = classesList.map((cls) => ({
+        ...cls,
+        schedules: schedulesByClassId[cls.id] || [],
+      }));
+
       return c.superjson(
         {
-          message: "Berhasil mendapatkan daftar kelas",
-          data: classesByLanguage,
+          message: "Berhasil mendapatkan daftar kelas dengan jadwal",
+          data: classesWithSchedules,
         },
         200
       );

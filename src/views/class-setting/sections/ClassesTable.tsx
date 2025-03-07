@@ -11,7 +11,7 @@ import {
 } from "@mui/joy";
 import { useRouter } from "next/navigation";
 import {
-  EditRounded as EditIcon,
+  CalendarMonthRounded,
   VisibilityRounded as VisibilityIcon,
 } from "@mui/icons-material";
 
@@ -21,8 +21,28 @@ interface ClassesTableProps {
     name: string;
     batch: number;
     schedule: string;
+    schedules?: Array<{
+      id: string;
+      classId: string;
+      day: string;
+      startTime: string;
+      endTime: string;
+    }>;
   }>;
 }
+
+const formatDayName = (day: string) => {
+  const days: Record<string, string> = {
+    SENIN: "Senin",
+    SELASA: "Selasa",
+    RABU: "Rabu",
+    KAMIS: "Kamis",
+    JUMAT: "Jumat",
+    SABTU: "Sabtu",
+    MINGGU: "Minggu",
+  };
+  return days[day] || day;
+};
 
 export default function ClassesTable({ classes }: ClassesTableProps) {
   const router = useRouter();
@@ -56,13 +76,43 @@ export default function ClassesTable({ classes }: ClassesTableProps) {
                 </Chip>
               </td>
               <td>
+                {/* General Schedule */}
                 <Typography
                   component="span"
                   fontWeight="medium"
                   level="body-xs"
+                  sx={{ display: "block", mb: 1 }}
                 >
                   {classItem.schedule}
                 </Typography>
+
+                {/* Schedule Days */}
+                {classItem.schedules && classItem.schedules.length > 0 && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 0.5,
+                      alignItems: "center",
+                    }}
+                  >
+                    <CalendarMonthRounded
+                      fontSize="small"
+                      sx={{ color: "primary.500", mr: 0.5 }}
+                    />
+                    {classItem.schedules.map((schedule, index) => (
+                      <Chip
+                        key={index}
+                        size="sm"
+                        variant="soft"
+                        color="primary"
+                        slotProps={{ root: { sx: { fontSize: "0.7rem" } } }}
+                      >
+                        {formatDayName(schedule.day)}
+                      </Chip>
+                    ))}
+                  </Box>
+                )}
               </td>
               <td>
                 <Box
@@ -72,25 +122,13 @@ export default function ClassesTable({ classes }: ClassesTableProps) {
                     justifyContent: "center",
                   }}
                 >
-                  <Tooltip title="Edit Kelas">
-                    <IconButton
-                      size="sm"
-                      variant="plain"
-                      color="neutral"
-                      onClick={() =>
-                        router.push(`/class-setting/edit/${classItem.id}`)
-                      }
-                    >
-                      <EditIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
                   <Tooltip title="Detail Kelas">
                     <IconButton
                       size="sm"
                       variant="plain"
                       color="primary"
                       onClick={() =>
-                        router.push(`/class-setting/detail/${classItem.id}`)
+                        router.push(`/class-setting/${classItem.id}`)
                       }
                     >
                       <VisibilityIcon fontSize="small" />
