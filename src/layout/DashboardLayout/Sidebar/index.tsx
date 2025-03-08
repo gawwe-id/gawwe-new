@@ -19,13 +19,7 @@ import TitleLogo from "./TitleLogo";
 import UserDisplay from "./UserDisplay";
 import ListMenuItem from "./ListMenuItem";
 import { closeSidebar } from "../utils";
-import {
-  Menu,
-  participant,
-  participant_bottom,
-  agency,
-  agency_bottom,
-} from "../menu-items";
+import { Menu, useMenus } from "../menu-items";
 
 // Types
 interface SidebarProps {
@@ -77,6 +71,7 @@ const Sidebar = ({ className }: SidebarProps) => {
   const { data: session } = useSession();
   const role = session?.user.role;
   const pathname = usePathname();
+  const { agency, agency_bottom, participant, participant_bottom } = useMenus();
 
   const [openMenus, setOpenMenus] = useState<string[]>([]);
   const [activeMenuItem, setActiveMenuItem] = useState<string>("");

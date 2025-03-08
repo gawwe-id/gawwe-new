@@ -1,0 +1,32 @@
+{
+  "home": "Home",
+  "dashboard": "Dashboard",
+  "myClasses": "My Classes",
+  "allClasses": "All Classes",
+  "schedule": "Schedule",
+  "assignments": "Assignments",
+  "homework": "Homework & Essays",
+  "exams": "Exams",
+  "grades": "Grades",
+  "calendar": "Calendar",
+  "notifications": "Notifications",
+  "payments": "Payments",
+  "accountSettings": "Account Settings",
+
+  "classManagement": "Class Management",
+  "classSettings": "Class Settings",
+  "classSchedule": "Class Schedule",
+  "batchManagement": "Batch Management",
+  "enrollmentStatus": "Enrollment Status",
+  "homeworkManagement": "Homework Management",
+  "examManagement": "Exam Management",
+  "quizManagement": "Quiz Management",
+  "gradeManagement": "Grade Management",
+  "calendarEvents": "Calendar & Events",
+  "studentManagement": "Student Management",
+  "transactions": "Transactions",
+
+  "language": "Language",
+  "english": "English",
+  "indonesian": "Indonesian"
+}

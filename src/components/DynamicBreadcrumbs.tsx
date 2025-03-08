@@ -1,18 +1,14 @@
 "use client";
 
 import React from "react";
-import { Breadcrumbs, Link, Typography, Box } from "@mui/joy";
+import { Breadcrumbs, Link, Typography, Box, Stack, Button } from "@mui/joy";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import { SxProps } from "@mui/joy/styles/types";
-import {
-  Menu,
-  agency,
-  agency_bottom,
-  participant,
-  participant_bottom,
-} from "@/layout/DashboardLayout/menu-items";
+import { Menu, useMenus } from "@/layout/DashboardLayout/menu-items";
 import { usePathname } from "next/navigation";
+import { useTranslation } from "react-i18next";
+import LanguageChanger from "./LanguageChanger";
 
 // Define interfaces for our menu structure
 
@@ -27,6 +23,8 @@ interface DynamicBreadcrumbsProps {
 }
 
 const DynamicBreadcrumbs: React.FC<DynamicBreadcrumbsProps> = ({ sx }) => {
+  const { agency, agency_bottom, participant, participant_bottom } = useMenus();
+
   // Combine all menus
   const allMenus: Menu[] = [
     ...participant,
@@ -63,10 +61,11 @@ const DynamicBreadcrumbs: React.FC<DynamicBreadcrumbsProps> = ({ sx }) => {
     const paths = pathname.split("/").filter(Boolean);
     let currentPath = "";
     const breadcrumbs: BreadcrumbItem[] = [];
+    const { t } = useTranslation();
 
     // Add home
     breadcrumbs.push({
-      title: "Home",
+      title: t("home"),
       url: "/",
       icon: <HomeRoundedIcon />,
     });
@@ -99,7 +98,12 @@ const DynamicBreadcrumbs: React.FC<DynamicBreadcrumbsProps> = ({ sx }) => {
   const breadcrumbs = generateBreadcrumbs();
 
   return (
-    <Box sx={{ ...sx }}>
+    <Stack
+      sx={{ ...sx }}
+      direction="row"
+      justifyContent="space-between"
+      alignItems="center"
+    >
       <Breadcrumbs
         size="sm"
         aria-label="breadcrumbs"
@@ -144,7 +148,9 @@ const DynamicBreadcrumbs: React.FC<DynamicBreadcrumbsProps> = ({ sx }) => {
           );
         })}
       </Breadcrumbs>
-    </Box>
+
+      <LanguageChanger />
+    </Stack>
   );
 };
 

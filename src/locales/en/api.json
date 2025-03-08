@@ -1,0 +1,17 @@
+{
+  "education_level_created": "Education level created successfully",
+  "education_level_updated": "Education level updated successfully",
+  "education_level_deleted": "Education level deleted successfully",
+  "class_created": "Class created successfully",
+  "classes_fetched": "Classes retrieved successfully",
+  "class_details_fetched": "Class details retrieved successfully",
+  "class_updated": "Class updated successfully",
+  "class_deleted": "Class deleted successfully",
+  "profile_updated": "User profile updated successfully",
+
+  "language_not_found": "Language not found or you don't have access",
+  "class_not_found": "Class not found",
+  "class_access_denied": "Class not found or you don't have access",
+  "unauthorized": "Unauthorized, please sign in to continue",
+  "forbidden": "Forbidden: Access denied"
+}

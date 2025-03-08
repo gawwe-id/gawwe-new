@@ -1,0 +1,17 @@
+{
+  "education_level_created": "Berhasil membuat jenjang pendidikan",
+  "education_level_updated": "Berhasil update jenjang pendidikan",
+  "education_level_deleted": "Berhasil menghapus jenjang pendidikan",
+  "class_created": "Kelas berhasil dibuat",
+  "classes_fetched": "Berhasil mendapatkan daftar kelas",
+  "class_details_fetched": "Berhasil mendapatkan detail kelas",
+  "class_updated": "Kelas berhasil diperbarui",
+  "class_deleted": "Kelas berhasil dihapus",
+  "profile_updated": "User Profile berhasil diubah",
+
+  "language_not_found": "Bahasa tidak ditemukan atau Anda tidak memiliki akses",
+  "class_not_found": "Kelas tidak ditemukan",
+  "class_access_denied": "Kelas tidak ditemukan atau Anda tidak memiliki akses",
+  "unauthorized": "Tidak terautentikasi, silakan masuk untuk melanjutkan",
+  "forbidden": "Terlarang: Akses ditolak"
+}

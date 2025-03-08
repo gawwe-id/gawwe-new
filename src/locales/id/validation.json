@@ -1,0 +1,10 @@
+{
+  "required": "Bidang ini wajib diisi",
+  "email": "Masukkan alamat email yang valid",
+  "minLength": "Minimal {{count}} karakter",
+  "maxLength": "Maksimal {{count}} karakter",
+  "passwordMatch": "Kata sandi tidak cocok",
+  "invalidDate": "Masukkan tanggal yang valid",
+  "success": "Berhasil!",
+  "error": "Terjadi kesalahan. Silakan coba lagi."
+}

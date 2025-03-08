@@ -1,0 +1,32 @@
+{
+  "home": "Beranda",
+  "dashboard": "Dasbor",
+  "myClasses": "Kelas Saya",
+  "allClasses": "Semua Kelas",
+  "schedule": "Jadwal",
+  "assignments": "Tugas",
+  "homework": "Tugas & Essay",
+  "exams": "Ujian",
+  "grades": "Nilai",
+  "calendar": "Kalender",
+  "notifications": "Notifikasi",
+  "payments": "Pembayaran",
+  "accountSettings": "Pengaturan Akun",
+
+  "classManagement": "Manajemen Kelas",
+  "classSettings": "Pengaturan Kelas",
+  "classSchedule": "Jadwal Kelas",
+  "batchManagement": "Kelola Batch",
+  "enrollmentStatus": "Status Pendaftaran",
+  "homeworkManagement": "Kelola Tugas",
+  "examManagement": "Kelola Ujian",
+  "quizManagement": "Manajemen Quis",
+  "gradeManagement": "Manajemen Nilai",
+  "calendarEvents": "Kalender & Acara",
+  "studentManagement": "Manajemen Siswa",
+  "transactions": "Transaksi",
+
+  "language": "Bahasa",
+  "english": "Inggris",
+  "indonesian": "Indonesia"
+}
