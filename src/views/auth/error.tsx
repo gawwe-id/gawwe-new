@@ -8,38 +8,38 @@ import { Link, Stack, Typography } from "@mui/joy";
 
 // project import
 import AuthWrapper from "./sections/AuthWrapper";
-import AuthLogin from "./sections/AuthLogin";
+import AuthError from "./sections/AuthError";
 
 // assets
-import login_image from "@/assets/images/login.png";
+import error_image from "@/assets/images/error.png";
 
-// ==============================|| LOGIN PAGE ||============================== //
+// ==============================|| ERROR PAGE ||============================== //
 
-export default function SignIn() {
+export default function Error() {
   const { t } = useTranslation("auth");
 
   return (
-    <AuthWrapper image={login_image}>
+    <AuthWrapper image={error_image}>
       <Stack sx={{ gap: 4, mb: 2 }}>
         <Stack sx={{ gap: 1 }}>
           <Typography component="h1" level="h3">
-            {t("signIn.title")}
+            {t("errorPage.title")}
           </Typography>
           <Typography level="body-sm">
-            {t("signIn.noAccount")}{" "}
+            {t("errorPage.backToLogin")}{" "}
             <Link
-              href="/register"
+              href="/auth/signin"
               component={NextLink}
               level="title-sm"
               scroll={false}
             >
-              {t("signIn.signUp")}
+              {t("errorPage.signIn")}
             </Link>
           </Typography>
         </Stack>
       </Stack>
       <Stack>
-        <AuthLogin />
+        <AuthError />
       </Stack>
     </AuthWrapper>
   );

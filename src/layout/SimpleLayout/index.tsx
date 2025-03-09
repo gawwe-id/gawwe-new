@@ -7,7 +7,7 @@ import { lazy, ReactNode } from "react";
 // project-import
 const Header = lazy(() => import("./Header"));
 
-const i18nNamespaces = ["home"];
+const i18nNamespaces = ["common", "landing", "auth"];
 
 export default async function SimpleLayout({
   children,

@@ -1,5 +1,11 @@
 {
   "home": "Home",
+
+  "about": "About Us",
+  "contact": "Contact Us",
+  "program": "Programs",
+  "signIn": "Sign In",
+
   "dashboard": "Dashboard",
   "myClasses": "My Classes",
   "allClasses": "All Classes",

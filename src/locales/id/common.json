@@ -1,5 +1,11 @@
 {
   "home": "Beranda",
+
+  "about": "Tentang Kami",
+  "contact": "Kontak  Kami",
+  "program": "Program",
+  "signIn": "Masuk",
+
   "dashboard": "Dasbor",
   "myClasses": "Kelas Saya",
   "allClasses": "Semua Kelas",
