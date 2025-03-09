@@ -14,6 +14,7 @@ import {
 
 //thrd party
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 // import
 import { useOnboardingState } from "@/store/useOnboardingState";
@@ -35,6 +36,7 @@ const StepperDataAgency = ({
   handleNext,
 }: StepperDataAgencyProps) => {
   const { profileAgency, setProfileAgency } = useOnboardingState();
+  const { t } = useTranslation("onboarding");
 
   const {
     control,
@@ -66,12 +68,12 @@ const StepperDataAgency = ({
         <Grid container spacing={3}>
           <Grid xs={12} sm={6}>
             <Stack spacing={1}>
-              <FormLabel>Nama Agency</FormLabel>
+              <FormLabel>{t("personal.agencyName")}</FormLabel>
               <Controller
                 name="displayName"
                 control={control}
                 rules={{
-                  required: "Nama Agency harus diisi",
+                  required: t("personal.agencyNameRequired"),
                 }}
                 render={({ field }) => (
                   <Input
@@ -96,16 +98,16 @@ const StepperDataAgency = ({
           </Grid>
           <Grid xs={12} sm={6}>
             <Stack spacing={1}>
-              <FormLabel>Nomor HP</FormLabel>
+              <FormLabel>{t("personal.phoneNumber")}</FormLabel>
               <Controller
                 name="phone"
                 control={control}
                 rules={{
-                  required: "No HP harus diisi",
+                  required: t("personal.phoneRequired"),
                   min: 11,
                   pattern: {
                     value: /^[0-9]{10,14}$/,
-                    message: "No HP harus berupa angka dan minimal 10 digit",
+                    message: t("personal.phoneInvalid"),
                   },
                 }}
                 render={({ field }) => (
@@ -131,19 +133,19 @@ const StepperDataAgency = ({
           </Grid>
           <Grid xs={12}>
             <Stack spacing={1}>
-              <FormLabel>Bio</FormLabel>
+              <FormLabel>{t("personal.bio")}</FormLabel>
               <Controller
                 name="bio"
                 control={control}
                 rules={{
-                  required: "Bio harus diisi",
+                  required: t("personal.bioRequired"),
                 }}
                 render={({ field }) => (
                   <Textarea
                     {...field}
                     minRows={3}
                     id="bio"
-                    placeholder="Ceritakan menganai Agensi Anda..."
+                    placeholder={t("personal.bioPlaceholder")}
                     value={field.value || ""}
                   />
                 )}
@@ -173,7 +175,7 @@ const StepperDataAgency = ({
             startDecorator={<NavigateBeforeRoundedIcon />}
             onClick={handleBack}
           >
-            Kembali
+            {t("buttons.back")}
           </Button>
           <Button
             size="sm"
@@ -182,7 +184,7 @@ const StepperDataAgency = ({
             type="submit"
             endDecorator={<NavigateNextRoundedIcon />}
           >
-            Selanjutnya
+            {t("buttons.next")}
           </Button>
         </Stack>
       </form>

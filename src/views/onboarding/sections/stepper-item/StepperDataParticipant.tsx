@@ -25,6 +25,7 @@ import { ProfileParticipant } from "@/server/db/schema/profileParticipants";
 import { useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/client";
 import { customHeader, customStyles } from "@/utils/dateSelection";
+import { useTranslation } from "react-i18next";
 
 // assets
 import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
@@ -43,6 +44,7 @@ const StepperDataParticipant = ({
   handleNext,
 }: StepperDataParticipantProps) => {
   const { profileParticipant, setProfileParticipant } = useOnboardingState();
+  const { t } = useTranslation("onboarding");
 
   const {
     control,
@@ -84,15 +86,15 @@ const StepperDataParticipant = ({
         <Grid container spacing={3}>
           <Grid xs={6}>
             <Stack spacing={1}>
-              <FormLabel>Nomor HP</FormLabel>
+              <FormLabel>{t("personal.phoneNumber")}</FormLabel>
               <Controller
                 name="phone"
                 control={control}
                 rules={{
-                  required: "No HP harus diisi",
+                  required: t("personal.phoneRequired"),
                   pattern: {
                     value: /^[0-9]{10,14}$/,
-                    message: "No HP harus berupa angka dan minimal 10 digit",
+                    message: t("personal.phoneInvalid"),
                   },
                 }}
                 render={({ field }) => (
@@ -118,23 +120,23 @@ const StepperDataParticipant = ({
           </Grid>
           <Grid xs={6}>
             <Stack spacing={1}>
-              <FormLabel>Jenis Kelamin</FormLabel>
+              <FormLabel>{t("personal.gender")}</FormLabel>
               <Controller
                 name="gender"
                 control={control}
                 rules={{
-                  required: "Jenis Kelamin harus dipilih",
+                  required: t("personal.genderRequired"),
                 }}
                 render={({ field }) => (
                   <Select
                     {...field}
                     size="sm"
-                    placeholder="Pilih Jenis Kelamin"
+                    placeholder={t("personal.selectGender")}
                     value={field.value || ""}
                     onChange={(_, newValue) => field.onChange(newValue)}
                   >
-                    <Option value="L">Laki-laki</Option>
-                    <Option value="P">Perempuan</Option>
+                    <Option value="L">{t("personal.male")}</Option>
+                    <Option value="P">{t("personal.female")}</Option>
                   </Select>
                 )}
               />
@@ -150,23 +152,23 @@ const StepperDataParticipant = ({
           </Grid>
           <Grid xs={6}>
             <Stack spacing={1}>
-              <FormLabel>Tanggal Lahir</FormLabel>
+              <FormLabel>{t("personal.birthDate")}</FormLabel>
               <style>{customStyles}</style>
               <Controller
                 name="birthDate"
                 control={control}
                 rules={{
-                  required: "Tanggal lahir harus diisi",
+                  required: t("personal.birthDateRequired"),
                   validate: {
                     notFuture: (value) => {
                       if (value && dayjs(value) > dayjs()) {
-                        return "Tanggal lahir tidak boleh lebih dari hari ini";
+                        return t("personal.birthDateFuture");
                       }
                       return true;
                     },
                     notTooOld: (value) => {
                       if (value && dayjs(value) < dayjs("1900-01-01")) {
-                        return "Tanggal lahir tidak valid";
+                        return t("personal.birthDateInvalid");
                       }
                       return true;
                     },
@@ -179,7 +181,7 @@ const StepperDataParticipant = ({
                       selected={field.value}
                       dateFormat="yyyy-MM-dd"
                       renderCustomHeader={customHeader}
-                      placeholderText="Select date"
+                      placeholderText={t("personal.selectDate")}
                       ref={field.ref}
                       customInput={
                         <Input
@@ -205,17 +207,17 @@ const StepperDataParticipant = ({
           </Grid>
           <Grid xs={6}>
             <Stack spacing={1}>
-              <FormLabel>Pendidikan</FormLabel>
+              <FormLabel>{t("personal.education")}</FormLabel>
               <Controller
                 name="educationLevelId"
                 control={control}
                 rules={{
-                  required: "Pendidikan harus dipilih",
+                  required: t("personal.educationRequired"),
                 }}
                 render={({ field: { onChange, value } }) => (
                   <Select
                     size="sm"
-                    placeholder="Pilih Pendidikan"
+                    placeholder={t("personal.selectEducation")}
                     value={value || ""}
                     onChange={(_, newValue) => onChange(newValue)}
                   >
@@ -252,7 +254,7 @@ const StepperDataParticipant = ({
             startDecorator={<NavigateBeforeRoundedIcon />}
             onClick={handleBack}
           >
-            Kembali
+            {t("buttons.back")}
           </Button>
           <Button
             size="sm"
@@ -261,7 +263,7 @@ const StepperDataParticipant = ({
             type="submit"
             endDecorator={<NavigateNextRoundedIcon />}
           >
-            Selanjutnya
+            {t("buttons.next")}
           </Button>
         </Stack>
       </form>

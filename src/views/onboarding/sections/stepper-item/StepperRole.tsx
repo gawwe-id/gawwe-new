@@ -20,6 +20,7 @@ import {
 } from "@mui/icons-material";
 
 import { useOnboardingState } from "@/store/useOnboardingState";
+import { useTranslation } from "react-i18next";
 
 // assets
 import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
@@ -35,6 +36,7 @@ interface StepperRoleProps {
 
 const StepperRole = ({ roles, isLoading, handleNext }: StepperRoleProps) => {
   const { updateUser, user } = useOnboardingState();
+  const { t } = useTranslation("onboarding");
 
   const userRoles = roles?.filter((role) => role.code !== "admin");
 
@@ -49,7 +51,7 @@ const StepperRole = ({ roles, isLoading, handleNext }: StepperRoleProps) => {
   return (
     <Box mt={4}>
       <Typography textAlign="center" level="body-lg">
-        Mendaftar Sebagai
+        {t("steps.registerAs")}
       </Typography>
       {isLoading ? (
         <Stack
@@ -139,7 +141,7 @@ const StepperRole = ({ roles, isLoading, handleNext }: StepperRoleProps) => {
           onClick={handleNext}
           disabled={!value}
         >
-          Selanjutnya
+          {t("buttons.next")}
         </Button>
       </Stack>
     </Box>

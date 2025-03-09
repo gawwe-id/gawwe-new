@@ -18,6 +18,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { client } from "@/lib/client";
 import { useQuery } from "@tanstack/react-query";
 import { useOnboardingState } from "@/store/useOnboardingState";
+import { useTranslation } from "react-i18next";
 
 // assets
 import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
@@ -41,6 +42,7 @@ const StepperAddressAgency = ({
   handleNext,
 }: StepperAddressProps) => {
   const { profileAgency, setProfileAgency } = useOnboardingState();
+  const { t } = useTranslation("onboarding");
 
   const {
     control,
@@ -171,19 +173,19 @@ const StepperAddressAgency = ({
         <Grid container spacing={3}>
           <Grid xs={12}>
             <Stack spacing={1}>
-              <FormLabel>Alamat</FormLabel>
+              <FormLabel>{t("form.address.address")}</FormLabel>
               <Controller
                 name="address"
                 control={control}
                 rules={{
-                  required: "Alamat harus diisi",
+                  required: t("form.address.addressRequired"),
                 }}
                 render={({ field }) => (
                   <Textarea
                     {...field}
                     minRows={2}
                     id="address"
-                    placeholder="Alamat lengkap..."
+                    placeholder={t("form.address.addressPlaceholder")}
                     value={field.value || ""}
                   />
                 )}
@@ -200,15 +202,15 @@ const StepperAddressAgency = ({
           </Grid>
           <Grid xs={6}>
             <Stack spacing={1}>
-              <FormLabel>Provinsi</FormLabel>
+              <FormLabel>{t("form.address.province")}</FormLabel>
               <Controller
                 name="province"
                 control={control}
-                rules={{ required: "Provinsi harus dipilih" }}
+                rules={{ required: t("form.address.provinceRequired") }}
                 render={({ field: { onChange, value } }) => (
                   <Select
                     size="sm"
-                    placeholder="Pilih Provinsi"
+                    placeholder={t("form.address.selectProvince")}
                     value={value || ""}
                     onChange={(_, newValue) => onChange(newValue)}
                   >
@@ -230,15 +232,15 @@ const StepperAddressAgency = ({
 
           <Grid xs={6}>
             <Stack spacing={1}>
-              <FormLabel>Kota/Kabupaten</FormLabel>
+              <FormLabel>{t("form.address.city")}</FormLabel>
               <Controller
                 name="regency"
                 control={control}
-                rules={{ required: "Kota/Kabupaten harus dipilih" }}
+                rules={{ required: t("form.address.cityRequired") }}
                 render={({ field: { onChange, value } }) => (
                   <Select
                     size="sm"
-                    placeholder="Pilih Kota/Kabupaten"
+                    placeholder={t("form.address.selectCity")}
                     value={value || ""}
                     onChange={(_, newValue) => onChange(newValue)}
                     disabled={!watchProvince}
@@ -261,15 +263,15 @@ const StepperAddressAgency = ({
 
           <Grid xs={6}>
             <Stack spacing={1}>
-              <FormLabel>Kecamatan</FormLabel>
+              <FormLabel>{t("form.address.district")}</FormLabel>
               <Controller
                 name="district"
                 control={control}
-                rules={{ required: "Kecamatan harus dipilih" }}
+                rules={{ required: t("form.address.districtRequired") }}
                 render={({ field: { onChange, value } }) => (
                   <Select
                     size="sm"
-                    placeholder="Pilih Kecamatan"
+                    placeholder={t("form.address.selectDistrict")}
                     value={value || ""}
                     onChange={(_, newValue) => onChange(newValue)}
                     disabled={!watchRegency}
@@ -292,15 +294,15 @@ const StepperAddressAgency = ({
 
           <Grid xs={6}>
             <Stack spacing={1}>
-              <FormLabel>Kelurahan/Desa</FormLabel>
+              <FormLabel>{t("form.address.village")}</FormLabel>
               <Controller
                 name="village"
                 control={control}
-                rules={{ required: "Kelurahan/Desa harus dipilih" }}
+                rules={{ required: t("form.address.villageRequired") }}
                 render={({ field: { onChange, value } }) => (
                   <Select
                     size="sm"
-                    placeholder="Pilih Kelurahan/Desa"
+                    placeholder={t("form.address.selectVillage")}
                     value={value || ""}
                     onChange={(_, newValue) => onChange(newValue)}
                     disabled={!watchDistrict}
@@ -335,7 +337,7 @@ const StepperAddressAgency = ({
             startDecorator={<NavigateBeforeRoundedIcon />}
             onClick={handleBack}
           >
-            Kembali
+            {t("buttons.back")}
           </Button>
           <Button
             size="sm"
@@ -344,7 +346,7 @@ const StepperAddressAgency = ({
             variant="soft"
             endDecorator={<NavigateNextRoundedIcon />}
           >
-            Selanjutnya
+            {t("buttons.next")}
           </Button>
         </Stack>
       </form>

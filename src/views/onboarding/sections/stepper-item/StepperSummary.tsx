@@ -19,6 +19,7 @@ import { useSnackbar } from "@/hooks/useSnackbar";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useOnboardingState } from "@/store/useOnboardingState";
+import { useTranslation } from "react-i18next";
 
 // assets
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
@@ -53,6 +54,7 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
 
   const router = useRouter();
   const { showSnackbar } = useSnackbar();
+  const { t } = useTranslation("onboarding");
 
   const { data: educationLevel } = useQuery({
     queryKey: ["education-level"],
@@ -195,7 +197,7 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
       clearUser();
     },
     onError: () => {
-      showSnackbar("Failed to update user profile!", "danger");
+      showSnackbar(t("notifications.userProfileFailed"), "danger");
     },
   });
 
@@ -206,12 +208,12 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
       return res.json();
     },
     onSuccess: () => {
-      showSnackbar("Profile created successfully!", "success");
+      showSnackbar(t("notifications.profileCreated"), "success");
       clearProfileParticipant();
       router.push("/dashboard");
     },
     onError: () => {
-      showSnackbar("Failed to create participant profile!", "danger");
+      showSnackbar(t("notifications.participantProfileFailed"), "danger");
     },
   });
 
@@ -221,26 +223,23 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
       return res.json();
     },
     onSuccess: () => {
-      showSnackbar("Profile created successfully!", "success");
+      showSnackbar(t("notifications.profileCreated"), "success");
       clearProfileAgency();
       router.push("/dashboard");
     },
     onError: () => {
-      showSnackbar("Failed to create agency profile!", "danger");
+      showSnackbar(t("notifications.agencyProfileFailed"), "danger");
     },
   });
 
   const handleRegisterDetail = () => {
     if (!user) {
-      showSnackbar("User data is required!", "danger");
+      showSnackbar(t("notifications.userDataRequired"), "danger");
       return;
     }
 
     if (!profileParticipant && !profileAgency) {
-      showSnackbar(
-        "Either participant or agency profile is required!",
-        "danger"
-      );
+      showSnackbar(t("notifications.profileRequired"), "danger");
       return;
     }
 
@@ -278,7 +277,7 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
                     <Avatar sx={{ height: 40, width: 40 }} />
                   )
                 }
-                title="Profil"
+                title={t("summary.profile")}
               />
               <Grid container spacing={2}>
                 <Grid xs={12} sm={6} md={3}>
@@ -288,7 +287,7 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
                       textColor="text.secondary"
                       fontWeight="bold"
                     >
-                      Role
+                      {t("steps.role")}
                     </Typography>
                     <Chip
                       variant="soft"
@@ -308,13 +307,13 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
                 </Grid>
                 <Grid xs={12} sm={6} md={3}>
                   <InfoItem
-                    label="Nama Lengkap"
+                    label={t("steps.fullName")}
                     value={userData.account.fullName}
                   />
                 </Grid>
                 <Grid xs={12} sm={6} md={3}>
                   <InfoItem
-                    label="Nomor HP"
+                    label={t("steps.phoneNumber")}
                     value={userData.profile.phoneNumber}
                   />
                 </Grid>
@@ -322,17 +321,17 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
                   <>
                     <Grid xs={12} sm={6} md={3}>
                       <InfoItem
-                        label="Jenis Kelamin"
+                        label={t("steps.gender")}
                         value={
                           userData.profile.gender === "L"
-                            ? "Laki-Laki"
-                            : "Perempuan"
+                            ? t("steps.male")
+                            : t("steps.female")
                         }
                       />
                     </Grid>
                     <Grid xs={12} sm={6} md={3}>
                       <InfoItem
-                        label="Tanggal Lahir"
+                        label={t("steps.birthDate")}
                         value={
                           dayjs(userData.profile.birthDate).format(
                             "DD MMMM YYYY"
@@ -342,7 +341,7 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
                     </Grid>
                     <Grid xs={12} sm={6} md={3}>
                       <InfoItem
-                        label="Pendidikan"
+                        label={t("steps.education")}
                         value={userData.profile.education ?? ""}
                       />
                     </Grid>
@@ -351,13 +350,13 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
                   <>
                     <Grid xs={12} sm={6} md={3}>
                       <InfoItem
-                        label="Nama Agensi"
+                        label={t("steps.agencyName")}
                         value={userData.profile.displayName ?? ""}
                       />
                     </Grid>
                     <Grid xs={12}>
                       <InfoItem
-                        label="Bio"
+                        label={t("steps.bio")}
                         value={userData.profile.bio ?? ""}
                       />
                     </Grid>
@@ -372,40 +371,43 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
         <Grid xs={12}>
           <Card variant="plain">
             <CardContent>
-              <SectionHeader icon={<LocationOnRounded />} title="Domisili" />
+              <SectionHeader
+                icon={<LocationOnRounded />}
+                title={t("summary.domicile")}
+              />
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <InfoItem
-                  label="Alamat Lengkap"
+                  label={t("steps.fullAddress")}
                   value={userData.address.fullAddress ?? ""}
                 />
                 <Grid container spacing={2}>
                   <Grid xs={12} sm={6} md={3}>
                     <InfoItem
-                      label="Provinsi"
+                      label={t("steps.province")}
                       value={userData.address.province ?? ""}
                     />
                   </Grid>
                   <Grid xs={12} sm={6} md={3}>
                     <InfoItem
-                      label="Kota/Kabupaten"
+                      label={t("steps.regency")}
                       value={userData.address.regency ?? ""}
                     />
                   </Grid>
                   <Grid xs={12} sm={6} md={3}>
                     <InfoItem
-                      label="Kecamatan"
+                      label={t("steps.district")}
                       value={userData.address.district ?? ""}
                     />
                   </Grid>
                   <Grid xs={12} sm={6} md={3}>
                     <InfoItem
-                      label="Kelurahan/Desa"
+                      label={t("steps.village")}
                       value={userData.address.village ?? ""}
                     />
                   </Grid>
                   <Grid xs={12} sm={6} md={3}>
                     <InfoItem
-                      label="Kode Pos"
+                      label={t("steps.postalCode")}
                       value={userData.address.postalCode ?? ""}
                     />
                   </Grid>
@@ -417,9 +419,7 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
       </Grid>
 
       <Stack pt={2}>
-        <Typography level="body-xs">
-          * Pastikan semua data yang Anda input sudah benar
-        </Typography>
+        <Typography level="body-xs">{t("steps.dataConfirmation")}</Typography>
       </Stack>
 
       <Stack
@@ -436,7 +436,7 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
           disabled={isLoading}
           onClick={handleBack}
         >
-          Kembali
+          {t("buttons.back")}
         </Button>
         <Button
           size="sm"
@@ -447,7 +447,7 @@ const StepperSummary = ({ handleBack }: StepperSummaryProps) => {
           loading={isLoading}
           onClick={handleRegisterDetail}
         >
-          Daftarkan
+          {t("steps.register")}
         </Button>
       </Stack>
     </Box>

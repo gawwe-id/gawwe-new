@@ -5,6 +5,8 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Avatar, Box, Button, IconButton, Stack, styled } from "@mui/joy";
 
 import { useOnboardingState } from "@/store/useOnboardingState";
+import { useSnackbar } from "@/hooks/useSnackbar";
+import { useTranslation } from "react-i18next";
 
 import { useUploadFile } from "@/hooks/useUploadFile";
 import { useUpdateFile } from "@/hooks/useUpdateFile";
@@ -17,7 +19,6 @@ import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
 import NavigateBeforeRoundedIcon from "@mui/icons-material/NavigateBeforeRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
-import { useSnackbar } from "@/hooks/useSnackbar";
 
 const VisuallyHiddenInput = styled("input")`
   clip: rect(0 0 0 0);
@@ -42,8 +43,9 @@ const StepperUploadImage = ({
 }: StepperUploadImageProps) => {
   const { updateImageUser, user } = useOnboardingState();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const { showSnackbar } = useSnackbar();
+  const { t } = useTranslation("onboarding");
+
   const { mutate: uploadFile, isPending: isUploading } = useUploadFile();
   const { mutate: updateFile, isPending: isUpdating } = useUpdateFile();
   const { mutate: deleteFile, isPending: isDeleting } = useDeleteFile();
@@ -69,7 +71,7 @@ const StepperUploadImage = ({
     } else {
       setSelectedFile(null);
       setPreviewImage(null);
-      showSnackbar("File yang diupload harus berupa gambar!", "danger");
+      showSnackbar(t("notifications.photoRequired"), "danger");
     }
 
     if (event.target) {
@@ -112,26 +114,26 @@ const StepperUploadImage = ({
         { file: newFile, key: existingImageKey || "" },
         {
           onSuccess: () => {
-            showSnackbar("Update foto profil berhasil!", "success");
+            showSnackbar(t("notifications.photoUpdateSuccess"), "success");
             updateImageUser(updatedImage);
             setSelectedFile(null);
             setPreviewImage(null);
           },
           onError: () => {
-            showSnackbar("Update foto profil gagal!", "danger");
+            showSnackbar(t("notifications.photoUpdateFailed"), "danger");
           },
         }
       );
     } else {
       uploadFile(newFile, {
         onSuccess: () => {
-          showSnackbar("Upload foto profil berhasil!", "success");
+          showSnackbar(t("notifications.photoUploadSuccess"), "success");
           updateImageUser(updatedImage);
           setSelectedFile(null);
           setPreviewImage(null);
         },
         onError: () => {
-          showSnackbar("Upload foto profil gagal!", "danger");
+          showSnackbar(t("notifications.photoUploadFailed"), "danger");
         },
       });
     }
@@ -147,18 +149,18 @@ const StepperUploadImage = ({
 
     const imageKey = getImageKeyFromUrl(user.image);
     if (!imageKey) {
-      showSnackbar("Hapus foto profil gagal!", "danger");
+      showSnackbar(t("notifications.photoDeleteFailed"), "danger");
       return;
     }
     deleteFile(imageKey, {
       onSuccess: () => {
-        showSnackbar("Hapus foto profil berhasil!", "success");
+        showSnackbar(t("notifications.photoDeleteSuccess"), "success");
         updateImageUser(null);
         setSelectedFile(null);
         setPreviewImage(null);
       },
       onError: () => {
-        showSnackbar("Hapus foto profil gagal!", "danger");
+        showSnackbar(t("notifications.photoDeleteFailed"), "danger");
       },
     });
   };
@@ -224,7 +226,7 @@ const StepperUploadImage = ({
             disabled={isLoading}
             // onClick={handleEditClick}
           >
-            Pilih Foto
+            {t("buttons.selectPhoto")}
             <VisuallyHiddenInput
               type="file"
               ref={fileInputRef}
@@ -242,7 +244,9 @@ const StepperUploadImage = ({
               onClick={handleFileUpload}
               startDecorator={<CloudUploadRoundedIcon />}
             >
-              {user?.image ? "Update Foto" : "Upload Foto"}
+              {user?.image
+                ? t("buttons.updatePhoto")
+                : t("buttons.uploadPhoto")}
             </Button>
           )
         )}
@@ -262,7 +266,7 @@ const StepperUploadImage = ({
           onClick={handleBack}
           disabled={isLoading}
         >
-          Kembali
+          {t("buttons.back")}
         </Button>
         <Button
           size="sm"
@@ -273,7 +277,7 @@ const StepperUploadImage = ({
           onClick={handleNext}
           disabled={isLoading}
         >
-          Selanjutnya
+          {t("buttons.next")}
         </Button>
       </Stack>
     </Box>

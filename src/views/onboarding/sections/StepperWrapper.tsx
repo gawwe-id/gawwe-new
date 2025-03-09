@@ -6,6 +6,7 @@ import { Box, Button, Stack } from "@mui/joy";
 import { useOnboardingState } from "@/store/useOnboardingState";
 import { useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/client";
+import { useTranslation } from "react-i18next";
 
 // project import
 import StepperRole from "./stepper-item/StepperRole";
@@ -85,6 +86,7 @@ const StepperWrapper = () => {
   ];
 
   const { user } = useOnboardingState();
+  const { t } = useTranslation("onboarding");
 
   const { data: roles, isLoading } = useQuery({
     queryKey: ["roles"],
@@ -93,10 +95,6 @@ const StepperWrapper = () => {
       return await res.json();
     },
   });
-  //   if (session) {
-  //     setUser(session.user);
-  //   }
-  // }, []);
 
   const [activeStep, setActiveStep] = useState<number>(0);
 
@@ -119,7 +117,7 @@ const StepperWrapper = () => {
         <>
           <Stack>
             <Button onClick={handleReset} color="danger" variant="soft">
-              Reset
+              {t("buttons.reset")}
             </Button>
           </Stack>
         </>

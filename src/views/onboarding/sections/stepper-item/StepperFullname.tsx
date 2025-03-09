@@ -11,6 +11,7 @@ import {
 } from "@mui/joy";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { useOnboardingState } from "@/store/useOnboardingState";
+import { useTranslation } from "react-i18next";
 
 // assets
 import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
@@ -23,6 +24,7 @@ interface StepperFullnameProps {
 
 const StepperFullname = ({ handleBack, handleNext }: StepperFullnameProps) => {
   const { updateUser, user } = useOnboardingState();
+  const { t } = useTranslation("onboarding");
 
   const {
     control,
@@ -47,11 +49,11 @@ const StepperFullname = ({ handleBack, handleNext }: StepperFullnameProps) => {
     <Box mt={4} width={"50%"}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl error={!!errors.name}>
-          <FormLabel>Nama Lengkap</FormLabel>
+          <FormLabel>{t("personal.fullName")}</FormLabel>
           <Controller
             name="name"
             control={control}
-            rules={{ required: "Nama lengkap tidak boleh kosong" }}
+            rules={{ required: t("personal.fullNameRequired") }}
             render={({ field }) => (
               <Input
                 {...field}
@@ -59,7 +61,7 @@ const StepperFullname = ({ handleBack, handleNext }: StepperFullnameProps) => {
                 variant="outlined"
                 sx={{ minWidth: 400 }}
                 value={field.value || ""}
-                placeholder="Isi nama lengkap..."
+                placeholder={t("personal.fullNamePlaceholder")}
                 error={!!errors.name}
               />
             )}
@@ -82,7 +84,7 @@ const StepperFullname = ({ handleBack, handleNext }: StepperFullnameProps) => {
             startDecorator={<NavigateBeforeRoundedIcon />}
             onClick={handleBack}
           >
-            Kembali
+            {t("buttons.back")}
           </Button>
           <Button
             size="sm"
@@ -91,7 +93,7 @@ const StepperFullname = ({ handleBack, handleNext }: StepperFullnameProps) => {
             type="submit"
             endDecorator={<NavigateNextRoundedIcon />}
           >
-            Selanjutnya
+            {t("buttons.next")}
           </Button>
         </Stack>
       </form>
