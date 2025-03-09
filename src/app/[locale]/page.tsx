@@ -1,4 +1,3 @@
-// project import
 import SimpleLayout from "@/layout/SimpleLayout";
 import Landing from "@/views/landing";
 
