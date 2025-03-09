@@ -123,7 +123,7 @@ export default function AuthLogin() {
       }
 
       // Proceed with magic link/passwordless auth
-      const result = await signIn("email", {
+      const result = await signIn("resend", {
         email,
         redirect: false,
         callbackUrl: "/dashboard",
