@@ -11,15 +11,17 @@ import {
 } from "@mui/joy";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { client } from "@/lib/client";
+import { ProfileParticipant } from "@/server/db/schema/profileParticipants";
+import { ProfileAgencies } from "@/server/db/schema/profileAgencies";
+import { useTranslation } from "react-i18next";
 import { useRouter, useSearchParams } from "next/navigation";
+
 import TabsAccount from "./settings/TabsAccount";
 import AccountInfo from "./settings/AccountInfo";
 import ProfileInfoParticipant from "./participant/ProfileInfo";
 import ProfileInfoAgency from "./agency/ProfileInfo";
 import AddressInfo from "./settings/AddressInfo";
-import { client } from "@/lib/client";
-import { ProfileParticipant } from "@/server/db/schema/profileParticipants";
-import { ProfileAgencies } from "@/server/db/schema/profileAgencies";
 
 // Type for profile data based on role
 type ProfileData = {
@@ -97,6 +99,7 @@ const transformAgencyData = (data: any): ProfileAgencies | undefined => {
 };
 
 const Account = () => {
+  const { t } = useTranslation("account");
   const { data: session } = useSession();
   const role = session?.user?.role;
   const router = useRouter();
@@ -128,7 +131,7 @@ const Account = () => {
   return (
     <Box sx={{ px: { xs: 2, md: 6 } }}>
       <Typography level="h2" component="h1" sx={{ mt: 1, mb: 2 }}>
-        My Account
+        {t("pageTitle")}
       </Typography>
 
       <Tabs

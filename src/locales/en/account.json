@@ -1,0 +1,90 @@
+{
+  "pageTitle": "My Account",
+  "tabs": {
+    "profile": "Profile",
+    "document": "Document",
+    "settings": "Settings"
+  },
+  "accountInfo": {
+    "title": "Account",
+    "subtitle": "Customize your identity",
+    "fullName": "Full Name",
+    "uploadPhoto": "Upload new picture",
+    "notifications": {
+      "photoRequired": "The uploaded file must be a valid type (JPEG, PNG, or WebP)",
+      "photoSize": "Image size should be less than 5MB",
+      "photoUpdateSuccess": "Profile picture updated successfully!",
+      "photoUpdateFailed": "Failed to upload image. Try again.",
+      "userUpdateSuccess": "User Account updated successfully!"
+    }
+  },
+  "addressInfo": {
+    "title": "Address",
+    "subtitle": "Your current residential address",
+    "address": "Address",
+    "province": "Province",
+    "regency": "City/Regency",
+    "district": "District",
+    "village": "Village",
+    "postalCode": "Postal Code",
+    "edit": "Edit"
+  },
+  "editAddress": {
+    "title": "Update Address",
+    "subtitle": "Please update if your residential address has changed",
+    "address": "Address",
+    "addressPlaceholder": "Full address...",
+    "addressRequired": "Address is required",
+    "province": "Province",
+    "selectProvince": "Select Province",
+    "provinceRequired": "Province must be selected",
+    "city": "City/Regency",
+    "selectCity": "Select City/Regency",
+    "cityRequired": "City/Regency must be selected",
+    "district": "District",
+    "selectDistrict": "Select District",
+    "districtRequired": "District must be selected",
+    "village": "Village",
+    "selectVillage": "Select Village",
+    "villageRequired": "Village must be selected",
+    "updateAddress": "Update Address"
+  },
+  "profileInfo": {
+    "title": "Profile",
+    "subtitle": "Update your profile information if needed",
+    "common": {
+      "phoneNumber": "Phone Number",
+      "phoneRequired": "Phone number is required",
+      "phoneInvalid": "Phone number must be numeric and at least 10 digits"
+    },
+    "participant": {
+      "gender": "Gender",
+      "selectGender": "Select Gender",
+      "genderRequired": "Gender must be selected",
+      "male": "Male",
+      "female": "Female",
+      "birthDate": "Birth Date",
+      "birthDateRequired": "Birth date is required",
+      "birthDateFuture": "Birth date cannot be in the future",
+      "birthDateInvalid": "Invalid birth date",
+      "selectDate": "Select date",
+      "education": "Education",
+      "selectEducation": "Select Education",
+      "educationRequired": "Education must be selected"
+    },
+    "agency": {
+      "agencyName": "Agency Name",
+      "agencyNameRequired": "Agency name is required",
+      "bio": "Bio",
+      "bioPlaceholder": "Tell us about your Agency...",
+      "bioRequired": "Bio is required"
+    }
+  },
+  "buttons": {
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "notifications": {
+    "profileUpdateSuccess": "User Profile updated successfully!"
+  }
+}

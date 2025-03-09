@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useSnackbar } from '@/hooks/useSnackbar';
-import { client } from '@/lib/client';
+import { useSnackbar } from "@/hooks/useSnackbar";
+import { client } from "@/lib/client";
 import {
   AspectRatio,
   Box,
@@ -15,21 +15,22 @@ import {
   IconButton,
   Input,
   Stack,
-  Typography
-} from '@mui/joy';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useRef } from 'react';
-import { useForm } from 'react-hook-form';
+  Typography,
+} from "@mui/joy";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 // assets
-import EditRounded from '@mui/icons-material/EditRounded';
+import EditRounded from "@mui/icons-material/EditRounded";
 
 // hooks
-import { useUploadFile } from '@/hooks/useUploadFile';
-import { useUpdateFile } from '@/hooks/useUpdateFile';
+import { useUploadFile } from "@/hooks/useUploadFile";
+import { useUpdateFile } from "@/hooks/useUpdateFile";
 
 // types
-import { User } from '@/server/db/schema/users';
+import { User } from "@/server/db/schema/users";
 
 interface FormValues {
   name: string;
@@ -39,13 +40,14 @@ const AccountInfo = () => {
   const { showSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation("account");
 
   const { data: user } = useQuery({
-    queryKey: ['user'],
+    queryKey: ["user"],
     queryFn: async () => {
       const res = await client.users.single.$get();
       return await res.json();
-    }
+    },
   });
 
   const {
@@ -53,38 +55,38 @@ const AccountInfo = () => {
     register,
     handleSubmit,
     formState: { isDirty },
-    reset
+    reset,
   } = useForm<FormValues>({
     defaultValues: {
-      name: user?.data?.name || ''
-    }
+      name: user?.data?.name || "",
+    },
   });
 
   useEffect(() => {
     if (user) {
-      setValue('name', user.data?.name as string);
+      setValue("name", user.data?.name as string);
     }
   }, [user, setValue]);
 
   const { mutate: mutateUpdateUser, isPending: isUser } = useMutation({
     mutationFn: async ({
       updateUser,
-      userId
+      userId,
     }: {
       updateUser: Partial<User>;
       userId: string;
     }) => {
       const res = await client.users.update.$post({
         updateUser,
-        userId
+        userId,
       });
       return await res.json();
     },
     onSuccess: async ({ data }) => {
-      await queryClient.invalidateQueries({ queryKey: ['user'] });
-      showSnackbar('User Account berhasil diubah!', 'success');
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
+      showSnackbar(t("accountInfo.notifications.userUpdateSuccess"), "success");
       reset({ name: data?.name as string });
-    }
+    },
   });
 
   const { mutate: uploadFile, isPending: isUploading } = useUploadFile();
@@ -96,13 +98,13 @@ const AccountInfo = () => {
 
   const getImageKeyFromUrl = (url: string) => {
     // Extract the key from the URL (everything after gawwe.space/)
-    return url.split('gawwe.space/')[1];
+    return url.split("gawwe.space/")[1];
   };
 
   const generateUniqueFileName = (file: File) => {
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 8);
-    const extension = file.name.split('.').pop();
+    const extension = file.name.split(".").pop();
     return `${timestamp}-${randomString}.${extension}`;
   };
 
@@ -116,36 +118,36 @@ const AccountInfo = () => {
     const updatedImage = `https://gawwe.space/${uniqueFileName}`;
 
     const newFile = new File([file], uniqueFileName, {
-      type: file.type
+      type: file.type,
     });
 
-    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    const validTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!validTypes.includes(file.type)) {
-      showSnackbar(
-        'Mohon upload tipe file yang valid (JPEG, PNG, or WebP)',
-        'danger'
-      );
+      showSnackbar(t("accountInfo.notifications.photoRequired"), "danger");
       return;
     }
 
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
-      showSnackbar('Ukuran gambar harus dibawah 5MB', 'danger');
+      showSnackbar(t("accountInfo.notifications.photoSize"), "danger");
       return;
     }
 
-    const handleSuccess = (response: any) => {
+    const handleSuccess = () => {
       if (!user?.data?.id) return;
 
       mutateUpdateUser({
         updateUser: { image: updatedImage },
-        userId: user.data.id
+        userId: user.data.id,
       });
-      showSnackbar('Profile picture berhasil diubah!', 'success');
+      showSnackbar(
+        t("accountInfo.notifications.photoUpdateSuccess"),
+        "success"
+      );
     };
 
     const handleError = () => {
-      showSnackbar('Gagal upload image. Coba lagi.', 'danger');
+      showSnackbar(t("accountInfo.notifications.photoUpdateFailed"), "danger");
     };
 
     if (user?.data?.image) {
@@ -155,13 +157,13 @@ const AccountInfo = () => {
         { file: newFile, key: existingImageKey as string },
         {
           onSuccess: handleSuccess,
-          onError: handleError
+          onError: handleError,
         }
       );
     } else {
       uploadFile(newFile, {
         onSuccess: handleSuccess,
-        onError: handleError
+        onError: handleError,
       });
     }
   };
@@ -171,32 +173,32 @@ const AccountInfo = () => {
 
     mutateUpdateUser({
       updateUser: { name: data.name },
-      userId: user.data.id
+      userId: user.data.id,
     });
   };
 
   const handleReset = () => {
     reset({
-      name: user?.data?.name as string
+      name: user?.data?.name as string,
     });
   };
 
   return (
     <Card>
       <Box sx={{ mb: 1 }}>
-        <Typography level="title-md">Account</Typography>
-        <Typography level="body-sm">Sesuaikan dengan identitas kamu</Typography>
+        <Typography level="title-md">{t("accountInfo.title")}</Typography>
+        <Typography level="body-sm">{t("accountInfo.subtitle")}</Typography>
       </Box>
       <Divider />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack direction={{ xs: 'column' }} spacing={{ xs: 2 }} sx={{ my: 3 }}>
+        <Stack direction={{ xs: "column" }} spacing={{ xs: 2 }} sx={{ my: 3 }}>
           <Stack
             direction="column"
             spacing={1}
             sx={{
-              alignItems: { xs: 'center' },
-              position: 'relative',
-              width: { xs: '100%' }
+              alignItems: { xs: "center" },
+              position: "relative",
+              width: { xs: "100%" },
             }}
           >
             <AspectRatio
@@ -206,37 +208,37 @@ const AccountInfo = () => {
                 flex: 1,
                 minWidth: 100,
                 maxWidth: { xs: 200 },
-                borderRadius: '100%'
+                borderRadius: "100%",
               }}
             >
               <img
-                src={user?.data?.image || '/default-avatar.png'}
+                src={user?.data?.image || "/default-avatar.png"}
                 loading="lazy"
-                alt="Profile picture"
+                alt={user?.data?.name || ""}
               />
             </AspectRatio>
             <input
               type="file"
               ref={fileInputRef}
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
               accept="image/jpeg,image/png,image/webp"
               onChange={handleImageChange}
             />
             <IconButton
-              aria-label="upload new picture"
+              aria-label={t("accountInfo.uploadPhoto")}
               size="sm"
               variant="outlined"
               color="neutral"
               onClick={handleImageClick}
               disabled={isUploading || isUpdating}
               sx={{
-                bgcolor: 'background.body',
-                position: 'absolute',
+                bgcolor: "background.body",
+                position: "absolute",
                 zIndex: 2,
-                borderRadius: '50%',
-                boxShadow: 'sm',
-                right: { xs: '30%' },
-                bottom: { xs: '0' }
+                borderRadius: "50%",
+                boxShadow: "sm",
+                right: { xs: "30%" },
+                bottom: { xs: "0" },
               }}
             >
               <EditRounded />
@@ -247,16 +249,16 @@ const AccountInfo = () => {
             spacing={2}
             sx={{
               flexGrow: 1,
-              width: { xs: '100%' }
+              width: { xs: "100%" },
             }}
           >
             <Stack spacing={1}>
-              <FormLabel>Nama Lengkap</FormLabel>
+              <FormLabel>{t("accountInfo.fullName")}</FormLabel>
               <FormControl>
                 <Input
-                  {...register('name')}
+                  {...register("name")}
                   size="sm"
-                  placeholder="Nama Lengkap"
+                  placeholder={t("accountInfo.fullName")}
                   fullWidth
                 />
               </FormControl>
@@ -264,8 +266,8 @@ const AccountInfo = () => {
           </Stack>
         </Stack>
 
-        <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
-          <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
+        <CardOverflow sx={{ borderTop: "1px solid", borderColor: "divider" }}>
+          <CardActions sx={{ alignSelf: "flex-end", pt: 2 }}>
             <Button
               size="sm"
               variant="outlined"
@@ -274,7 +276,7 @@ const AccountInfo = () => {
               onClick={handleReset}
               type="button"
             >
-              Batalkan
+              {t("buttons.cancel")}
             </Button>
             <Button
               size="sm"
@@ -283,7 +285,7 @@ const AccountInfo = () => {
               disabled={!isDirty}
               type="submit"
             >
-              Simpan
+              {t("buttons.save")}
             </Button>
           </CardActions>
         </CardOverflow>

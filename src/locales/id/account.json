@@ -1,0 +1,90 @@
+{
+  "pageTitle": "Akun Saya",
+  "tabs": {
+    "profile": "Profil",
+    "document": "Dokumen",
+    "settings": "Pengaturan"
+  },
+  "accountInfo": {
+    "title": "Akun",
+    "subtitle": "Sesuaikan dengan identitas kamu",
+    "fullName": "Nama Lengkap",
+    "uploadPhoto": "Upload foto baru",
+    "notifications": {
+      "photoRequired": "Mohon upload tipe file yang valid (JPEG, PNG, or WebP)",
+      "photoSize": "Ukuran gambar harus dibawah 5MB",
+      "photoUpdateSuccess": "Profile picture berhasil diubah!",
+      "photoUpdateFailed": "Gagal upload image. Coba lagi.",
+      "userUpdateSuccess": "User Account berhasil diubah!"
+    }
+  },
+  "addressInfo": {
+    "title": "Alamat",
+    "subtitle": "Alamat sesuai dengan domisili saat ini Kamu tinggal",
+    "address": "Alamat",
+    "province": "Provinsi",
+    "regency": "Kota/Kabupaten",
+    "district": "Kecamatan",
+    "village": "Desa",
+    "postalCode": "Kode POS",
+    "edit": "Ubah"
+  },
+  "editAddress": {
+    "title": "Ubah Alamat Baru",
+    "subtitle": "Jika alamat domisili kamu berubah, harap untuk disesuaikan.",
+    "address": "Alamat",
+    "addressPlaceholder": "Alamat lengkap...",
+    "addressRequired": "Alamat harus diisi",
+    "province": "Provinsi",
+    "selectProvince": "Pilih Provinsi",
+    "provinceRequired": "Provinsi harus dipilih",
+    "city": "Kota/Kabupaten",
+    "selectCity": "Pilih Kota/Kabupaten",
+    "cityRequired": "Kota/Kabupaten harus dipilih",
+    "district": "Kecamatan",
+    "selectDistrict": "Pilih Kecamatan",
+    "districtRequired": "Kecamatan harus dipilih",
+    "village": "Kelurahan/Desa",
+    "selectVillage": "Pilih Kelurahan/Desa",
+    "villageRequired": "Kelurahan/Desa harus dipilih",
+    "updateAddress": "Ubah Alamat"
+  },
+  "profileInfo": {
+    "title": "Profil",
+    "subtitle": "Ubah identitas Profil Kamu bila memang diperlukan",
+    "common": {
+      "phoneNumber": "Nomor HP",
+      "phoneRequired": "No HP harus diisi",
+      "phoneInvalid": "No HP harus berupa angka dan minimal 10 digit"
+    },
+    "participant": {
+      "gender": "Jenis Kelamin",
+      "selectGender": "Pilih Jenis Kelamin",
+      "genderRequired": "Jenis Kelamin harus dipilih",
+      "male": "Laki-laki",
+      "female": "Perempuan",
+      "birthDate": "Tanggal Lahir",
+      "birthDateRequired": "Tanggal lahir harus diisi",
+      "birthDateFuture": "Tanggal lahir tidak boleh lebih dari hari ini",
+      "birthDateInvalid": "Tanggal lahir tidak valid",
+      "selectDate": "Pilih tanggal",
+      "education": "Pendidikan",
+      "selectEducation": "Pilih Pendidikan",
+      "educationRequired": "Pendidikan harus dipilih"
+    },
+    "agency": {
+      "agencyName": "Nama Agency",
+      "agencyNameRequired": "Nama Agency harus diisi",
+      "bio": "Bio",
+      "bioPlaceholder": "Ceritakan mengenai Agensi Anda...",
+      "bioRequired": "Bio harus diisi"
+    }
+  },
+  "buttons": {
+    "cancel": "Batalkan",
+    "save": "Simpan"
+  },
+  "notifications": {
+    "profileUpdateSuccess": "User Profile berhasil diubah!"
+  }
+}

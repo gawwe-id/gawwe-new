@@ -23,6 +23,7 @@ import { client } from "@/lib/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import { ProfileAgencies } from "@/server/db/schema/profileAgencies";
+import { useTranslation } from "react-i18next";
 
 // assets
 import {
@@ -38,6 +39,7 @@ interface ProfileInfoProps {
 const ProfileInfo = ({ profile }: ProfileInfoProps) => {
   const queryClient = useQueryClient();
   const { showSnackbar } = useSnackbar();
+  const { t } = useTranslation("account");
 
   const {
     control,
@@ -86,7 +88,7 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
     },
     onSuccess: async ({ data }) => {
       await queryClient.invalidateQueries({ queryKey: ["user"] });
-      showSnackbar("User Profile berhasil diubah!", "success");
+      showSnackbar(t("notifications.profileUpdateSuccess"), "success");
 
       reset({
         bio: data.bio,
@@ -106,22 +108,20 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
   return (
     <Card>
       <Box sx={{ mb: 1 }}>
-        <Typography level="title-md">Profile</Typography>
-        <Typography level="body-sm">
-          Ubah identitas Profile Kamu bia memang diperlukan
-        </Typography>
+        <Typography level="title-md">{t("profileInfo.title")}</Typography>
+        <Typography level="body-sm">{t("profileInfo.subtitle")}</Typography>
       </Box>
       <Divider />
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={3} sx={{ my: 1 }}>
           <Grid xs={12} sm={6}>
             <Stack spacing={1}>
-              <FormLabel>Nama Agency</FormLabel>
+              <FormLabel>{t("profileInfo.agency.agencyName")}</FormLabel>
               <Controller
                 name="displayName"
                 control={control}
                 rules={{
-                  required: "Nama Agency harus diisi",
+                  required: t("profileInfo.agency.agencyNameRequired"),
                 }}
                 render={({ field }) => (
                   <Input
@@ -147,16 +147,16 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
           </Grid>
           <Grid xs={12} sm={6}>
             <Stack spacing={1}>
-              <FormLabel>Nomor HP</FormLabel>
+              <FormLabel>{t("profileInfo.common.phoneNumber")}</FormLabel>
               <Controller
                 name="phone"
                 control={control}
                 rules={{
-                  required: "No HP harus diisi",
+                  required: t("profileInfo.common.phoneRequired"),
                   min: 11,
                   pattern: {
                     value: /^[0-9]{10,14}$/,
-                    message: "No HP harus berupa angka dan minimal 10 digit",
+                    message: t("profileInfo.common.phoneInvalid"),
                   },
                 }}
                 render={({ field }) => (
@@ -183,19 +183,19 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
           </Grid>
           <Grid xs={12}>
             <Stack spacing={1}>
-              <FormLabel>Bio</FormLabel>
+              <FormLabel>{t("profileInfo.agency.bio")}</FormLabel>
               <Controller
                 name="bio"
                 control={control}
                 rules={{
-                  required: "Bio harus diisi",
+                  required: t("profileInfo.agency.bioRequired"),
                 }}
                 render={({ field }) => (
                   <Textarea
                     {...field}
                     minRows={3}
                     id="bio"
-                    placeholder="Ceritakan menganai Agensi Anda..."
+                    placeholder={t("profileInfo.agency.bioPlaceholder")}
                     value={field.value || ""}
                   />
                 )}
@@ -221,7 +221,7 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
               onClick={handleReset}
               type="button"
             >
-              Batalkan
+              {t("buttons.cancel")}
             </Button>
             <Button
               size="sm"
@@ -230,7 +230,7 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
               disabled={!isDirty || isUpdating}
               type="submit"
             >
-              Simpan
+              {t("buttons.save")}
             </Button>
           </CardActions>
         </CardOverflow>

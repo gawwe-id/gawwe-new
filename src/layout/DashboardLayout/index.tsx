@@ -14,7 +14,7 @@ import initTranslations from "@/lib/i18n";
 const Sidebar = lazy(() => import("./Sidebar/index"));
 const Header = lazy(() => import("./Header/index"));
 
-const i18nNamespaces = ["common", "dashboard"];
+const i18nNamespaces = ["common", "dashboard", "account"];
 
 export default async function DashboardLayout({
   children,

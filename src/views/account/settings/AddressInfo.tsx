@@ -1,8 +1,5 @@
 "use client";
 
-import { ProfileAgencies } from "@/server/db/schema/profileAgencies";
-import { ProfileParticipant } from "@/server/db/schema/profileParticipants";
-import { useDialogEditAddressStore } from "@/store/useDialogEditAddressStore";
 import {
   Box,
   Button,
@@ -15,12 +12,18 @@ import {
   Typography,
 } from "@mui/joy";
 
+import { ProfileAgencies } from "@/server/db/schema/profileAgencies";
+import { ProfileParticipant } from "@/server/db/schema/profileParticipants";
+import { useDialogEditAddressStore } from "@/store/useDialogEditAddressStore";
+import { useTranslation } from "react-i18next";
+
 interface AddressInfoProps {
   profile: ProfileParticipant | ProfileAgencies | undefined | null;
 }
 
 const AddressInfo = ({ profile }: AddressInfoProps) => {
   const { openDialog } = useDialogEditAddressStore();
+  const { t } = useTranslation("account");
 
   const AdressItem = ({
     title,
@@ -42,38 +45,51 @@ const AddressInfo = ({ profile }: AddressInfoProps) => {
   return (
     <Card>
       <Box sx={{ mb: 1 }}>
-        <Typography level="title-md">Address</Typography>
-        <Typography level="body-sm">
-          Alamat sesuai dengan domisili saat ini Kamu tinggal
-        </Typography>
+        <Typography level="title-md">{t("addressInfo.title")}</Typography>
+        <Typography level="body-sm">{t("addressInfo.subtitle")}</Typography>
       </Box>
       <Divider />
       <Stack>
-        <Typography level="title-sm">Alamat</Typography>
+        <Typography level="title-sm">{t("addressInfo.address")}</Typography>
         <Typography level="body-xs">{profile?.address}</Typography>
       </Stack>
       <Grid container spacing={3} sx={{ my: 1 }}>
         <Grid xs={12} sm={4}>
-          <AdressItem title="Provinsi" value={profile?.province} />
+          <AdressItem
+            title={t("addressInfo.province")}
+            value={profile?.province}
+          />
         </Grid>
         <Grid xs={12} sm={4}>
-          <AdressItem title="Kota/Kabupaten" value={profile?.regency} />
+          <AdressItem
+            title={t("addressInfo.regency")}
+            value={profile?.regency}
+          />
         </Grid>
         <Grid xs={12} sm={4}>
-          <AdressItem title="Kecamatan" value={profile?.district} />
+          <AdressItem
+            title={t("addressInfo.district")}
+            value={profile?.district}
+          />
         </Grid>
         <Grid xs={12} sm={4}>
-          <AdressItem title="Desa" value={profile?.village} />
+          <AdressItem
+            title={t("addressInfo.village")}
+            value={profile?.village}
+          />
         </Grid>
         <Grid xs={12} sm={4}>
-          <AdressItem title="Kode POS" value={profile?.postalCode} />
+          <AdressItem
+            title={t("addressInfo.postalCode")}
+            value={profile?.postalCode}
+          />
         </Grid>
       </Grid>
 
       <CardOverflow sx={{ borderTop: "1px solid", borderColor: "divider" }}>
         <CardActions sx={{ alignSelf: "flex-end", pt: 2 }}>
           <Button size="sm" variant="soft" onClick={handleOpenDialog}>
-            Ubah
+            {t("addressInfo.edit")}
           </Button>
         </CardActions>
       </CardOverflow>

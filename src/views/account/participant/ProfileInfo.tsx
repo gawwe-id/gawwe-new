@@ -27,6 +27,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import { ProfileParticipant } from "@/server/db/schema/profileParticipants";
 import { customHeader, customStyles } from "@/utils/dateSelection";
+import { useTranslation } from "react-i18next";
 
 // assets
 import {
@@ -44,6 +45,7 @@ interface ProfileInfoProps {
 const ProfileInfo = ({ profile }: ProfileInfoProps) => {
   const queryClient = useQueryClient();
   const { showSnackbar } = useSnackbar();
+  const { t } = useTranslation("account");
 
   const {
     control,
@@ -104,7 +106,7 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
       },
       onSuccess: async ({ data }) => {
         await queryClient.invalidateQueries({ queryKey: ["user"] });
-        showSnackbar("User Profile berhasil diubah!", "success");
+        showSnackbar(t("notifications.profileUpdateSuccess"), "success");
 
         reset({
           phone: data?.phone,
@@ -125,25 +127,23 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
   return (
     <Card>
       <Box sx={{ mb: 1 }}>
-        <Typography level="title-md">Profile</Typography>
-        <Typography level="body-sm">
-          Ubah identitas Profile Kamu bia memang diperlukan
-        </Typography>
+        <Typography level="title-md">{t("profileInfo.title")}</Typography>
+        <Typography level="body-sm">{t("profileInfo.subtitle")}</Typography>
       </Box>
       <Divider />
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={3} sx={{ my: 1 }}>
           <Grid xs={6}>
             <Stack spacing={1}>
-              <FormLabel>Nomor HP</FormLabel>
+              <FormLabel>{t("profileInfo.common.phoneNumber")}</FormLabel>
               <Controller
                 name="phone"
                 control={control}
                 rules={{
-                  required: "No HP harus diisi",
+                  required: t("profileInfo.common.phoneRequired"),
                   pattern: {
                     value: /^[0-9]{10,14}$/,
-                    message: "No HP harus berupa angka dan minimal 10 digit",
+                    message: t("profileInfo.common.phoneInvalid"),
                   },
                 }}
                 render={({ field }) => (
@@ -170,16 +170,18 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
           </Grid>
           <Grid xs={6}>
             <Stack spacing={1}>
-              <FormLabel>Jenis Kelamin</FormLabel>
+              <FormLabel>{t("profileInfo.participant.gender")}</FormLabel>
               <Controller
                 name="gender"
                 control={control}
-                rules={{ required: "Jenis Kelamin harus dipilih" }}
+                rules={{
+                  required: t("profileInfo.participant.genderRequired"),
+                }}
                 render={({ field: { onChange, value, ref } }) => (
                   <Select
                     ref={ref}
                     size="sm"
-                    placeholder="Pilih Jenis Kelamin"
+                    placeholder={t("profileInfo.participant.selectGender")}
                     startDecorator={<WcRounded />}
                     value={value || ""}
                     onChange={(event, newValue) => {
@@ -190,8 +192,12 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
                       position: "relative",
                     }}
                   >
-                    <Option value="L">Laki-laki</Option>
-                    <Option value="P">Perempuan</Option>
+                    <Option value="L">
+                      {t("profileInfo.participant.male")}
+                    </Option>
+                    <Option value="P">
+                      {t("profileInfo.participant.female")}
+                    </Option>
                   </Select>
                 )}
               />
@@ -207,23 +213,25 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
           </Grid>
           <Grid xs={6}>
             <Stack spacing={1}>
-              <FormLabel>Tanggal Lahir</FormLabel>
+              <FormLabel> {t("profileInfo.participant.birthDate")}</FormLabel>
               <style>{customStyles}</style>
               <Controller
                 name="birthDate"
                 control={control}
                 rules={{
-                  required: "Tanggal lahir harus diisi",
+                  required: t("profileInfo.participant.birthDateRequired"),
                   validate: {
                     notFuture: (value) => {
                       if (value && dayjs(value) > dayjs()) {
-                        return "Tanggal lahir tidak boleh lebih dari hari ini";
+                        return t(
+                          "profileInfo.participant.fembirthDateFutureale"
+                        );
                       }
                       return true;
                     },
                     notTooOld: (value) => {
                       if (value && dayjs(value) < dayjs("1900-01-01")) {
-                        return "Tanggal lahir tidak valid";
+                        return t("profileInfo.participant.birthDateInvalid");
                       }
                       return true;
                     },
@@ -236,7 +244,7 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
                       selected={new Date(field.value)}
                       dateFormat="yyyy-MM-dd"
                       renderCustomHeader={customHeader}
-                      placeholderText="Select date"
+                      placeholderText={t("profileInfo.participant.selectDate")}
                       ref={field.ref}
                       customInput={
                         <Input
@@ -262,18 +270,18 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
           </Grid>
           <Grid xs={6}>
             <Stack spacing={1}>
-              <FormLabel>Pendidikan</FormLabel>
+              <FormLabel>{t("profileInfo.participant.education")}</FormLabel>
               <Controller
                 name="educationLevelId"
                 control={control}
                 rules={{
-                  required: "Pendidikan harus dipilih",
+                  required: t("profileInfo.participant.educationRequired"),
                 }}
                 render={({ field }) => (
                   <Select
                     {...field}
                     size="sm"
-                    placeholder="Pilih Pendidikan"
+                    placeholder={t("profileInfo.participant.selectEducation")}
                     startDecorator={<SchoolRounded />}
                     value={field.value || ""}
                     onChange={(_, newValue) => field.onChange(newValue)}
@@ -307,7 +315,7 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
               onClick={handleReset}
               type="button"
             >
-              Batalkan
+              {t("buttons.cancel")}
             </Button>
             <Button
               size="sm"
@@ -316,7 +324,7 @@ const ProfileInfo = ({ profile }: ProfileInfoProps) => {
               disabled={!isDirty || isUpdating}
               type="submit"
             >
-              Simpan
+              {t("buttons.save")}
             </Button>
           </CardActions>
         </CardOverflow>

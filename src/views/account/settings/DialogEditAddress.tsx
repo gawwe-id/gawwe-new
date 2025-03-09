@@ -5,6 +5,7 @@ import { client } from "@/lib/client";
 import { ProfileAgencies } from "@/server/db/schema/profileAgencies";
 import { ProfileParticipant } from "@/server/db/schema/profileParticipants";
 import { useDialogEditAddressStore } from "@/store/useDialogEditAddressStore";
+import { useTranslation } from "react-i18next";
 
 import {
   Button,
@@ -33,6 +34,7 @@ interface RegionData {
 }
 
 const DialogEditAdress = () => {
+  const { t } = useTranslation("account");
   const queryClient = useQueryClient();
   const { data: session } = useSession();
   const { showSnackbar } = useSnackbar();
@@ -119,7 +121,7 @@ const DialogEditAdress = () => {
         await queryClient.invalidateQueries({
           queryKey: ["profile-participant"],
         });
-        showSnackbar("User Profile berhasil diubah!", "success");
+        showSnackbar(t("notifications.profileUpdateSuccess"), "success");
 
         closeDialog();
       },
@@ -143,7 +145,7 @@ const DialogEditAdress = () => {
       await queryClient.invalidateQueries({
         queryKey: ["profile-agency"],
       });
-      showSnackbar("User Profile berhasil diubah!", "success");
+      showSnackbar(t("notifications.profileUpdateSuccess"), "success");
 
       closeDialog();
     },
@@ -195,28 +197,26 @@ const DialogEditAdress = () => {
   return (
     <Modal open={isOpen} onClose={closeDialog}>
       <ModalDialog>
-        <DialogTitle>Ubah Alamat Baru</DialogTitle>
-        <DialogContent>
-          Jika alamat domisili kamu berubah, harap untuk disesuaikan.
-        </DialogContent>
+        <DialogTitle>{t("editAddress.title")}</DialogTitle>
+        <DialogContent>{t("editAddress.subtitle")}</DialogContent>
         <Divider />
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={3}>
             <Grid xs={12}>
               <Stack spacing={1}>
-                <FormLabel>Alamat</FormLabel>
+                <FormLabel>{t("editAddress.address")}</FormLabel>
                 <Controller
                   name="address"
                   control={control}
                   rules={{
-                    required: "Alamat harus diisi",
+                    required: t("editAddress.addressRequired"),
                   }}
                   render={({ field }) => (
                     <Textarea
                       {...field}
                       minRows={2}
                       id="address"
-                      placeholder="Alamat lengkap..."
+                      placeholder={t("editAddress.addressPlaceholder")}
                       value={field.value || ""}
                     />
                   )}
@@ -233,15 +233,15 @@ const DialogEditAdress = () => {
             </Grid>
             <Grid xs={6}>
               <Stack spacing={1}>
-                <FormLabel>Provinsi</FormLabel>
+                <FormLabel>{t("editAddress.province")}</FormLabel>
                 <Controller
                   name="province"
                   control={control}
-                  rules={{ required: "Provinsi harus dipilih" }}
+                  rules={{ required: t("editAddress.provinceRequired") }}
                   render={({ field: { onChange, value } }) => (
                     <Select
                       size="sm"
-                      placeholder="Pilih Provinsi"
+                      placeholder={t("editAddress.selectProvince")}
                       value={value || ""}
                       onChange={(_, newValue) => onChange(newValue)}
                     >
@@ -263,15 +263,15 @@ const DialogEditAdress = () => {
 
             <Grid xs={6}>
               <Stack spacing={1}>
-                <FormLabel>Kota/Kabupaten</FormLabel>
+                <FormLabel>{t("editAddress.city")}</FormLabel>
                 <Controller
                   name="regency"
                   control={control}
-                  rules={{ required: "Kota/Kabupaten harus dipilih" }}
+                  rules={{ required: t("editAddress.cityRequired") }}
                   render={({ field: { onChange, value } }) => (
                     <Select
                       size="sm"
-                      placeholder="Pilih Kota/Kabupaten"
+                      placeholder={t("editAddress.selectCity")}
                       value={value || ""}
                       onChange={(_, newValue) => onChange(newValue)}
                       disabled={!watchProvince}
@@ -294,15 +294,15 @@ const DialogEditAdress = () => {
 
             <Grid xs={6}>
               <Stack spacing={1}>
-                <FormLabel>Kecamatan</FormLabel>
+                <FormLabel>{t("editAddress.district")}</FormLabel>
                 <Controller
                   name="district"
                   control={control}
-                  rules={{ required: "Kecamatan harus dipilih" }}
+                  rules={{ required: t("editAddress.districtRequired") }}
                   render={({ field: { onChange, value } }) => (
                     <Select
                       size="sm"
-                      placeholder="Pilih Kecamatan"
+                      placeholder={t("editAddress.selectDistrict")}
                       value={value || ""}
                       onChange={(_, newValue) => onChange(newValue)}
                       disabled={!watchRegency}
@@ -325,15 +325,15 @@ const DialogEditAdress = () => {
 
             <Grid xs={6}>
               <Stack spacing={1}>
-                <FormLabel>Kelurahan/Desa</FormLabel>
+                <FormLabel>{t("editAddress.village")}</FormLabel>
                 <Controller
                   name="village"
                   control={control}
-                  rules={{ required: "Kelurahan/Desa harus dipilih" }}
+                  rules={{ required: t("editAddress.villageRequired") }}
                   render={({ field: { onChange, value } }) => (
                     <Select
                       size="sm"
-                      placeholder="Pilih Kelurahan/Desa"
+                      placeholder={t("editAddress.selectVillage")}
                       value={value || ""}
                       onChange={(_, newValue) => onChange(newValue)}
                       disabled={!watchDistrict}
@@ -370,7 +370,7 @@ const DialogEditAdress = () => {
               disabled={isUpdating}
               onClick={closeDialog}
             >
-              Batalkan
+              {t("buttons.cancel")}
             </Button>
             <Button
               size="sm"
@@ -380,7 +380,7 @@ const DialogEditAdress = () => {
               loading={isUpdating}
               disabled={isUpdating}
             >
-              Ubah Alamat
+              {t("editAddress.updateAddress")}
             </Button>
           </Stack>
         </form>
