@@ -1,11 +1,13 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useQuery } from "@tanstack/react-query";
+import { client } from "@/lib/client";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 // UI Components
 import { Box, Button, Grid, Divider } from "@mui/joy";
-
-import { AddRounded as AddIcon } from "@mui/icons-material";
 
 // Zustand store
 import { useLanguageStore } from "@/store/useLanguageStore";
@@ -13,13 +15,14 @@ import { useLanguageStore } from "@/store/useLanguageStore";
 // Components
 import AddLanguageDialog from "./dialog/AddLanguageDialog";
 import PageHeader from "@/components/common/PageHeader";
-import { useQuery } from "@tanstack/react-query";
-import { client } from "@/lib/client";
 import LanguageSection from "./sections/LanguageSection";
 import ClassesSection from "./sections/ClassesSection";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+// assets
+import { AddRounded as AddIcon } from "@mui/icons-material";
 
 export default function ClassSettingsPage() {
+  const { t } = useTranslation("class");
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -122,8 +125,8 @@ export default function ClassSettingsPage() {
   return (
     <Box sx={{ py: 4, px: { xs: 2, md: 4 }, maxWidth: "1300px", mx: "auto" }}>
       <PageHeader
-        title="Pengaturan Kelas"
-        description="Kelola bahasa dan kelas yang Anda tawarkan"
+        title={t("classSetting.pageTitle")}
+        description={t("classSetting.pageDescription")}
         action={
           <Button
             startDecorator={<AddIcon />}
@@ -131,7 +134,7 @@ export default function ClassSettingsPage() {
             onClick={openAddLanguageModal}
             size="sm"
           >
-            Tambah Bahasa
+            {t("classSetting.addLanguage")}
           </Button>
         }
       />

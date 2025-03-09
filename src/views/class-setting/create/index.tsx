@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useForm, Controller } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useTranslation } from "react-i18next";
 
 // UI Components
 import {
@@ -41,6 +42,7 @@ import { useSnackbar } from "@/hooks/useSnackbar";
 import ClassScheduleManager from "../sections/ClassScheduleManager";
 
 export default function CreateClass() {
+  const { t } = useTranslation("class");
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const languageId = searchParams.get("languageId") as string;
@@ -89,11 +91,14 @@ export default function CreateClass() {
       await queryClient.invalidateQueries({
         queryKey: ["classes-by-language", data?.languageClassId],
       });
-      showSnackbar(message, "success");
+      showSnackbar(t("notifications.classCreated"), "success");
     },
     onError: (error) => {
       console.error("Error creating class:", error);
-      showSnackbar(error.message, "danger");
+      showSnackbar(
+        t("notifications.error", { message: error.message }),
+        "danger"
+      );
     },
   });
 
@@ -124,7 +129,7 @@ export default function CreateClass() {
             >
               <ArrowBackIcon />
             </IconButton>
-            <Typography level="h2">Buat Kelas Baru</Typography>
+            <Typography level="h2">{t("createClass.pageTitle")}</Typography>
           </Box>
         </Box>
       )}
@@ -136,19 +141,19 @@ export default function CreateClass() {
             <Grid xs={12} md={8}>
               <Card variant="outlined">
                 <Typography level="title-lg" sx={{ mb: 2 }}>
-                  Informasi Kelas
+                  {t("createClass.sections.classInfo")}
                 </Typography>
 
                 <Grid container spacing={2}>
                   <Grid xs={12} sm={6}>
                     <FormControl error={!!errors.name} required>
-                      <FormLabel>Nama Kelas</FormLabel>
+                      <FormLabel>{t("createClass.form.className")}</FormLabel>
                       <Input
                         size="sm"
                         fullWidth
-                        placeholder="Contoh: Kelas Bahasa Jepang Batch 1"
+                        placeholder={t("createClass.form.classNamePlaceholder")}
                         {...register("name", {
-                          required: "Nama kelas harus diisi",
+                          required: t("createClass.form.errors.nameRequired"),
                         })}
                       />
                     </FormControl>
@@ -163,17 +168,17 @@ export default function CreateClass() {
 
                   <Grid xs={12} sm={6}>
                     <FormControl error={!!errors.batch} required>
-                      <FormLabel>Batch</FormLabel>
+                      <FormLabel>{t("createClass.form.batch")}</FormLabel>
                       <Input
                         type="number"
                         placeholder="1"
                         size="sm"
                         slotProps={{ input: { min: 1 } }}
                         {...register("batch", {
-                          required: "Batch harus diisi",
+                          required: t("createClass.form.errors.batchRequired"),
                           min: {
                             value: 1,
-                            message: "Batch minimal 1",
+                            message: t("createClass.form.errors.batchMin"),
                           },
                           valueAsNumber: true,
                         })}
@@ -190,12 +195,16 @@ export default function CreateClass() {
 
                   <Grid xs={12}>
                     <FormControl error={!!errors.description} required>
-                      <FormLabel>Deskripsi Kelas</FormLabel>
+                      <FormLabel>{t("createClass.form.description")}</FormLabel>
                       <Textarea
                         minRows={3}
-                        placeholder="Deskripsi tentang kelas ini"
+                        placeholder={t(
+                          "createClass.form.descriptionPlaceholder"
+                        )}
                         {...register("description", {
-                          required: "Deskripsi kelas harus diisi",
+                          required: t(
+                            "createClass.form.errors.descriptionRequired"
+                          ),
                         })}
                       />
                     </FormControl>
@@ -210,11 +219,15 @@ export default function CreateClass() {
 
                   <Grid xs={12} sm={6}>
                     <FormControl error={!!errors.startDate} required>
-                      <FormLabel>Tanggal Mulai</FormLabel>
+                      <FormLabel>{t("createClass.form.startDate")}</FormLabel>
                       <Controller
                         name="startDate"
                         control={control}
-                        rules={{ required: "Tanggal mulai harus diisi" }}
+                        rules={{
+                          required: t(
+                            "createClass.form.errors.startDateRequired"
+                          ),
+                        }}
                         render={({ field }) => (
                           <DatePicker
                             selected={field.value}
@@ -242,15 +255,17 @@ export default function CreateClass() {
 
                   <Grid xs={12} sm={6}>
                     <FormControl error={!!errors.endDate} required>
-                      <FormLabel>Tanggal Selesai</FormLabel>
+                      <FormLabel>{t("createClass.form.endDate")}</FormLabel>
                       <Controller
                         name="endDate"
                         control={control}
                         rules={{
-                          required: "Tanggal selesai harus diisi",
+                          required: t(
+                            "createClass.form.errors.endDateRequired"
+                          ),
                           validate: (value) =>
                             value > startDate ||
-                            "Tanggal selesai harus setelah tanggal mulai",
+                            t("createClass.form.errors.endDateAfterStart"),
                         }}
                         render={({ field }) => (
                           <DatePicker
@@ -282,7 +297,7 @@ export default function CreateClass() {
 
               <Card variant="outlined" sx={{ mt: 3 }}>
                 <Typography level="title-lg" sx={{ mb: 2 }}>
-                  Materi & Kurikulum
+                  {t("createClass.sections.materialsAndCurriculum")}
                 </Typography>
 
                 <Alert
@@ -292,7 +307,7 @@ export default function CreateClass() {
                   startDecorator={<InfoIcon />}
                   sx={{ mb: 2 }}
                 >
-                  Anda dapat menambahkan materi setelah kelas dibuat.
+                  {t("createClass.sections.materialsNote")}
                 </Alert>
               </Card>
             </Grid>
@@ -300,7 +315,7 @@ export default function CreateClass() {
             <Grid xs={12} md={4}>
               <Card variant="soft" color="primary" sx={{ mb: 3 }}>
                 <Typography level="title-lg" sx={{ mb: 2 }}>
-                  Bahasa
+                  {t("createClass.sections.language")}
                 </Typography>
 
                 <Box
@@ -308,7 +323,8 @@ export default function CreateClass() {
                 >
                   <LanguageIcon color="primary" />
                   <Typography level="title-md">
-                    Bahasa {languageData?.data?.languageClass?.languageName}
+                    {t("createClass.sections.language")}{" "}
+                    {languageData?.data?.languageClass?.languageName}
                   </Typography>
                 </Box>
 
@@ -319,7 +335,7 @@ export default function CreateClass() {
 
               <Card variant="outlined" sx={{ mb: 3 }}>
                 <Typography level="title-lg" sx={{ mb: 2 }}>
-                  Tindakan
+                  {t("createClass.sections.actions")}
                 </Typography>
 
                 <Stack spacing={2}>
@@ -331,7 +347,7 @@ export default function CreateClass() {
                     disabled={isPending}
                     loading={isPending}
                   >
-                    Simpan Kelas
+                    {t("common.actions.save")}
                   </Button>
 
                   <Button
@@ -343,28 +359,30 @@ export default function CreateClass() {
                     fullWidth
                     disabled={isPending}
                   >
-                    Batal
+                    {t("common.actions.cancel")}
                   </Button>
                 </Stack>
               </Card>
 
               <Card variant="outlined">
-                <Typography level="title-lg">Tips</Typography>
+                <Typography level="title-lg">
+                  {t("createClass.sections.tips")}
+                </Typography>
 
                 <List marker={"disc"}>
                   <ListItem>
                     <Typography level="body-xs">
-                      Nama kelas sebaiknya mencakup nama bahasa dan batch
+                      {t("createClass.tips.namingTip")}
                     </Typography>
                   </ListItem>
                   <ListItem>
                     <Typography level="body-xs">
-                      Pastikan jadwal mencakup hari dan waktu
+                      {t("createClass.tips.scheduleTip")}
                     </Typography>
                   </ListItem>
                   <ListItem>
                     <Typography level="body-xs">
-                      Deskripsi yang baik meningkatkan ketertarikan siswa
+                      {t("createClass.tips.descriptionTip")}
                     </Typography>
                   </ListItem>
                 </List>

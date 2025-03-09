@@ -23,14 +23,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { client } from "@/lib/client";
 import { useSession } from "next-auth/react";
 import { useSnackbar } from "@/hooks/useSnackbar";
-
-// Define schema for form validation
-const languageFormSchema = z.object({
-  languageId: z.string().min(1, "Silakan pilih bahasa"),
-  level: z.enum(["Beginner", "Intermediate", "Advanced", "All Levels"]),
-});
-
-type LanguageFormValues = z.infer<typeof languageFormSchema>;
+import { useTranslation } from "react-i18next";
 
 interface AddLanguageDialogProps {
   open: boolean;
@@ -41,9 +34,18 @@ export default function AddLanguageDialog({
   open,
   onClose,
 }: AddLanguageDialogProps) {
+  const { t } = useTranslation("class");
   const queryClient = useQueryClient();
   const { data: session } = useSession();
   const { showSnackbar } = useSnackbar();
+
+  // Define schema for form validation with translated error messages
+  const languageFormSchema = z.object({
+    languageId: z.string().min(1, t("addClass.languageName")),
+    level: z.enum(["Beginner", "Intermediate", "Advanced", "All Levels"]),
+  });
+
+  type LanguageFormValues = z.infer<typeof languageFormSchema>;
 
   const {
     control,
@@ -97,12 +99,15 @@ export default function AddLanguageDialog({
       await queryClient.invalidateQueries({
         queryKey: ["language-classes"],
       });
-      showSnackbar(data.message, "success");
+      showSnackbar(t("notifications.languageAdded"), "success");
       onClose();
     },
     onError: (error) => {
       console.error("Error creating language class:", error);
-      showSnackbar(error.message, "danger");
+      showSnackbar(
+        t("notifications.error", { message: error.message }),
+        "danger"
+      );
     },
   });
 
@@ -144,7 +149,7 @@ export default function AddLanguageDialog({
             textColor="inherit"
             fontWeight="lg"
           >
-            Tambah Bahasa Baru
+            {t("addClass.dialogTitle")}
           </Typography>
         </Box>
 
@@ -152,7 +157,7 @@ export default function AddLanguageDialog({
 
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
           <FormControl sx={{ mb: 2 }} required>
-            <FormLabel>Nama Bahasa</FormLabel>
+            <FormLabel>{t("addClass.languageName")}</FormLabel>
             <Controller
               name="languageId"
               control={control}
@@ -160,7 +165,7 @@ export default function AddLanguageDialog({
                 <Select
                   {...field}
                   size="sm"
-                  placeholder="Pilih Bahasa"
+                  placeholder={t("classSetting.selectLanguage")}
                   value={field.value || ""}
                   onChange={(event, newValue) => {
                     field.onChange(newValue);
@@ -180,7 +185,7 @@ export default function AddLanguageDialog({
           </FormControl>
 
           <FormControl sx={{ mb: 3 }}>
-            <FormLabel>Level</FormLabel>
+            <FormLabel>{t("addClass.level")}</FormLabel>
             <Controller
               name="level"
               control={control}
@@ -200,15 +205,15 @@ export default function AddLanguageDialog({
                 </Select>
               )}
             />
-            <FormHelperText>Pilih level umum untuk bahasa ini</FormHelperText>
+            <FormHelperText>{t("addClass.levelDescription")}</FormHelperText>
           </FormControl>
 
           <Box sx={{ display: "flex", gap: 1, justifyContent: "flex-end" }}>
             <Button variant="plain" color="neutral" onClick={onClose}>
-              Batal
+              {t("common.actions.cancel")}
             </Button>
             <Button type="submit" loading={isPending}>
-              Simpan
+              {t("common.actions.save")}
             </Button>
           </Box>
         </Box>
