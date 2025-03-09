@@ -1,0 +1,160 @@
+{
+  "common": {
+    "actions": {
+      "add": "Add",
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save",
+      "cancel": "Cancel",
+      "back": "Back",
+      "detail": "Detail",
+      "update": "Update",
+      "close": "Close",
+      "saveChanges": "Save Changes",
+      "viewAll": "View all"
+    },
+    "status": {
+      "loading": "Loading...",
+      "processing": "Processing..."
+    },
+    "time": {
+      "startTime": "Start Time",
+      "endTime": "End Time"
+    }
+  },
+  "classSetting": {
+    "pageTitle": "Class Settings",
+    "pageDescription": "Manage the languages and classes you offer",
+    "addLanguage": "Add Language",
+    "selectLanguage": "Select Language",
+    "languagesSection": {
+      "title": "Available Languages",
+      "noLanguages": "No Languages Yet",
+      "noLanguagesDescription": "You haven't added any languages yet. Add a language to start creating classes.",
+      "languageLevel": "Level: {{level}}",
+      "classCount": "{{count}} Classes"
+    },
+    "classesSection": {
+      "title": "{{language}} Classes",
+      "noClasses": "No Classes Yet",
+      "noClassesDescription": "You haven't created any classes for this language.",
+      "createNewClass": "Create New Class",
+      "viewModes": {
+        "card": "Card View",
+        "table": "Table View"
+      },
+      "batch": "Batch {{number}}",
+      "schedule": "Schedule",
+      "scheduleDay": "Schedule Days:",
+      "tableName": "Class Name",
+      "tableBatch": "Batch",
+      "tableSchedule": "Schedule",
+      "tableAction": "Action"
+    }
+  },
+  "addClass": {
+    "dialogTitle": "Add New Language",
+    "languageName": "Language Name",
+    "selectLanguage": "Select Language",
+    "level": "Level",
+    "levelDescription": "Select general level for this language"
+  },
+  "createClass": {
+    "pageTitle": "Create New Class",
+    "sections": {
+      "classInfo": "Class Information",
+      "materialsAndCurriculum": "Materials & Curriculum",
+      "materialsNote": "You can add materials after creating the class.",
+      "language": "Language",
+      "actions": "Actions",
+      "tips": "Tips"
+    },
+    "form": {
+      "className": "Class Name",
+      "classNamePlaceholder": "Example: Japanese Language Class Batch 1",
+      "batch": "Batch",
+      "description": "Class Description",
+      "descriptionPlaceholder": "Description about this class",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "errors": {
+        "nameRequired": "Class name is required",
+        "batchRequired": "Batch is required",
+        "batchMin": "Minimum batch is 1",
+        "descriptionRequired": "Class description is required",
+        "startDateRequired": "Start date is required",
+        "endDateRequired": "End date is required",
+        "endDateAfterStart": "End date must be after start date"
+      }
+    },
+    "tips": {
+      "namingTip": "Class name should include language name and batch",
+      "scheduleTip": "Make sure the schedule includes day and time",
+      "descriptionTip": "A good description increases student interest"
+    },
+    "success": {
+      "title": "Class Created Successfully!",
+      "addSchedules": "Add Schedules",
+      "scheduleNote": "No schedules yet, add schedules before returning to Class Settings page"
+    }
+  },
+  "classDetail": {
+    "pageTitle": "Class Detail",
+    "sections": {
+      "information": "Class Information",
+      "description": "Description",
+      "scheduleInfo": "Schedule Information",
+      "startDate": "Start Date:",
+      "endDate": "End Date:",
+      "delete": {
+        "title": "Delete Class",
+        "confirmation": "Are you sure you want to delete this class?",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      }
+    }
+  },
+  "schedule": {
+    "title": "Class Schedules",
+    "form": {
+      "title": "Add Class Schedule",
+      "editTitle": "Edit Class Schedule",
+      "day": "Day",
+      "dayRequired": "Day must be selected",
+      "dayDuplicate": "Schedule for this day already exists",
+      "startTime": "Start Time",
+      "startTimeRequired": "Start time is required",
+      "endTime": "End Time",
+      "endTimeRequired": "End time is required",
+      "selectTime": "Select Time",
+      "addSchedule": "Add Schedule",
+      "updateSchedule": "Update Schedule",
+      "cancelEdit": "Cancel Edit"
+    },
+    "noSchedules": "No schedules available",
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    }
+  },
+  "participants": {
+    "title": "Enrolled Students",
+    "noStudents": "No students enrolled yet",
+    "joined": "Joined: {{date}}"
+  },
+  "notifications": {
+    "classCreated": "Class created successfully",
+    "classUpdated": "Changes saved successfully",
+    "classDeleted": "Class deleted successfully",
+    "scheduleCreated": "Schedule created successfully",
+    "scheduleUpdated": "Schedule updated successfully",
+    "scheduleDeleted": "Schedule deleted successfully",
+    "languageAdded": "Language added successfully",
+    "error": "An error occurred: {{message}}"
+  }
+}

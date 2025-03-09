@@ -1,4 +1,7 @@
+"use client";
+
 import { Box, Button, Typography } from "@mui/joy";
+import { useTranslation } from "react-i18next";
 import {
   AddRounded as AddIcon,
   LanguageRounded as LanguageIcon,
@@ -28,8 +31,10 @@ export default function LanguageSection({
   onOpenAddLanguageModal,
   isPending,
 }: LanguageSectionProps) {
+  const { t } = useTranslation("class");
+
   if (isPending) {
-    return <Box>Loading...</Box>;
+    return <Box>{t("common.status.loading")}</Box>;
   }
 
   const handleLanguageClick = (id: string) => {
@@ -39,20 +44,22 @@ export default function LanguageSection({
   return (
     <>
       <Typography level="title-lg" sx={{ mb: 2 }}>
-        Bahasa yang Tersedia
+        {t("classSetting.languagesSection.title")}
       </Typography>
 
       {!languages?.length ? (
         <EmptyState
           icon={<LanguageIcon sx={{ fontSize: 40 }} />}
-          title="Belum Ada Bahasa"
-          description="Anda belum menambahkan bahasa apapun. Tambahkan bahasa untuk mulai membuat kelas."
+          title={t("classSetting.languagesSection.noLanguages")}
+          description={t(
+            "classSetting.languagesSection.noLanguagesDescription"
+          )}
           action={
             <Button
               startDecorator={<AddIcon />}
               onClick={onOpenAddLanguageModal}
             >
-              Tambah Bahasa
+              {t("classSetting.addLanguage")}
             </Button>
           }
         />

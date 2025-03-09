@@ -29,12 +29,14 @@ import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import { Controller, useForm } from "react-hook-form";
 import ListSchedule from "./ListSchedule";
+import { useTranslation } from "react-i18next";
 
 interface FormScheduleProps {
   classId: string;
 }
 
 const FormSchedule = ({ classId }: FormScheduleProps) => {
+  const { t } = useTranslation("class");
   const { showSnackbar } = useSnackbar();
 
   const [editingSchedule, setEditingSchedule] = useState<null | ClassSchedule>(
@@ -64,10 +66,13 @@ const FormSchedule = ({ classId }: FormScheduleProps) => {
     useCreateClassSchedule(
       () => {
         resetForm();
-        showSnackbar("Berhasil membuat jadwal", "success");
+        showSnackbar(t("notifications.scheduleCreated"), "success");
       },
       (error) => {
-        showSnackbar(error.message, "danger");
+        showSnackbar(
+          t("notifications.error", { message: error.message }),
+          "danger"
+        );
       }
     );
 
@@ -75,20 +80,26 @@ const FormSchedule = ({ classId }: FormScheduleProps) => {
     useUpdateClassSchedule(
       () => {
         resetForm();
-        showSnackbar("Berhasil mengubah jadwal", "success");
+        showSnackbar(t("notifications.scheduleUpdated"), "success");
       },
       (error) => {
-        showSnackbar(error.message, "danger");
+        showSnackbar(
+          t("notifications.error", { message: error.message }),
+          "danger"
+        );
       }
     );
 
   const { mutate: deleteSchedule, isPending: isDeleteing } =
     useDeleteClassSchedule(
       () => {
-        showSnackbar("Berhasil menghapus jadwal", "success");
+        showSnackbar(t("notifications.scheduleDeleted"), "success");
       },
       (error) => {
-        showSnackbar(error.message, "danger");
+        showSnackbar(
+          t("notifications.error", { message: error.message }),
+          "danger"
+        );
       }
     );
 
@@ -138,6 +149,21 @@ const FormSchedule = ({ classId }: FormScheduleProps) => {
       .padStart(2, "0")}:00`;
   };
 
+  // Map ScheduleDay enum values to translation keys
+  const getDayTranslation = (day: string) => {
+    const dayMap: Record<string, string> = {
+      SENIN: t("schedule.days.monday"),
+      SELASA: t("schedule.days.tuesday"),
+      RABU: t("schedule.days.wednesday"),
+      KAMIS: t("schedule.days.thursday"),
+      JUMAT: t("schedule.days.friday"),
+      SABTU: t("schedule.days.saturday"),
+      MINGGU: t("schedule.days.sunday"),
+    };
+
+    return dayMap[day] || day.charAt(0) + day.slice(1).toLowerCase();
+  };
+
   const onSubmit = (data: ClassSchedule) => {
     if (editingSchedule) {
       updateSchedule({
@@ -164,13 +190,15 @@ const FormSchedule = ({ classId }: FormScheduleProps) => {
     <Card>
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <EventRounded sx={{ mr: 1, fontSize: 22 }} />
-        <Typography level="title-lg">Class Schedules</Typography>
+        <Typography level="title-lg">{t("schedule.title")}</Typography>
       </Box>
 
       <Divider sx={{ my: 1 }} />
 
       <Box mb={2}>
-        <Typography level="title-md">Jadwal Kelas</Typography>
+        <Typography level="title-md">
+          {t("classSetting.classesSection.schedule")}
+        </Typography>
         {isSchedule ? (
           <Stack height={50} justifyContent="center" alignItems="center">
             <CircularProgress size="sm" />
@@ -189,11 +217,11 @@ const FormSchedule = ({ classId }: FormScheduleProps) => {
         <Grid container spacing={1} sx={{ mb: 2 }}>
           <Grid xs={12} md={4}>
             <FormControl error={isDayDuplicate && !editingSchedule}>
-              <FormLabel>Hari</FormLabel>
+              <FormLabel>{t("schedule.form.day")}</FormLabel>
               <Controller
                 name="day"
                 control={control}
-                rules={{ required: "Hari harus dipilih" }}
+                rules={{ required: t("schedule.form.dayRequired") }}
                 render={({ field }) => (
                   <Select
                     {...field}
@@ -208,14 +236,16 @@ const FormSchedule = ({ classId }: FormScheduleProps) => {
                   >
                     {availableDays.map((d) => (
                       <Option key={d} value={d}>
-                        {d.charAt(0) + d.slice(1).toLowerCase()}
+                        {getDayTranslation(d)}
                       </Option>
                     ))}
                   </Select>
                 )}
               />
               {isDayDuplicate && !editingSchedule && (
-                <FormHelperText>Jadwal untuk hari ini sudah ada</FormHelperText>
+                <FormHelperText>
+                  {t("schedule.form.dayDuplicate")}
+                </FormHelperText>
               )}
               {errors.day && (
                 <Typography level="body-xs" color="danger">
@@ -227,11 +257,11 @@ const FormSchedule = ({ classId }: FormScheduleProps) => {
 
           <Grid xs={12} md={4}>
             <FormControl>
-              <FormLabel>Waktu Mulai</FormLabel>
+              <FormLabel>{t("common.time.startTime")}</FormLabel>
               <Controller
                 name="startTime"
                 control={control}
-                rules={{ required: "Waktu mulai harus diisi" }}
+                rules={{ required: t("schedule.form.startTimeRequired") }}
                 render={({ field }) => (
                   <DatePicker
                     selected={timeStringToDate(field.value)}
@@ -245,7 +275,7 @@ const FormSchedule = ({ classId }: FormScheduleProps) => {
                     timeIntervals={15}
                     dateFormat="HH:mm"
                     timeFormat="HH:mm"
-                    placeholderText="Pilih Waktu"
+                    placeholderText={t("schedule.form.selectTime")}
                     showTimeCaption={false}
                     customInput={<Input size="sm" fullWidth />}
                   />
@@ -261,11 +291,11 @@ const FormSchedule = ({ classId }: FormScheduleProps) => {
 
           <Grid xs={12} md={4}>
             <FormControl>
-              <FormLabel>Waktu Selesai</FormLabel>
+              <FormLabel>{t("common.time.endTime")}</FormLabel>
               <Controller
                 name="endTime"
                 control={control}
-                rules={{ required: "Waktu selesai harus diisi" }}
+                rules={{ required: t("schedule.form.endTimeRequired") }}
                 render={({ field }) => (
                   <DatePicker
                     selected={timeStringToDate(field.value)}
@@ -279,7 +309,7 @@ const FormSchedule = ({ classId }: FormScheduleProps) => {
                     timeIntervals={15}
                     dateFormat="HH:mm"
                     timeFormat="HH:mm"
-                    placeholderText="Pilih Waktu"
+                    placeholderText={t("schedule.form.selectTime")}
                     showTimeCaption={false}
                     customInput={<Input size="sm" fullWidth />}
                   />
@@ -305,9 +335,9 @@ const FormSchedule = ({ classId }: FormScheduleProps) => {
             {isCreating || isUpdating ? (
               <CircularProgress size="sm" />
             ) : editingSchedule ? (
-              "Update Jadwal"
+              t("schedule.form.updateSchedule")
             ) : (
-              "Tambah Jadwal"
+              t("schedule.form.addSchedule")
             )}
           </Button>
 
@@ -318,7 +348,7 @@ const FormSchedule = ({ classId }: FormScheduleProps) => {
               color="neutral"
               onClick={resetForm}
             >
-              Batal Edit
+              {t("schedule.form.cancelEdit")}
             </Button>
           )}
         </Stack>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Button,
   Typography,
@@ -52,6 +53,7 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
   data,
   readOnly = false,
 }) => {
+  const { t } = useTranslation("class");
   const router = useRouter();
   const { showSnackbar } = useSnackbar();
 
@@ -79,10 +81,13 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
     useCreateClassSchedule(
       () => {
         resetForm();
-        showSnackbar("Berhasil membuat jadwal", "success");
+        showSnackbar(t("notifications.scheduleCreated"), "success");
       },
       (error) => {
-        showSnackbar(error.message, "danger");
+        showSnackbar(
+          t("notifications.error", { message: error.message }),
+          "danger"
+        );
       }
     );
 
@@ -90,20 +95,26 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
     useUpdateClassSchedule(
       () => {
         resetForm();
-        showSnackbar("Berhasil mengubah jadwal", "success");
+        showSnackbar(t("notifications.scheduleUpdated"), "success");
       },
       (error) => {
-        showSnackbar(error.message, "danger");
+        showSnackbar(
+          t("notifications.error", { message: error.message }),
+          "danger"
+        );
       }
     );
 
   const { mutate: deleteSchedule, isPending: isDeleteing } =
     useDeleteClassSchedule(
       () => {
-        showSnackbar("Berhasil menghapus jadwal", "success");
+        showSnackbar(t("notifications.scheduleDeleted"), "success");
       },
       (error) => {
-        showSnackbar(error.message, "danger");
+        showSnackbar(
+          t("notifications.error", { message: error.message }),
+          "danger"
+        );
       }
     );
 
@@ -190,6 +201,20 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
       .padStart(2, "0")}:00`;
   };
 
+  const formatDayName = (day: string) => {
+    const dayMap: Record<string, string> = {
+      SENIN: t("schedule.days.monday"),
+      SELASA: t("schedule.days.tuesday"),
+      RABU: t("schedule.days.wednesday"),
+      KAMIS: t("schedule.days.thursday"),
+      JUMAT: t("schedule.days.friday"),
+      SABTU: t("schedule.days.saturday"),
+      MINGGU: t("schedule.days.sunday"),
+    };
+
+    return dayMap[day] || day.charAt(0) + day.slice(1).toLowerCase();
+  };
+
   const handleBack = () => router.back();
 
   return (
@@ -202,7 +227,7 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
           <CheckCircleRounded color="success" sx={{ mr: 1, fontSize: 24 }} />
           <Typography level="title-sm" color="success">
-            Kelas Berhasil Dibuat!
+            {t("createClass.success.title")}
           </Typography>
         </Box>
 
@@ -212,17 +237,27 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
           </Typography>
           <Grid container mt={1}>
             <Grid xs={12} md={4}>
-              <Typography level="title-sm">Batch</Typography>
-              <Typography level="body-sm">Batch: {data?.batch}</Typography>
+              <Typography level="title-sm">
+                {t("classSetting.classesSection.batch", { number: "" })}
+              </Typography>
+              <Typography level="body-sm">
+                {t("classSetting.classesSection.batch", {
+                  number: data?.batch,
+                })}
+              </Typography>
             </Grid>
             <Grid xs={12} md={4}>
-              <Typography level="title-sm">Tanggal Mulai</Typography>
+              <Typography level="title-sm">
+                {t("createClass.form.startDate")}
+              </Typography>
               <Typography level="body-sm">
                 {formatDate(data?.startDate as Date)}
               </Typography>
             </Grid>
             <Grid xs={12} md={4}>
-              <Typography level="title-sm">Tanggal Selesai</Typography>
+              <Typography level="title-sm">
+                {t("createClass.form.endDate")}
+              </Typography>
               <Typography level="body-sm">
                 {formatDate(data?.endDate as Date)}
               </Typography>
@@ -231,7 +266,7 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
         </Box>
 
         <Box>
-          <Typography level="title-md">Jadwal Kelas</Typography>
+          <Typography level="title-md">{t("schedule.title")}</Typography>
           {isLoading ? (
             <CircularProgress />
           ) : (
@@ -244,31 +279,37 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
                   startDecorator={<InfoRounded />}
                   sx={{ mt: 1 }}
                 >
-                  Belum ada Jadwal, tambahkan Jadwal sebelum kembali ke halaman
-                  Pengaturan Kelas
+                  {t("createClass.success.scheduleNote")}
                 </Alert>
               ) : (
                 <>
                   <Grid container mt={1}>
                     <Grid xs={12} md={3}>
-                      <Typography level="title-sm">Hari</Typography>
+                      <Typography level="title-sm">
+                        {t("schedule.form.day")}
+                      </Typography>
                     </Grid>
                     <Grid xs={12} md={3}>
-                      <Typography level="title-sm">Waktu Mulai</Typography>
+                      <Typography level="title-sm">
+                        {t("common.time.startTime")}
+                      </Typography>
                     </Grid>
                     <Grid xs={12} md={3}>
-                      <Typography level="title-sm">Waktu Selesai</Typography>
+                      <Typography level="title-sm">
+                        {t("common.time.endTime")}
+                      </Typography>
                     </Grid>
                     <Grid xs={12} md={3}>
-                      <Typography level="title-sm">Aksi</Typography>
+                      <Typography level="title-sm">
+                        {t("common.actions.add")}
+                      </Typography>
                     </Grid>
                   </Grid>
                   {schedulesData?.data.map((schedule: ClassSchedule) => (
                     <Grid container key={schedule.id}>
                       <Grid xs={12} md={3}>
                         <Typography level="body-sm">
-                          {schedule.day.charAt(0) +
-                            schedule.day.slice(1).toLowerCase()}
+                          {formatDayName(schedule.day)}
                         </Typography>
                       </Grid>
                       <Grid xs={12} md={3}>
@@ -289,7 +330,7 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
                             disabled={isCreating || isUpdating || isDeleteing}
                             onClick={() => handleEditSchedule(schedule)}
                           >
-                            Edit
+                            {t("common.actions.edit")}
                           </Link>
                           <Link
                             level="body-sm"
@@ -297,7 +338,7 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
                             disabled={isCreating || isUpdating || isDeleteing}
                             onClick={() => handleDeleteSchedule(schedule.id)}
                           >
-                            Hapus
+                            {t("common.actions.delete")}
                           </Link>
                         </Stack>
                       </Grid>
@@ -320,7 +361,9 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
           }}
         >
           <Typography level="title-lg">
-            {editingSchedule ? "Edit Jadwal Kelas" : "Tambah Jadwal Kelas"}
+            {editingSchedule
+              ? t("schedule.form.editTitle")
+              : t("schedule.form.title")}
           </Typography>
         </Box>
         {!readOnly && (
@@ -328,11 +371,11 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
             <Grid container spacing={2} sx={{ mb: 2 }}>
               <Grid xs={12} md={4}>
                 <FormControl error={isDayDuplicate && !editingSchedule}>
-                  <FormLabel>Hari</FormLabel>
+                  <FormLabel>{t("schedule.form.day")}</FormLabel>
                   <Controller
                     name="day"
                     control={control}
-                    rules={{ required: "Hari harus dipilih" }}
+                    rules={{ required: t("schedule.form.dayRequired") }}
                     render={({ field }) => (
                       <Select
                         {...field}
@@ -348,7 +391,7 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
                       >
                         {availableDays.map((d) => (
                           <Option key={d} value={d}>
-                            {d.charAt(0) + d.slice(1).toLowerCase()}
+                            {formatDayName(d)}
                           </Option>
                         ))}
                       </Select>
@@ -356,7 +399,7 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
                   />
                   {isDayDuplicate && !editingSchedule && (
                     <FormHelperText>
-                      Jadwal untuk hari ini sudah ada
+                      {t("schedule.form.dayDuplicate")}
                     </FormHelperText>
                   )}
                   {errors.day && (
@@ -369,11 +412,11 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
 
               <Grid xs={12} md={4}>
                 <FormControl>
-                  <FormLabel>Waktu Mulai</FormLabel>
+                  <FormLabel>{t("common.time.startTime")}</FormLabel>
                   <Controller
                     name="startTime"
                     control={control}
-                    rules={{ required: "Waktu mulai harus diisi" }}
+                    rules={{ required: t("schedule.form.startTimeRequired") }}
                     render={({ field }) => (
                       <DatePicker
                         selected={timeStringToDate(field.value)}
@@ -387,7 +430,7 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
                         timeIntervals={15}
                         dateFormat="HH:mm"
                         timeFormat="HH:mm"
-                        placeholderText="Pilih Waktu"
+                        placeholderText={t("schedule.form.selectTime")}
                         showTimeCaption={false}
                         customInput={
                           <Input
@@ -409,11 +452,11 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
 
               <Grid xs={12} md={4}>
                 <FormControl>
-                  <FormLabel>Waktu Selesai</FormLabel>
+                  <FormLabel>{t("common.time.endTime")}</FormLabel>
                   <Controller
                     name="endTime"
                     control={control}
-                    rules={{ required: "Waktu selesai harus diisi" }}
+                    rules={{ required: t("schedule.form.endTimeRequired") }}
                     render={({ field }) => (
                       <DatePicker
                         selected={timeStringToDate(field.value)}
@@ -427,7 +470,7 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
                         timeIntervals={15}
                         dateFormat="HH:mm"
                         timeFormat="HH:mm"
-                        placeholderText="Pilih Waktu"
+                        placeholderText={t("schedule.form.selectTime")}
                         showTimeCaption={false}
                         customInput={
                           <Input
@@ -463,15 +506,15 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
                 {isCreating || isUpdating ? (
                   <CircularProgress size="sm" />
                 ) : editingSchedule ? (
-                  "Update Jadwal"
+                  t("schedule.form.updateSchedule")
                 ) : (
-                  "Tambah Jadwal"
+                  t("schedule.form.addSchedule")
                 )}
               </Button>
 
               {editingSchedule && (
                 <Button variant="outlined" color="neutral" onClick={resetForm}>
-                  Batal Edit
+                  {t("schedule.form.cancelEdit")}
                 </Button>
               )}
             </Stack>
@@ -489,7 +532,7 @@ const ClassScheduleManager: React.FC<ClassScheduleManagerProps> = ({
             disabled={schedulesData?.data?.length === 0}
             sx={{ ":hover": { textDecoration: "underline" } }}
           >
-            Kembali ke Pengaturan Kelas
+            {t("common.actions.back")} {t("classSetting.pageTitle")}
           </Button>
         </Box>
       </Card>

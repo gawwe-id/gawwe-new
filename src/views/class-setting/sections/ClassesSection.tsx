@@ -1,5 +1,6 @@
 import { Box, Button, Grid, Typography } from "@mui/joy";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import {
   AddRounded as AddIcon,
   SchoolRounded as SchoolIcon,
@@ -26,18 +27,20 @@ export default function ClassesSection({
   onViewChange,
   isPending,
 }: ClassesSectionProps) {
+  const { t } = useTranslation("class");
+
   if (!selectedLanguageId) {
     return (
       <EmptyState
         icon={<SchoolIcon sx={{ fontSize: 40 }} />}
-        title="Pilih Bahasa"
-        description="Silakan pilih bahasa dari daftar di sebelah kiri untuk melihat kelas yang tersedia."
+        title={t("classSetting.selectLanguage")}
+        description={t("classSetting.languagesSection.noLanguagesDescription")}
       />
     );
   }
 
   if (isPending) {
-    return <Box>Loading...</Box>;
+    return <Box>{t("common.status.loading")}</Box>;
   }
 
   return (
@@ -50,7 +53,9 @@ export default function ClassesSection({
           mb: 2,
         }}
       >
-        <Typography level="title-lg">Kelas Bahasa {languageName}</Typography>
+        <Typography level="title-lg">
+          {t("classSetting.classesSection.title", { language: languageName })}
+        </Typography>
 
         <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
           <ViewToggle viewMode={viewMode} onViewChange={onViewChange} />
@@ -61,7 +66,7 @@ export default function ClassesSection({
             startDecorator={<AddIcon />}
             size="sm"
           >
-            Buat Kelas Baru
+            {t("classSetting.classesSection.createNewClass")}
           </Button>
         </Box>
       </Box>
@@ -69,8 +74,8 @@ export default function ClassesSection({
       {!classes?.length ? (
         <EmptyState
           icon={<SchoolIcon sx={{ fontSize: 40 }} />}
-          title="Belum Ada Kelas"
-          description="Anda belum membuat kelas untuk bahasa ini."
+          title={t("classSetting.classesSection.noClasses")}
+          description={t("classSetting.classesSection.noClassesDescription")}
         />
       ) : viewMode === "table" ? (
         <ClassesTable classes={classes} />

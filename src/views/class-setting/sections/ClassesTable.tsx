@@ -10,6 +10,9 @@ import {
   Typography,
 } from "@mui/joy";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
+
+// assets
 import {
   CalendarMonthRounded,
   VisibilityRounded as VisibilityIcon,
@@ -31,20 +34,21 @@ interface ClassesTableProps {
   }>;
 }
 
-const formatDayName = (day: string) => {
-  const days: Record<string, string> = {
-    SENIN: "Senin",
-    SELASA: "Selasa",
-    RABU: "Rabu",
-    KAMIS: "Kamis",
-    JUMAT: "Jumat",
-    SABTU: "Sabtu",
-    MINGGU: "Minggu",
+const formatDayName = (day: string, t: any) => {
+  const dayMap: Record<string, string> = {
+    SENIN: t("schedule.days.monday"),
+    SELASA: t("schedule.days.tuesday"),
+    RABU: t("schedule.days.wednesday"),
+    KAMIS: t("schedule.days.thursday"),
+    JUMAT: t("schedule.days.friday"),
+    SABTU: t("schedule.days.saturday"),
+    MINGGU: t("schedule.days.sunday"),
   };
-  return days[day] || day;
+  return dayMap[day] || day;
 };
 
 export default function ClassesTable({ classes }: ClassesTableProps) {
+  const { t } = useTranslation("class");
   const router = useRouter();
 
   return (
@@ -52,10 +56,18 @@ export default function ClassesTable({ classes }: ClassesTableProps) {
       <Table>
         <thead>
           <tr>
-            <th style={{ width: "40%" }}>Nama Kelas</th>
-            <th style={{ width: "15%" }}>Batch</th>
-            <th style={{ width: "30%" }}>Jadwal</th>
-            <th style={{ width: "15%", textAlign: "center" }}>Aksi</th>
+            <th style={{ width: "40%" }}>
+              {t("classSetting.classesSection.tableName")}
+            </th>
+            <th style={{ width: "15%" }}>
+              {t("classSetting.classesSection.tableBatch")}
+            </th>
+            <th style={{ width: "30%" }}>
+              {t("classSetting.classesSection.tableSchedule")}
+            </th>
+            <th style={{ width: "15%", textAlign: "center" }}>
+              {t("classSetting.classesSection.tableAction")}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -72,7 +84,9 @@ export default function ClassesTable({ classes }: ClassesTableProps) {
               </td>
               <td>
                 <Chip size="sm" variant="soft" color="secondary">
-                  Batch {classItem.batch}
+                  {t("classSetting.classesSection.batch", {
+                    number: classItem.batch,
+                  })}
                 </Chip>
               </td>
               <td>
@@ -108,7 +122,7 @@ export default function ClassesTable({ classes }: ClassesTableProps) {
                         color="primary"
                         slotProps={{ root: { sx: { fontSize: "0.7rem" } } }}
                       >
-                        {formatDayName(schedule.day)}
+                        {formatDayName(schedule.day, t)}
                       </Chip>
                     ))}
                   </Box>

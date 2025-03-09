@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/joy";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface ListScheduleProps {
   schedules: ClassSchedule[] | undefined;
@@ -27,6 +28,8 @@ const ListSchedule = ({
   onDelete,
   isLoading,
 }: ListScheduleProps) => {
+  const { t } = useTranslation("class");
+
   const formatTime = (timeString: string) => {
     try {
       if (!timeString) return "";
@@ -47,7 +50,17 @@ const ListSchedule = ({
   };
 
   const getDayLabel = (day: string) => {
-    return day.charAt(0) + day.slice(1).toLowerCase();
+    const dayMap: Record<string, string> = {
+      SENIN: t("schedule.days.monday"),
+      SELASA: t("schedule.days.tuesday"),
+      RABU: t("schedule.days.wednesday"),
+      KAMIS: t("schedule.days.thursday"),
+      JUMAT: t("schedule.days.friday"),
+      SABTU: t("schedule.days.saturday"),
+      MINGGU: t("schedule.days.sunday"),
+    };
+
+    return dayMap[day] || day.charAt(0) + day.slice(1).toLowerCase();
   };
 
   const getDayColor = (day: string) => {
@@ -69,7 +82,9 @@ const ListSchedule = ({
         {schedules?.length === 0 ? (
           <ListItem>
             <ListItemContent>
-              <Typography level="body-xs">Tidak ada jadwal tersedia</Typography>
+              <Typography level="body-xs">
+                {t("schedule.noSchedules")}
+              </Typography>
             </ListItemContent>
           </ListItem>
         ) : (
@@ -84,7 +99,7 @@ const ListSchedule = ({
                     disabled={isLoading}
                     onClick={() => onEdit(schedule)}
                   >
-                    Edit
+                    {t("common.actions.edit")}
                   </Link>
                   <Link
                     level="body-xs"
@@ -92,7 +107,7 @@ const ListSchedule = ({
                     disabled={isLoading}
                     onClick={() => onDelete(schedule.id)}
                   >
-                    Hapus
+                    {t("common.actions.delete")}
                   </Link>
                 </Stack>
               }

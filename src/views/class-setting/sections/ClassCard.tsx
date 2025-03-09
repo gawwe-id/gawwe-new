@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import {
   AspectRatio,
   Box,
@@ -12,6 +13,8 @@ import {
   Chip,
   Typography,
 } from "@mui/joy";
+
+// assets
 import {
   CalendarMonthRounded,
   SchoolRounded as SchoolIcon,
@@ -33,20 +36,21 @@ interface ClassCardProps {
   };
 }
 
-const formatDayName = (day: string) => {
-  const days: Record<string, string> = {
-    SENIN: "Senin",
-    SELASA: "Selasa",
-    RABU: "Rabu",
-    KAMIS: "Kamis",
-    JUMAT: "Jumat",
-    SABTU: "Sabtu",
-    MINGGU: "Minggu",
+const formatDayName = (day: string, t: any) => {
+  const dayMap: Record<string, string> = {
+    SENIN: t("schedule.days.monday"),
+    SELASA: t("schedule.days.tuesday"),
+    RABU: t("schedule.days.wednesday"),
+    KAMIS: t("schedule.days.thursday"),
+    JUMAT: t("schedule.days.friday"),
+    SABTU: t("schedule.days.saturday"),
+    MINGGU: t("schedule.days.sunday"),
   };
-  return days[day] || day;
+  return dayMap[day] || day;
 };
 
 export default function ClassCard({ classItem }: ClassCardProps) {
+  const { t } = useTranslation("class");
   const router = useRouter();
 
   return (
@@ -81,7 +85,9 @@ export default function ClassCard({ classItem }: ClassCardProps) {
         <Typography level="title-md">{classItem.name}</Typography>
         <Box sx={{ display: "flex", gap: 1, my: 1 }}>
           <Chip size="sm" variant="soft" color="secondary">
-            Batch {classItem.batch}
+            {t("classSetting.classesSection.batch", {
+              number: classItem.batch,
+            })}
           </Chip>
         </Box>
         <Typography level="body-sm" sx={{ color: "text.secondary", mb: 1 }}>
@@ -102,7 +108,7 @@ export default function ClassCard({ classItem }: ClassCardProps) {
               }}
             >
               <CalendarMonthRounded fontSize="small" />
-              Jadwal Hari:
+              {t("classSetting.classesSection.scheduleDay")}
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
               {classItem.schedules.map((schedule, index) => (
@@ -113,7 +119,7 @@ export default function ClassCard({ classItem }: ClassCardProps) {
                   color="primary"
                   slotProps={{ root: { sx: { fontSize: "0.75rem" } } }}
                 >
-                  {formatDayName(schedule.day)}
+                  {formatDayName(schedule.day, t)}
                 </Chip>
               ))}
             </Box>
@@ -129,7 +135,7 @@ export default function ClassCard({ classItem }: ClassCardProps) {
             onClick={() => router.push(`/class-setting/${classItem.id}`)}
             sx={{ flex: 1 }}
           >
-            Detail
+            {t("common.actions.detail")}
           </Button>
         </CardActions>
       </CardOverflow>

@@ -15,12 +15,14 @@ import {
 import { GroupRounded } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useClassParticipants } from "@/hooks/useClass";
+import { useTranslation } from "react-i18next";
 
 interface ClassParticipantsProps {
   classId: string;
 }
 
 const ClassParticipants: React.FC<ClassParticipantsProps> = ({ classId }) => {
+  const { t } = useTranslation("class");
   const { data, isLoading, error } = useClassParticipants(classId);
   const meta = data?.meta;
   const participants = data?.data;
@@ -41,7 +43,7 @@ const ClassParticipants: React.FC<ClassParticipantsProps> = ({ classId }) => {
   if (error) {
     return (
       <Typography level="body-sm" color="danger">
-        Failed to load participants
+        {t("notifications.error", { message: error.message })}
       </Typography>
     );
   }
@@ -50,7 +52,7 @@ const ClassParticipants: React.FC<ClassParticipantsProps> = ({ classId }) => {
     <Card sx={{ display: "flex", flexDirection: "column" }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
         <GroupRounded sx={{ mr: 1, fontSize: 24 }} />
-        <Typography level="title-md">Enrolled Students</Typography>
+        <Typography level="title-md">{t("participants.title")}</Typography>
       </Box>
 
       <Divider sx={{ my: 1 }} />
@@ -58,7 +60,7 @@ const ClassParticipants: React.FC<ClassParticipantsProps> = ({ classId }) => {
       {participants?.length === 0 ? (
         <Box sx={{ py: 3, textAlign: "center" }}>
           <Typography level="body-sm" sx={{ mb: 2 }}>
-            No students enrolled yet
+            {t("participants.noStudents")}
           </Typography>
         </Box>
       ) : (
@@ -84,7 +86,9 @@ const ClassParticipants: React.FC<ClassParticipantsProps> = ({ classId }) => {
                   </Typography>
                 </ListItemContent>
                 <Typography level="body-xs" textColor="neutral.500">
-                  Joined: {formatDate(participant.enrolledAt)}
+                  {t("participants.joined", {
+                    date: formatDate(participant.enrolledAt),
+                  })}
                 </Typography>
               </ListItem>
             ))}
@@ -99,7 +103,7 @@ const ClassParticipants: React.FC<ClassParticipantsProps> = ({ classId }) => {
                 component="a"
                 href={`/students?classId=${classId}`}
               >
-                View all ({data?.meta?.total})
+                {t("common.actions.viewAll")} ({data?.meta?.total})
               </Button>
             </Box>
           )}

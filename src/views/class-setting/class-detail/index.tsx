@@ -29,8 +29,10 @@ import { useSnackbar } from "@/hooks/useSnackbar";
 import FormSchedule from "./FormSchedule";
 import CalendarSchedule from "./CalendarSchedule";
 import ClassParticipants from "./ClassParticipants";
+import { useTranslation } from "react-i18next";
 
 const ClassDetail = () => {
+  const { t } = useTranslation("class");
   const params = useParams();
   const router = useRouter();
   const classId = params.classId as string;
@@ -46,12 +48,15 @@ const ClassDetail = () => {
   const { mutate: mutateDelete } = useDeleteClass(
     () => {
       setLoading(false);
-      showSnackbar("Berhasil mengapus Kelas", "success");
+      showSnackbar(t("notifications.classDeleted"), "success");
       router.back();
       closeDialog();
     },
     (error) => {
-      showSnackbar(error.message, "danger");
+      showSnackbar(
+        t("notifications.error", { message: error.message }),
+        "danger"
+      );
     }
   );
 
@@ -69,10 +74,10 @@ const ClassDetail = () => {
 
   const openDialogDelete = () => {
     openDialog({
-      title: "Hapus Kelas",
-      description: "Apakah Kamu yakin ingin menghapus Kelas ini?",
-      textCancel: "Batal",
-      textAction: "Hapus",
+      title: t("classDetail.sections.delete.title"),
+      description: t("classDetail.sections.delete.confirmation"),
+      textCancel: t("classDetail.sections.delete.cancel"),
+      textAction: t("classDetail.sections.delete.confirm"),
       onAction: handleDeleteClass,
     });
   };
@@ -98,7 +103,7 @@ const ClassDetail = () => {
         <IconButton onClick={() => router.back()} variant="plain">
           <ArrowBackRounded />
         </IconButton>
-        <Typography level="h3">Class Detail</Typography>
+        <Typography level="h3">{t("classDetail.pageTitle")}</Typography>
       </Stack>
 
       <Card sx={{ mb: 3 }}>
@@ -111,7 +116,9 @@ const ClassDetail = () => {
         >
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <SchoolRounded sx={{ mr: 1, fontSize: 24 }} />
-            <Typography level="title-lg">Class Information</Typography>
+            <Typography level="title-lg">
+              {t("classDetail.sections.information")}
+            </Typography>
           </Box>
           <Stack direction="row" spacing={1}>
             <Button
@@ -121,7 +128,7 @@ const ClassDetail = () => {
               startDecorator={<EditRounded />}
               onClick={() => onOpenEdit({ class: cls })}
             >
-              Edit
+              {t("common.actions.edit")}
             </Button>
             <Button
               size="sm"
@@ -130,7 +137,7 @@ const ClassDetail = () => {
               startDecorator={<DeleteRounded />}
               onClick={openDialogDelete}
             >
-              Hapus
+              {t("common.actions.delete")}
             </Button>
           </Stack>
         </Box>
@@ -147,7 +154,7 @@ const ClassDetail = () => {
               {cls?.name}
             </Typography>
             <Chip size="sm" variant="soft" color="primary">
-              Batch: {cls?.batch}
+              {t("classSetting.classesSection.batch", { number: cls?.batch })}
             </Chip>
           </Stack>
         </Sheet>
@@ -156,7 +163,7 @@ const ClassDetail = () => {
           <Grid xs={12} md={6}>
             <Sheet variant="outlined" sx={{ p: 2, borderRadius: "sm" }}>
               <Typography level="title-sm" sx={{ mb: 1 }}>
-                Description
+                {t("classDetail.sections.description")}
               </Typography>
               <Typography level="body-sm">{cls?.description}</Typography>
             </Sheet>
@@ -165,12 +172,12 @@ const ClassDetail = () => {
           <Grid xs={12} md={6}>
             <Sheet variant="outlined" sx={{ p: 2, borderRadius: "sm" }}>
               <Typography level="title-sm" sx={{ mb: 1 }}>
-                Schedule Information
+                {t("classDetail.sections.scheduleInfo")}
               </Typography>
               <Grid container spacing={0.3}>
                 <Grid xs={12} md={4}>
                   <Typography level="body-xs" fontWeight="bold">
-                    Start Date:
+                    {t("classDetail.sections.startDate")}
                   </Typography>
                 </Grid>
                 <Grid xs={12} md={8}>
@@ -181,7 +188,7 @@ const ClassDetail = () => {
 
                 <Grid xs={12} md={4}>
                   <Typography level="body-xs" fontWeight="bold">
-                    End Date:
+                    {t("classDetail.sections.endDate")}
                   </Typography>
                 </Grid>
                 <Grid xs={12} md={8}>

@@ -1,5 +1,8 @@
+"use client";
+
 import { Box, Card, CardContent, Chip, Typography } from "@mui/joy";
 import { LanguageRounded as LanguageIcon } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 
 interface LanguageCardProps {
   language: {
@@ -17,6 +20,8 @@ export default function LanguageCard({
   isSelected,
   onClick,
 }: LanguageCardProps) {
+  const { t } = useTranslation("class");
+
   return (
     <Card
       variant="outlined"
@@ -41,16 +46,22 @@ export default function LanguageCard({
             }}
           />
           <Typography level="title-md" sx={{ flex: 1 }}>
-            Bahasa {language.languageName}
+            {t("classSetting.classesSection.title", {
+              language: language.languageName,
+            })}
           </Typography>
         </Box>
 
         <Box sx={{ display: "flex", gap: 1, mb: 1 }}>
           <Chip size="sm" variant="soft">
-            Level: {language.level}
+            {t("classSetting.languagesSection.languageLevel", {
+              level: language.level,
+            })}
           </Chip>
           <Chip size="sm" variant="soft" color="primary">
-            {language.classCount} Kelas
+            {t("classSetting.languagesSection.classCount", {
+              count: language.classCount,
+            })}
           </Chip>
         </Box>
       </CardContent>

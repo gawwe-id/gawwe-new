@@ -24,6 +24,7 @@ import dayjs from "dayjs";
 import { useEffect } from "react";
 import DatePicker from "react-datepicker";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 interface EditClassDialogProps {
   open: boolean;
@@ -31,6 +32,7 @@ interface EditClassDialogProps {
 }
 
 const EditClassDialog = ({ open, onClose }: EditClassDialogProps) => {
+  const { t } = useTranslation("class");
   const classData = useEditClassStore((state) => state.classConfig?.class);
   const closeDialog = useEditClassStore((state) => state.closeDialog);
   const { showSnackbar } = useSnackbar();
@@ -73,11 +75,14 @@ const EditClassDialog = ({ open, onClose }: EditClassDialogProps) => {
   const { mutate: updateClass, isPending } = useUpdateClass(
     () => {
       closeDialog();
-      showSnackbar("Berhasil menyimpan perubahan", "success");
+      showSnackbar(t("notifications.classUpdated"), "success");
     },
     (error) => {
       closeDialog();
-      showSnackbar(error.message, "danger");
+      showSnackbar(
+        t("notifications.error", { message: error.message }),
+        "danger"
+      );
     }
   );
 
@@ -98,8 +103,11 @@ const EditClassDialog = ({ open, onClose }: EditClassDialogProps) => {
   return (
     <Modal open={open} onClose={onClose}>
       <ModalDialog variant="outlined">
-        <DialogTitle>Edit Kelas</DialogTitle>
-        <DialogContent>Ubah informasi mengenai Kelas Kamu</DialogContent>
+        <DialogTitle>
+          {t("common.actions.edit")}{" "}
+          {t("classSetting.classesSection.title", { language: "" }).trim()}
+        </DialogTitle>
+        <DialogContent>{t("classDetail.sections.information")}</DialogContent>
 
         <Divider sx={{ my: 2 }} />
 
@@ -109,10 +117,10 @@ const EditClassDialog = ({ open, onClose }: EditClassDialogProps) => {
               <Controller
                 name="name"
                 control={control}
-                rules={{ required: "Class name is required" }}
+                rules={{ required: t("createClass.form.errors.nameRequired") }}
                 render={({ field, fieldState }) => (
                   <FormControl error={!!fieldState.error}>
-                    <FormLabel>Nama Kelas</FormLabel>
+                    <FormLabel>{t("createClass.form.className")}</FormLabel>
                     <Input {...field} value={field.value} size="sm" />
                     {fieldState.error && (
                       <FormHelperText>
@@ -129,12 +137,15 @@ const EditClassDialog = ({ open, onClose }: EditClassDialogProps) => {
                 name="batch"
                 control={control}
                 rules={{
-                  required: "Batch is required",
-                  min: { value: 1, message: "Minimum batch is 1" },
+                  required: t("createClass.form.errors.batchRequired"),
+                  min: {
+                    value: 1,
+                    message: t("createClass.form.errors.batchMin"),
+                  },
                 }}
                 render={({ field, fieldState }) => (
                   <FormControl error={!!fieldState.error}>
-                    <FormLabel>Batch</FormLabel>
+                    <FormLabel>{t("createClass.form.batch")}</FormLabel>
                     <Input
                       {...field}
                       type="number"
@@ -158,10 +169,12 @@ const EditClassDialog = ({ open, onClose }: EditClassDialogProps) => {
               <Controller
                 name="description"
                 control={control}
-                rules={{ required: "Description is required" }}
+                rules={{
+                  required: t("createClass.form.errors.descriptionRequired"),
+                }}
                 render={({ field, fieldState }) => (
                   <FormControl error={!!fieldState.error}>
-                    <FormLabel>Deskripsi</FormLabel>
+                    <FormLabel>{t("createClass.form.description")}</FormLabel>
                     <Textarea {...field} minRows={3} />
                     {fieldState.error && (
                       <FormHelperText>
@@ -175,11 +188,13 @@ const EditClassDialog = ({ open, onClose }: EditClassDialogProps) => {
 
             <Grid xs={12} md={6}>
               <FormControl error={!!errors.startDate} required>
-                <FormLabel>Tanggal Mulai</FormLabel>
+                <FormLabel>{t("createClass.form.startDate")}</FormLabel>
                 <Controller
                   name="startDate"
                   control={control}
-                  rules={{ required: "Tanggal mulai harus diisi" }}
+                  rules={{
+                    required: t("createClass.form.errors.startDateRequired"),
+                  }}
                   render={({ field }) => (
                     <DatePicker
                       selected={field.value}
@@ -205,15 +220,15 @@ const EditClassDialog = ({ open, onClose }: EditClassDialogProps) => {
 
             <Grid xs={12} md={6}>
               <FormControl error={!!errors.endDate} required>
-                <FormLabel>Tanggal Selesai</FormLabel>
+                <FormLabel>{t("createClass.form.endDate")}</FormLabel>
                 <Controller
                   name="endDate"
                   control={control}
                   rules={{
-                    required: "Tanggal selesai harus diisi",
+                    required: t("createClass.form.errors.endDateRequired"),
                     validate: (value) =>
                       value > startDate ||
-                      "Tanggal selesai harus setelah tanggal mulai",
+                      t("createClass.form.errors.endDateAfterStart"),
                   }}
                   render={({ field }) => (
                     <DatePicker
@@ -252,7 +267,7 @@ const EditClassDialog = ({ open, onClose }: EditClassDialogProps) => {
               onClick={closeDialog}
               disabled={isPending}
             >
-              Cancel
+              {t("common.actions.cancel")}
             </Button>
             <Button
               size="sm"
@@ -260,7 +275,7 @@ const EditClassDialog = ({ open, onClose }: EditClassDialogProps) => {
               loading={isPending}
               disabled={!isValid || isPending}
             >
-              Simpan Perubahan
+              {t("common.actions.saveChanges")}
             </Button>
           </Stack>
         </form>

@@ -1,0 +1,160 @@
+{
+  "common": {
+    "actions": {
+      "add": "Tambah",
+      "edit": "Edit",
+      "delete": "Hapus",
+      "save": "Simpan",
+      "cancel": "Batal",
+      "back": "Kembali",
+      "detail": "Detail",
+      "update": "Perbarui",
+      "close": "Tutup",
+      "saveChanges": "Simpan Perubahan",
+      "viewAll": "Lihat semua"
+    },
+    "status": {
+      "loading": "Memuat...",
+      "processing": "Memproses..."
+    },
+    "time": {
+      "startTime": "Waktu Mulai",
+      "endTime": "Waktu Selesai"
+    }
+  },
+  "classSetting": {
+    "pageTitle": "Pengaturan Kelas",
+    "pageDescription": "Kelola bahasa dan kelas yang Anda tawarkan",
+    "addLanguage": "Tambah Bahasa",
+    "selectLanguage": "Pilih Bahasa",
+    "languagesSection": {
+      "title": "Bahasa yang Tersedia",
+      "noLanguages": "Belum Ada Bahasa",
+      "noLanguagesDescription": "Anda belum menambahkan bahasa apapun. Tambahkan bahasa untuk mulai membuat kelas.",
+      "languageLevel": "Level: {{level}}",
+      "classCount": "{{count}} Kelas"
+    },
+    "classesSection": {
+      "title": "Kelas Bahasa {{language}}",
+      "noClasses": "Belum Ada Kelas",
+      "noClassesDescription": "Anda belum membuat kelas untuk bahasa ini.",
+      "createNewClass": "Buat Kelas Baru",
+      "viewModes": {
+        "card": "Tampilan Kartu",
+        "table": "Tampilan Tabel"
+      },
+      "batch": "Batch {{number}}",
+      "schedule": "Jadwal",
+      "scheduleDay": "Jadwal Hari:",
+      "tableName": "Nama Kelas",
+      "tableBatch": "Batch",
+      "tableSchedule": "Jadwal",
+      "tableAction": "Aksi"
+    }
+  },
+  "addClass": {
+    "dialogTitle": "Tambah Bahasa Baru",
+    "languageName": "Nama Bahasa",
+    "selectLanguage": "Pilih Bahasa",
+    "level": "Level",
+    "levelDescription": "Pilih level umum untuk bahasa ini"
+  },
+  "createClass": {
+    "pageTitle": "Buat Kelas Baru",
+    "sections": {
+      "classInfo": "Informasi Kelas",
+      "materialsAndCurriculum": "Materi & Kurikulum",
+      "materialsNote": "Anda dapat menambahkan materi setelah kelas dibuat.",
+      "language": "Bahasa",
+      "actions": "Tindakan",
+      "tips": "Tips"
+    },
+    "form": {
+      "className": "Nama Kelas",
+      "classNamePlaceholder": "Contoh: Kelas Bahasa Jepang Batch 1",
+      "batch": "Batch",
+      "description": "Deskripsi Kelas",
+      "descriptionPlaceholder": "Deskripsi tentang kelas ini",
+      "startDate": "Tanggal Mulai",
+      "endDate": "Tanggal Selesai",
+      "errors": {
+        "nameRequired": "Nama kelas harus diisi",
+        "batchRequired": "Batch harus diisi",
+        "batchMin": "Batch minimal 1",
+        "descriptionRequired": "Deskripsi kelas harus diisi",
+        "startDateRequired": "Tanggal mulai harus diisi",
+        "endDateRequired": "Tanggal selesai harus diisi",
+        "endDateAfterStart": "Tanggal selesai harus setelah tanggal mulai"
+      }
+    },
+    "tips": {
+      "namingTip": "Nama kelas sebaiknya mencakup nama bahasa dan batch",
+      "scheduleTip": "Pastikan jadwal mencakup hari dan waktu",
+      "descriptionTip": "Deskripsi yang baik meningkatkan ketertarikan siswa"
+    },
+    "success": {
+      "title": "Kelas Berhasil Dibuat!",
+      "addSchedules": "Tambahkan Jadwal",
+      "scheduleNote": "Belum ada Jadwal, tambahkan Jadwal sebelum kembali ke halaman Pengaturan Kelas"
+    }
+  },
+  "classDetail": {
+    "pageTitle": "Detail Kelas",
+    "sections": {
+      "information": "Informasi Kelas",
+      "description": "Deskripsi",
+      "scheduleInfo": "Informasi Jadwal",
+      "startDate": "Tanggal Mulai:",
+      "endDate": "Tanggal Selesai:",
+      "delete": {
+        "title": "Hapus Kelas",
+        "confirmation": "Apakah Kamu yakin ingin menghapus Kelas ini?",
+        "cancel": "Batal",
+        "confirm": "Hapus"
+      }
+    }
+  },
+  "schedule": {
+    "title": "Jadwal Kelas",
+    "form": {
+      "title": "Tambah Jadwal Kelas",
+      "editTitle": "Edit Jadwal Kelas",
+      "day": "Hari",
+      "dayRequired": "Hari harus dipilih",
+      "dayDuplicate": "Jadwal untuk hari ini sudah ada",
+      "startTime": "Waktu Mulai",
+      "startTimeRequired": "Waktu mulai harus diisi",
+      "endTime": "Waktu Selesai",
+      "endTimeRequired": "Waktu selesai harus diisi",
+      "selectTime": "Pilih Waktu",
+      "addSchedule": "Tambah Jadwal",
+      "updateSchedule": "Update Jadwal",
+      "cancelEdit": "Batal Edit"
+    },
+    "noSchedules": "Tidak ada jadwal tersedia",
+    "days": {
+      "monday": "Senin",
+      "tuesday": "Selasa",
+      "wednesday": "Rabu",
+      "thursday": "Kamis",
+      "friday": "Jumat",
+      "saturday": "Sabtu",
+      "sunday": "Minggu"
+    }
+  },
+  "participants": {
+    "title": "Siswa Terdaftar",
+    "noStudents": "Belum ada siswa yang terdaftar",
+    "joined": "Bergabung: {{date}}"
+  },
+  "notifications": {
+    "classCreated": "Kelas berhasil dibuat",
+    "classUpdated": "Berhasil menyimpan perubahan",
+    "classDeleted": "Berhasil menghapus Kelas",
+    "scheduleCreated": "Berhasil membuat jadwal",
+    "scheduleUpdated": "Berhasil mengubah jadwal",
+    "scheduleDeleted": "Berhasil menghapus jadwal",
+    "languageAdded": "Berhasil menambahkan bahasa",
+    "error": "Terjadi kesalahan: {{message}}"
+  }
+}
