@@ -6,12 +6,14 @@ import {
   ListItemContent,
   Typography,
 } from "@mui/joy";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, memo } from "react";
 import Toggler from "./Toggler";
 import { KeyboardArrowDown } from "@mui/icons-material";
 import Link from "next/link";
 import { Menu } from "../menu-items";
 import { usePathname } from "next/navigation";
+
+type PathNormalizer = (path: string) => string;
 
 interface ListMenuItemProps {
   menu: Menu;
@@ -20,46 +22,62 @@ interface ListMenuItemProps {
   toggleMenu?: () => void;
   setActiveMenuItem?: (id: string) => void;
   activeMenuItem?: string;
+  normalizePath?: PathNormalizer;
 }
 
-const ListMenuItem = ({
+const ListMenuItem: React.FC<ListMenuItemProps> = ({
   menu,
   isOpen,
   isActive,
   toggleMenu,
   setActiveMenuItem,
   activeMenuItem,
-}: ListMenuItemProps) => {
+  normalizePath,
+}) => {
   const pathname = usePathname();
-  const [forceOpen, setForceOpen] = useState(isOpen || false);
+  const [forceOpen, setForceOpen] = useState<boolean>(isOpen || false);
 
-  const isPathMatch = (menuUrl: string): boolean => {
-    if (!menuUrl) return false;
-    const currentPath = pathname.split("?")[0];
-    const baseMenuUrl = menuUrl.split("?")[0];
+  const isPathMatch = useCallback(
+    (menuUrl: string): boolean => {
+      if (!menuUrl || !pathname) return false;
 
-    if (currentPath === baseMenuUrl) return true;
+      const currentPath = pathname.split("?")[0] as string;
+      const baseMenuUrl = menuUrl.split("?")[0] as string;
 
-    if (currentPath && currentPath.startsWith(baseMenuUrl as string)) {
-      if (baseMenuUrl === "/") return currentPath === "/";
+      const normalizedCurrentPath = normalizePath
+        ? normalizePath(currentPath)
+        : currentPath;
 
-      const nextChar = currentPath.charAt(baseMenuUrl?.length || 0);
-      return nextChar === "" || nextChar === "/";
-    }
+      if (normalizedCurrentPath === baseMenuUrl) return true;
 
-    return false;
-  };
+      if (normalizedCurrentPath.startsWith(baseMenuUrl)) {
+        if (baseMenuUrl === "/") return normalizedCurrentPath === "/";
+
+        const nextChar = normalizedCurrentPath.charAt(baseMenuUrl.length);
+        return nextChar === "" || nextChar === "/";
+      }
+
+      return false;
+    },
+    [pathname, normalizePath]
+  );
 
   useEffect(() => {
     if (menu.children) {
       const isChildActive = menu.children.some(
         (child) => isPathMatch(child.url) || activeMenuItem === child.id
       );
-      if (isChildActive) {
+      if (isChildActive && !forceOpen) {
         setForceOpen(true);
       }
     }
-  }, [pathname, menu.children, activeMenuItem]);
+  }, [pathname, menu.children, activeMenuItem, isPathMatch, forceOpen]);
+
+  useEffect(() => {
+    if (isOpen !== undefined && isOpen !== forceOpen) {
+      setForceOpen(isOpen);
+    }
+  }, [isOpen, forceOpen]);
 
   const isMenuActive =
     isActive || activeMenuItem === menu.id || isPathMatch(menu.url);
@@ -80,7 +98,13 @@ const ListMenuItem = ({
         <ListItem nested key={menu.id}>
           <Toggler
             defaultExpanded={forceOpen}
-            renderToggle={({ open, setOpen }) => (
+            renderToggle={({
+              open,
+              setOpen,
+            }: {
+              open: boolean;
+              setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+            }) => (
               <ListItemButton
                 onClick={() => {
                   setOpen(!open);
@@ -94,11 +118,10 @@ const ListMenuItem = ({
                   <Typography level="title-sm">{menu.title}</Typography>
                 </ListItemContent>
                 <KeyboardArrowDown
-                  sx={[
-                    open || forceOpen
-                      ? { transform: "rotate(180deg)" }
-                      : { transform: "none" },
-                  ]}
+                  sx={{
+                    transform: open || forceOpen ? "rotate(180deg)" : "none",
+                    transition: "transform 0.2s",
+                  }}
                 />
               </ListItemButton>
             )}
@@ -113,7 +136,7 @@ const ListMenuItem = ({
                     href={submenu.url}
                     key={submenu.id}
                     style={{ textDecoration: "none" }}
-                    onClick={() => setActiveMenuItem?.(submenu.id)}
+                    onClick={() => setActiveMenuItem?.(menu.id)}
                   >
                     <ListItem sx={{ mt: 0.5 }}>
                       <ListItemButton sx={isSubmenuActive ? activeStyle : {}}>
@@ -152,4 +175,4 @@ const ListMenuItem = ({
   );
 };
 
-export default ListMenuItem;
+export default memo(ListMenuItem);

@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState, useEffect } from "react";
+import { memo, useState, useEffect, useCallback } from "react";
 import {
   Box,
   Divider,
@@ -26,7 +26,6 @@ interface SidebarProps {
   className?: string;
 }
 
-// Constants
 const SIDEBAR_WIDTH = {
   default: "240px",
   lg: "245px",
@@ -34,7 +33,6 @@ const SIDEBAR_WIDTH = {
 
 const TRANSITION_DURATION = "0.4s";
 
-// Styled components
 const SidebarOverlay = memo(({ onClick }: { onClick: () => void }) => (
   <Box
     className="Sidebar-overlay"
@@ -67,6 +65,8 @@ const SearchInput = memo(() => (
 ));
 SearchInput.displayName = "SearchInput";
 
+export type PathNormalizer = (path: string) => string;
+
 const Sidebar = ({ className }: SidebarProps) => {
   const { data: session } = useSession();
   const role = session?.user.role;
@@ -80,38 +80,54 @@ const Sidebar = ({ className }: SidebarProps) => {
   const bottomMenuItems =
     role === "participant" ? participant_bottom : agency_bottom;
 
-  useEffect(() => {
-    if (!pathname) return;
+  const normalizePath: PathNormalizer = useCallback((path: string): string => {
+    if (!path) return "";
 
-    const isPathMatch = (menuUrl: string): boolean => {
-      if (!menuUrl) return false;
+    const pathParts = path.split("/");
 
-      const currentPath = pathname.split("?")[0];
-      const baseMenuUrl = menuUrl.split("?")[0];
+    if (pathParts.length > 1 && /^[a-z]{2}$/.test(pathParts[1] as string)) {
+      return "/" + pathParts.slice(2).join("/");
+    }
 
-      if (currentPath === baseMenuUrl) return true;
+    return path;
+  }, []);
 
-      if (currentPath?.startsWith(baseMenuUrl as string)) {
-        if (baseMenuUrl === "/") return currentPath === "/";
+  const isPathMatch = useCallback(
+    (menuUrl: string, currentPath: string): boolean => {
+      if (!menuUrl || !currentPath) return false;
 
-        const nextChar = currentPath.charAt(baseMenuUrl?.length || 0);
+      const cleanCurrentPath = currentPath.split("?")[0] as string;
+      const baseMenuUrl = menuUrl.split("?")[0] as string;
+
+      const normalizedCurrentPath = normalizePath(cleanCurrentPath);
+
+      if (normalizedCurrentPath === baseMenuUrl) return true;
+
+      if (normalizedCurrentPath.startsWith(baseMenuUrl)) {
+        if (baseMenuUrl === "/") return normalizedCurrentPath === "/";
+
+        const nextChar = normalizedCurrentPath.charAt(baseMenuUrl.length);
         return nextChar === "" || nextChar === "/";
       }
 
       return false;
-    };
+    },
+    [normalizePath]
+  );
 
-    const findActiveMenu = (items: Menu[]) => {
+  useEffect(() => {
+    if (!pathname) return;
+
+    const findActiveMenu = (items: Menu[]): void => {
       for (const item of items) {
-        // Check if this is a direct match
-        if (isPathMatch(item.url)) {
+        if (isPathMatch(item.url, pathname)) {
           setActiveMenuItem(item.id);
           return;
         }
 
         if (item.children) {
           const childMatch = item.children.find((child) =>
-            isPathMatch(child.url)
+            isPathMatch(child.url, pathname)
           );
           if (childMatch) {
             setActiveMenuItem(childMatch.id);
@@ -127,9 +143,9 @@ const Sidebar = ({ className }: SidebarProps) => {
 
     findActiveMenu(menuItems);
     findActiveMenu(bottomMenuItems);
-  }, [pathname, menuItems, bottomMenuItems, openMenus]);
+  }, [pathname, isPathMatch, menuItems, bottomMenuItems, openMenus]);
 
-  const toggleMenu = (menuId: string) => {
+  const toggleMenu = useCallback((menuId: string): void => {
     setOpenMenus((prev) => {
       if (prev.includes(menuId)) {
         return prev.filter((id) => id !== menuId);
@@ -137,9 +153,17 @@ const Sidebar = ({ className }: SidebarProps) => {
         return [...prev, menuId];
       }
     });
-  };
+  }, []);
 
-  const MenuList = memo(({ items }: { items: Menu[] }) => (
+  const setActiveMenuItemCallback = useCallback((id: string): void => {
+    setActiveMenuItem(id);
+  }, []);
+
+  interface MenuListProps {
+    items: Menu[];
+  }
+
+  const MenuList = memo(({ items }: MenuListProps) => (
     <List
       size="sm"
       sx={{
@@ -155,15 +179,16 @@ const Sidebar = ({ className }: SidebarProps) => {
           isOpen={openMenus.includes(menu.id)}
           isActive={activeMenuItem === menu.id}
           toggleMenu={() => toggleMenu(menu.id)}
-          setActiveMenuItem={setActiveMenuItem}
+          setActiveMenuItem={setActiveMenuItemCallback}
           activeMenuItem={activeMenuItem}
+          normalizePath={normalizePath}
         />
       ))}
     </List>
   ));
   MenuList.displayName = "MenuList";
 
-  const BottomMenuList = memo(({ items }: { items: Menu[] }) => (
+  const BottomMenuList = memo(({ items }: MenuListProps) => (
     <List
       size="sm"
       sx={{
@@ -180,8 +205,9 @@ const Sidebar = ({ className }: SidebarProps) => {
           isOpen={openMenus.includes(menu.id)}
           isActive={activeMenuItem === menu.id}
           toggleMenu={() => toggleMenu(menu.id)}
-          setActiveMenuItem={setActiveMenuItem}
+          setActiveMenuItem={setActiveMenuItemCallback}
           activeMenuItem={activeMenuItem}
+          normalizePath={normalizePath}
         />
       ))}
     </List>
