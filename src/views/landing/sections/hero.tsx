@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 import Button from "@mui/joy/Button";
 import Typography from "@mui/joy/Typography";
@@ -8,6 +9,8 @@ import ArrowForward from "@mui/icons-material/ArrowForward";
 import WrapperHero from "@/layout/SimpleLayout/WrapperHero";
 
 export default function Hero() {
+  const { t } = useTranslation("landing");
+
   return (
     <WrapperHero>
       <Typography
@@ -22,22 +25,22 @@ export default function Hero() {
           Gawwe
         </Typography>
         <br />
-        Speak Fluent, Work Abroad
+        {t("hero.headline")}
       </Typography>
       <Typography
         textColor="text.secondary"
         sx={{ fontSize: "lg", lineHeight: "lg" }}
       >
-        Platform pelatihan bahasa asing dan sertifikasi untuk karier profesional
-        di luar negeri.
+        {t("hero.subheadline")}
       </Typography>
       <Link href="/register">
         <Button size="md" endDecorator={<ArrowForward fontSize="large" />}>
-          Get Started
+          {t("hero.getStarted")}
         </Button>
       </Link>
       <Typography>
-        Sudah mendaftar? <Link href="/login">Sign in</Link>
+        {t("hero.alreadyRegistered")}{" "}
+        <Link href="/login">{t("hero.signIn")}</Link>
       </Typography>
     </WrapperHero>
   );

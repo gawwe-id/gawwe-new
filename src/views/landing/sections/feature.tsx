@@ -1,16 +1,19 @@
-"use client"
+"use client";
 
-import { Card, Container, Grid, Typography } from "@mui/joy"
+import { Card, Container, Grid, Typography } from "@mui/joy";
+import { useTranslation } from "react-i18next";
 
 function CardFeature({
   emoji,
-  title,
-  description,
+  titleKey,
+  descriptionKey,
 }: {
-  emoji: string
-  title: string
-  description: string
+  emoji: string;
+  titleKey: string;
+  descriptionKey: string;
 }) {
+  const { t } = useTranslation("landing");
+
   return (
     <Card
       size="lg"
@@ -20,45 +23,47 @@ function CardFeature({
       sx={{ borderRadius: "xl" }}
     >
       <Typography level="h3">{emoji}</Typography>
-      <Typography level="h4">{title}</Typography>
-      <Typography level="body-sm">{description}</Typography>
+      <Typography level="h4">{t(titleKey)}</Typography>
+      <Typography level="body-sm">{t(descriptionKey)}</Typography>
     </Card>
-  )
+  );
 }
 
 export default function Feature() {
+  const { t } = useTranslation("landing");
+
   return (
     <Container sx={{ pb: 10 }}>
       <Grid container spacing={2} sx={{ flexGrow: 1 }}>
         <Grid xs={12} sm={6} md={3}>
           <CardFeature
             emoji="🗣️"
-            title="Pelatihan Bahasa Terarah"
-            description="Program belajar disesuaikan dengan kebutuhan industri dan negara tujuan untuk karier optimal."
+            titleKey={t("feature.language.title")}
+            descriptionKey={t("feature.language.description")}
           />
         </Grid>
         <Grid xs={12} sm={6} md={3}>
           <CardFeature
             emoji="🎓"
-            title="Sertifikasi Resmi"
-            description="Sertifikat bahasa kredibel yang mempermudah proses rekrutmen dan diakui internasional."
+            titleKey={t("feature.certification.title")}
+            descriptionKey={t("feature.certification.description")}
           />
         </Grid>
         <Grid xs={12} sm={6} md={3}>
           <CardFeature
             emoji="🌍"
-            title="Peluang Kerja Global"
-            description="Terhubung langsung dengan agensi serta perusahaan luar negeri untuk kesempatan kerja."
+            titleKey={t("feature.global.title")}
+            descriptionKey={t("feature.global.description")}
           />
         </Grid>
         <Grid xs={12} sm={6} md={3}>
           <CardFeature
             emoji="🤝"
-            title="Bimbingan Karier"
-            description="Mendapatkan dukungan penuh dari pendaftaran hingga penempatan di negara tujuan kerja."
+            titleKey={t("feature.guidance.title")}
+            descriptionKey={t("feature.guidance.description")}
           />
         </Grid>
       </Grid>
     </Container>
-  )
+  );
 }

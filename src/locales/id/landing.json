@@ -1,0 +1,27 @@
+{
+  "hero": {
+    "headline": "Fasih Berbahasa, Berkarier di Luar Negeri",
+    "subheadline": "Platform pelatihan bahasa asing dan sertifikasi untuk karier profesional di luar negeri.",
+    "getStarted": "Mulai Sekarang",
+    "alreadyRegistered": "Sudah mendaftar?",
+    "signIn": "Masuk"
+  },
+  "feature": {
+    "language": {
+      "title": "Pelatihan Bahasa Terarah",
+      "description": "Program belajar disesuaikan dengan kebutuhan industri dan negara tujuan untuk karier optimal."
+    },
+    "certification": {
+      "title": "Sertifikasi Resmi",
+      "description": "Sertifikat bahasa kredibel yang mempermudah proses rekrutmen dan diakui internasional."
+    },
+    "global": {
+      "title": "Peluang Kerja Global",
+      "description": "Terhubung langsung dengan agensi serta perusahaan luar negeri untuk kesempatan kerja."
+    },
+    "guidance": {
+      "title": "Bimbingan Karier",
+      "description": "Mendapatkan dukungan penuh dari pendaftaran hingga penempatan di negara tujuan kerja."
+    }
+  }
+}

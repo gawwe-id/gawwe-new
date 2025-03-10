@@ -1,0 +1,27 @@
+{
+  "hero": {
+    "headline": "Speak Fluent, Work Abroad",
+    "subheadline": "Language training and certification platform for professional careers abroad.",
+    "getStarted": "Get Started",
+    "alreadyRegistered": "Already registered?",
+    "signIn": "Sign in"
+  },
+  "feature": {
+    "language": {
+      "title": "Targeted Language Training",
+      "description": "Learning programs tailored to industry needs and destination countries for optimal career outcomes."
+    },
+    "certification": {
+      "title": "Official Certification",
+      "description": "Credible language certificates that facilitate recruitment processes and are internationally recognized."
+    },
+    "global": {
+      "title": "Global Job Opportunities",
+      "description": "Connect directly with agencies and international companies for employment opportunities."
+    },
+    "guidance": {
+      "title": "Career Guidance",
+      "description": "Receive full support from registration to placement in your destination country."
+    }
+  }
+}
