@@ -13,7 +13,10 @@ import {
   Tooltip,
   MenuButton,
 } from "@mui/joy";
-import { TranslateRounded } from "@mui/icons-material";
+import {
+  KeyboardArrowDownRounded,
+  TranslateRounded,
+} from "@mui/icons-material";
 
 export default function LanguageChanger() {
   const { i18n, t } = useTranslation();
@@ -59,7 +62,12 @@ export default function LanguageChanger() {
   return (
     <Dropdown>
       <Tooltip title={t("language")} placement="bottom">
-        <MenuButton variant="soft" color="neutral" size="sm">
+        <MenuButton
+          variant="soft"
+          color="neutral"
+          size="sm"
+          endDecorator={<KeyboardArrowDownRounded />}
+        >
           <TranslateRounded />
         </MenuButton>
       </Tooltip>
