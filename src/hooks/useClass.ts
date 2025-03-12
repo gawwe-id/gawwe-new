@@ -25,6 +25,18 @@ export function useClass(classId: string) {
   });
 }
 
+export function useClassesByUserId(userId?: string) {
+  return useQuery({
+    queryKey: ["classes-by-user", userId],
+    queryFn: async () => {
+      const res = await client.classes.byUserId.$get({
+        userId,
+      });
+      return res.json();
+    },
+  });
+}
+
 export function useClassesByLanguage(languageClassId: string) {
   return useQuery({
     queryKey: ["classes-by-language", languageClassId],

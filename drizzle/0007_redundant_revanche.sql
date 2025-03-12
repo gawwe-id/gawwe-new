@@ -1,0 +1,1 @@
+ALTER TABLE "calendars" ALTER COLUMN "date" SET DATA TYPE date;

@@ -50,6 +50,13 @@
       "when": 1740673276077,
       "tag": "0006_opposite_wendigo",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1741702018026,
+      "tag": "0007_redundant_revanche",
+      "breakpoints": true
     }
   ]
 }

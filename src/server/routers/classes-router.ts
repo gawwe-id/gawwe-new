@@ -1,4 +1,9 @@
-import { classes, classSchedules, languageClasses } from "@/server/db/schema";
+import {
+  classes,
+  classSchedules,
+  languageClassEnrollments,
+  languageClasses,
+} from "@/server/db/schema";
 import {
   insertClassSchema,
   selectClassSchema,
@@ -90,6 +95,128 @@ export const classesRouter = j.router({
       200
     );
   }),
+
+  /** ========================================
+   * GET CLASSES BY USER ID
+   ======================================== */
+  byUserId: privateProcedure
+    .input(
+      z.object({
+        userId: z.string().optional(),
+      })
+    )
+    .query(async ({ c, ctx, input }) => {
+      const { db, user } = ctx;
+
+      // Use provided userId or default to authenticated user
+      const userId = input.userId || (user.id as string);
+      const userRole = user.role;
+
+      // Different query logic based on user role
+      let userClasses: any[] = [];
+
+      if (userRole === "agency") {
+        // For agency users: Find classes for language classes they own
+        const ownedLanguageClasses = await db
+          .select()
+          .from(languageClasses)
+          .where(eq(languageClasses.userId, userId))
+          .execute();
+
+        if (ownedLanguageClasses.length === 0) {
+          return c.superjson(
+            {
+              message: "Berhasil mendapatkan daftar kelas",
+              data: [],
+            },
+            200
+          );
+        }
+
+        const languageClassIds = ownedLanguageClasses.map((lc) => lc.id);
+
+        userClasses = await db
+          .select()
+          .from(classes)
+          .where(inArray(classes.languageClassId, languageClassIds))
+          .execute();
+      } else {
+        // For participant users: Find classes they're enrolled in
+        const enrollments = await db
+          .select({
+            enrollment: languageClassEnrollments,
+            languageClass: languageClasses,
+          })
+          .from(languageClassEnrollments)
+          .leftJoin(
+            languageClasses,
+            eq(languageClassEnrollments.classId, languageClasses.id)
+          )
+          .where(eq(languageClassEnrollments.userId, userId))
+          .execute();
+
+        if (enrollments.length === 0) {
+          return c.superjson(
+            {
+              message: "Berhasil mendapatkan daftar kelas",
+              data: [],
+            },
+            200
+          );
+        }
+
+        const languageClassIds = enrollments.map((e) => e.languageClass?.id);
+
+        userClasses = await db
+          .select()
+          .from(classes)
+          .where(inArray(classes.languageClassId, languageClassIds as string[]))
+          .execute();
+      }
+
+      // If no classes found
+      if (userClasses.length === 0) {
+        return c.superjson(
+          {
+            message: "Berhasil mendapatkan daftar kelas",
+            data: [],
+          },
+          200
+        );
+      }
+
+      // Get schedules for these classes
+      const classIds = userClasses.map((cls) => cls.id);
+      const schedules = await db
+        .select()
+        .from(classSchedules)
+        .where(inArray(classSchedules.classId, classIds))
+        .execute();
+
+      // Organize schedules by class id
+      const schedulesByClassId: Record<string, typeof schedules> = {};
+
+      for (const schedule of schedules) {
+        if (!schedulesByClassId[schedule.classId]) {
+          schedulesByClassId[schedule.classId] = [];
+        }
+        schedulesByClassId[schedule.classId]!.push(schedule);
+      }
+
+      // Combine classes with their schedules
+      const classesWithSchedules = userClasses.map((cls) => ({
+        ...cls,
+        schedules: schedulesByClassId[cls.id] || [],
+      }));
+
+      return c.superjson(
+        {
+          message: "Berhasil mendapatkan daftar kelas pengguna",
+          data: classesWithSchedules,
+        },
+        200
+      );
+    }),
 
   /** ========================================
    * GET CLASS BY ID

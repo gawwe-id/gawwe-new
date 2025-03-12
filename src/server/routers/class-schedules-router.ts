@@ -79,6 +79,35 @@ export const classSchedulesRouter = j.router({
     }),
 
   /** ========================================
+   * GET ALL CLASS SCHEDULES
+   ======================================== */
+  list: privateProcedure.query(async ({ c, ctx }) => {
+    const { db } = ctx;
+
+    const allSchedules = await db
+      .select({
+        schedule: classSchedules,
+        class: classes,
+      })
+      .from(classSchedules)
+      .leftJoin(classes, eq(classSchedules.classId, classes.id))
+      .execute();
+
+    const formattedSchedules = allSchedules.map(({ schedule, class: cls }) => ({
+      ...schedule,
+      class: cls,
+    }));
+
+    return c.superjson(
+      {
+        message: "Berhasil mendapatkan daftar jadwal kelas",
+        data: formattedSchedules,
+      },
+      200
+    );
+  }),
+
+  /** ========================================
    * GET SCHEDULES BY CLASS ID
    ======================================== */
   byClass: publicProcedure

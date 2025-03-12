@@ -57,9 +57,9 @@ export const useMenus = () => {
           url: "/classes",
         },
         {
-          id: "schedule",
+          id: "schedules",
           title: t("schedule"),
-          url: "/schedule",
+          url: "/schedules",
         },
       ],
     },
@@ -124,11 +124,6 @@ export const useMenus = () => {
           id: "class_setting",
           title: t("classSettings"),
           url: "/class-setting",
-        },
-        {
-          id: "schedule",
-          title: t("classSchedule"),
-          url: "/schedule",
         },
         {
           id: "batch",
