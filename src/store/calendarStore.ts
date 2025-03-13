@@ -17,13 +17,13 @@ interface DateStoreType {
 }
 
 export type CalendarEventType = {
-  id: string;
   title: string;
   date: dayjs.Dayjs;
   description: string;
-  eventType: string;
-  isOnline: boolean;
-  link: string;
+  type: string;
+  eventType?: string;
+  isOnline?: boolean;
+  link?: string;
 };
 
 type EventStore = {

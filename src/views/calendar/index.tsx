@@ -25,6 +25,11 @@ import {
 } from "@/store/calendarStore";
 import dayjs from "dayjs";
 import { useClassesByUserId } from "@/hooks/useClass";
+import {
+  createCombinedCalendar,
+  transformClassesToCalendarEvents,
+} from "@/utils/classCalendarHelper";
+import CalendarScheduler from "./_components/CalendarSchedular";
 
 export default function SchedulePage() {
   const { t } = useTranslation("common");
@@ -53,22 +58,32 @@ export default function SchedulePage() {
   });
 
   useEffect(() => {
-    // const mappedEvents: CalendarEventType[] = classSchedules?.data.map((event) => ({
-    //   id: event.id,
-    //   date: dayjs(event.date),
-    //   title: event.title,
-    //   description: event.description,
-    // }));
-    // setEvents(mappedEvents);
-  }, [classes, setEvents]);
+    const mappedEvents = createCombinedCalendar(
+      classes?.data ?? [],
+      calendars?.data
+    );
 
-  console.log("CLASSS sc : ", classes);
+    setEvents(mappedEvents);
+  }, [classes, calendars, setEvents]);
 
   return (
-    <Box sx={{ p: { xs: 2, sm: 3 } }}>
-      <Typography level="h2" sx={{ mb: 3 }}>
-        {t("schedule.title")}
-      </Typography>
+    <Box>
+      {/* <Stack>
+        <MiniCalendar />
+      </Stack> */}
+      <CalendarScheduler />
     </Box>
   );
 }
+
+// Array<{
+//   date: dayjs.Dayjs;
+//   title: string;
+//   description: string;
+//   type: string;
+//   eventType?: string;
+//   isOnline?: boolean;
+//   link?: string;
+// }>
+
+// based on this data, can you make a full callendar scheduler? in each date there is data schedule or event showing (with different color based on type). when click the date, print the data in the console()  for now please create a Month View first! next, create a Week View and Day View
