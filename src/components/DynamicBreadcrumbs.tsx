@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Breadcrumbs, Link, Typography, Box, Stack, Button } from "@mui/joy";
+import { Breadcrumbs, Link, Typography, Stack } from "@mui/joy";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import { SxProps } from "@mui/joy/styles/types";
@@ -9,8 +9,6 @@ import { Menu, useMenus } from "@/layout/DashboardLayout/menu-items";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import LanguageChanger from "./LanguageChanger";
-
-// Define interfaces for our menu structure
 
 interface BreadcrumbItem {
   title: string;
@@ -24,8 +22,11 @@ interface DynamicBreadcrumbsProps {
 
 const DynamicBreadcrumbs: React.FC<DynamicBreadcrumbsProps> = ({ sx }) => {
   const { agency, agency_bottom, participant, participant_bottom } = useMenus();
+  const { t, i18n } = useTranslation();
+  const pathname = usePathname();
 
-  // Combine all menus
+  const currentLang = i18n.language || "en";
+
   const allMenus: Menu[] = [
     ...participant,
     ...agency,
@@ -33,14 +34,11 @@ const DynamicBreadcrumbs: React.FC<DynamicBreadcrumbsProps> = ({ sx }) => {
     ...agency_bottom,
   ];
 
-  // Function to find menu item by URL
   const findMenuItemByUrl = (
     url: string
   ): (Menu & { parent?: Menu }) | undefined => {
-    // First try direct match
     let item = allMenus.find((menu) => menu.url === url);
 
-    // If not found, check children
     if (!item) {
       for (const menu of allMenus) {
         if (menu.children) {
@@ -55,42 +53,51 @@ const DynamicBreadcrumbs: React.FC<DynamicBreadcrumbsProps> = ({ sx }) => {
     return item;
   };
 
-  // Generate breadcrumb items
   const generateBreadcrumbs = (): BreadcrumbItem[] => {
-    const pathname = usePathname();
-    const paths = pathname.split("/").filter(Boolean);
-    let currentPath = "";
     const breadcrumbs: BreadcrumbItem[] = [];
-    const { t } = useTranslation();
 
-    // Add home
     breadcrumbs.push({
       title: t("home"),
-      url: "/",
+      url: `/${currentLang}`,
       icon: <HomeRoundedIcon />,
     });
 
-    // Generate rest of the breadcrumbs
-    paths.forEach((path) => {
-      currentPath += `/${path}`;
+    const pathSegments = pathname.split("/").filter(Boolean);
+
+    const supportedLocales = ["en", "id"];
+    const startIndex =
+      pathSegments[0] && supportedLocales.includes(pathSegments[0]) ? 1 : 0;
+
+    let currentPath = "";
+
+    for (let i = startIndex; i < pathSegments.length; i++) {
+      const segment = pathSegments[i];
+      currentPath += `/${segment}`;
+
       const menuItem = findMenuItemByUrl(currentPath);
 
       if (menuItem) {
         if ("parent" in menuItem && menuItem.parent) {
-          // Add parent if it's a child menu item
-          breadcrumbs.push({
-            title: menuItem.parent.title,
-            url: menuItem.parent.url || "#",
-            // icon: menuItem.parent.icon
-          });
+          const parentAlreadyAdded = breadcrumbs.some(
+            (item) => item.title === menuItem.parent?.title
+          );
+
+          if (!parentAlreadyAdded) {
+            breadcrumbs.push({
+              title: menuItem.parent.title,
+              url: menuItem.parent.url
+                ? `/${currentLang}${menuItem.parent.url}`
+                : "#",
+            });
+          }
         }
+
         breadcrumbs.push({
           title: menuItem.title,
-          url: menuItem.url,
-          // icon: menuItem.icon
+          url: `/${currentLang}${menuItem.url}`,
         });
       }
-    });
+    }
 
     return breadcrumbs;
   };
