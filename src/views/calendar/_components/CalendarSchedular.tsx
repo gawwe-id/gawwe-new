@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import weekOfYear from "dayjs/plugin/weekOfYear";
 import {
   Box,
@@ -27,19 +27,18 @@ import {
   ArrowDropDown,
 } from "@mui/icons-material";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useTranslation } from "react-i18next";
+import { CalendarEventType, useEventStore } from "@/store/calendarStore";
 
-// Add the week plugin to dayjs
 dayjs.extend(weekOfYear);
 
-// Define the calendar views
 const VIEWS = {
   MONTH: "month",
   WEEK: "week",
   DAY: "day",
 };
 
-// Color mapping based on event type
-const getEventColor = (type: any) => {
+const getEventColor = (type: string) => {
   switch (type.toLowerCase()) {
     case "schedule":
       return "secondary";
@@ -51,62 +50,19 @@ const getEventColor = (type: any) => {
 };
 
 const CalendarScheduler = () => {
+  const { t } = useTranslation("schedules");
   const isMobile = useMediaQuery("(max-width: 576px)");
-
-  // Sample events for demo
-  const [events, setEvents] = useState([
-    {
-      date: dayjs().subtract(1, "day"),
-      title: "Team Meeting",
-      description: "Weekly team sync",
-      type: "schedule",
-      isOnline: true,
-      link: "https://meet.example.com",
-    },
-    {
-      date: dayjs().add(1, "day"),
-      title: "English Assignment",
-      description: "Complete essay",
-      type: "event",
-    },
-    {
-      date: dayjs(),
-      title: "Math Class",
-      description: "Algebra lesson",
-      type: "schedule",
-      eventType: "schedule",
-    },
-    {
-      date: dayjs().add(2, "day"),
-      title: "Science Exam",
-      description: "Biology final",
-      type: "event",
-      isOnline: false,
-    },
-    {
-      date: dayjs().add(5, "day"),
-      title: "Project Deadline",
-      description: "Submit final report",
-      type: "schedule",
-    },
-    {
-      date: dayjs().add(7, "day"),
-      title: "History Workshop",
-      description: "Ancient civilizations",
-      type: "event",
-    },
-  ]);
+  const { events, openEventSummary } = useEventStore();
 
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [view, setView] = useState(VIEWS.MONTH);
 
-  // Generate calendar days for the month view
   const generateMonthDays = () => {
     const firstDayOfMonth = currentDate.startOf("month");
     const firstDayOfCalendar = firstDayOfMonth.startOf("week");
 
     const days = [];
-    const daysToShow = 42; // 6 weeks (6 x 7)
+    const daysToShow = 42;
 
     for (let i = 0; i < daysToShow; i++) {
       const day = dayjs(firstDayOfCalendar).add(i, "day");
@@ -116,7 +72,6 @@ const CalendarScheduler = () => {
     return days;
   };
 
-  // Generate days for the week view
   const generateWeekDays = () => {
     const startOfWeek = currentDate.startOf("week");
     const days = [];
@@ -128,7 +83,6 @@ const CalendarScheduler = () => {
     return days;
   };
 
-  // Generate hours for the day view
   const generateDayHours = () => {
     const hours = [];
 
@@ -139,15 +93,13 @@ const CalendarScheduler = () => {
     return hours;
   };
 
-  // Get events for a specific day
-  const getEventsForDay = (day: Dayjs) => {
+  const getEventsForDay = (day: dayjs.Dayjs) => {
     return events.filter(
       (event) => event.date.format("YYYY-MM-DD") === day.format("YYYY-MM-DD")
     );
   };
 
-  // Get events for a specific hour
-  const getEventsForHour = (day: Dayjs, hour: number) => {
+  const getEventsForHour = (day: dayjs.Dayjs, hour: number) => {
     return events.filter(
       (event) =>
         event.date.format("YYYY-MM-DD") === day.format("YYYY-MM-DD") &&
@@ -155,7 +107,6 @@ const CalendarScheduler = () => {
     );
   };
 
-  // Handle navigation based on current view
   const goToPrevious = () => {
     if (view === VIEWS.MONTH) {
       setCurrentDate(currentDate.subtract(1, "month"));
@@ -176,29 +127,24 @@ const CalendarScheduler = () => {
     }
   };
 
-  // Handle day click
-  const handleDayClick = (day: Dayjs) => {
-    const dayEvents = getEventsForDay(day);
-    console.log(`Events for ${day.format("YYYY-MM-DD")}:`, dayEvents);
+  const handleEventClick = (event: CalendarEventType) => {
+    openEventSummary(event);
   };
 
-  // Handle hour click in day view
-  const handleHourClick = (hour: number) => {
-    const hourEvents = getEventsForHour(currentDate, hour);
-    console.log(
-      `Events for ${currentDate.format("YYYY-MM-DD")} at ${hour}:00:`,
-      hourEvents
-    );
-  };
-
-  // Month view component
   const MonthView = () => {
     const days = generateMonthDays();
-    const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const weekDays = [
+      t("calendar.weekDays.short.sunday"),
+      t("calendar.weekDays.short.monday"),
+      t("calendar.weekDays.short.tuesday"),
+      t("calendar.weekDays.short.wednesday"),
+      t("calendar.weekDays.short.thursday"),
+      t("calendar.weekDays.short.friday"),
+      t("calendar.weekDays.short.saturday"),
+    ];
 
     return (
       <Box sx={{ width: "100%" }}>
-        {/* Weekday headers */}
         <Grid container columns={7} spacing={0}>
           {weekDays.map((day, index) => (
             <Grid key={index} xs={1}>
@@ -214,7 +160,6 @@ const CalendarScheduler = () => {
           ))}
         </Grid>
 
-        {/* Calendar grid */}
         <Grid container columns={7} spacing={0}>
           {days.map((day, index) => {
             const isCurrentMonth = day.month() === currentDate.month();
@@ -225,7 +170,6 @@ const CalendarScheduler = () => {
             return (
               <Grid key={index} xs={1}>
                 <Sheet
-                  onClick={() => handleDayClick(day)}
                   sx={{
                     height: isMobile ? "80px" : "120px",
                     p: 1,
@@ -252,7 +196,6 @@ const CalendarScheduler = () => {
                     {day.date()}
                   </Typography>
 
-                  {/* Events */}
                   <Stack
                     spacing={0.5}
                     mt={0.5}
@@ -267,7 +210,17 @@ const CalendarScheduler = () => {
                         size="sm"
                         variant="soft"
                         color={getEventColor(event.type)}
-                        sx={{ height: "auto", py: 0.2, maxWidth: "100%" }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEventClick(event);
+                        }}
+                        sx={{
+                          height: "auto",
+                          py: 0.2,
+                          maxWidth: "100%",
+                          cursor: "pointer",
+                          transition: "transform 0.1s",
+                        }}
                       >
                         <Typography level="body-xs" noWrap>
                           {event.title}
@@ -284,7 +237,6 @@ const CalendarScheduler = () => {
     );
   };
 
-  // Week view component
   const WeekView = () => {
     const weekDays = generateWeekDays();
     const hours = Array.from({ length: 24 }, (_, i) => i);
@@ -292,7 +244,6 @@ const CalendarScheduler = () => {
     return (
       <Box sx={{ width: "100%", overflowX: "auto" }}>
         <Grid container columns={8} spacing={0}>
-          {/* Time column */}
           <Grid xs={1}>
             <Sheet
               sx={{
@@ -303,7 +254,7 @@ const CalendarScheduler = () => {
               }}
             >
               <Typography level="body-xs" textAlign="center">
-                Hour
+                {t("calendar.hour")}
               </Typography>
             </Sheet>
             {hours.map((hour) => (
@@ -324,7 +275,6 @@ const CalendarScheduler = () => {
             ))}
           </Grid>
 
-          {/* Day columns */}
           {weekDays.map((day, dayIndex) => {
             const isToday =
               day.format("YYYY-MM-DD") === dayjs().format("YYYY-MM-DD");
@@ -362,14 +312,6 @@ const CalendarScheduler = () => {
                   return (
                     <Sheet
                       key={`${dayIndex}-${hour}`}
-                      onClick={() => {
-                        console.log(
-                          `Events for ${day.format(
-                            "YYYY-MM-DD"
-                          )} at ${hour}:00:`,
-                          hourEvents
-                        );
-                      }}
                       sx={{
                         height: "60px",
                         p: 0.5,
@@ -396,7 +338,14 @@ const CalendarScheduler = () => {
                             size="sm"
                             variant="soft"
                             color={getEventColor(event.type)}
-                            sx={{ height: "auto", py: 0.2, maxWidth: "100%" }}
+                            onClick={() => handleEventClick(event)}
+                            sx={{
+                              height: "auto",
+                              py: 0.2,
+                              maxWidth: "100%",
+                              cursor: "pointer",
+                              transition: "transform 0.1s",
+                            }}
                           >
                             <Typography level="body-xs" noWrap>
                               {event.title}
@@ -415,7 +364,6 @@ const CalendarScheduler = () => {
     );
   };
 
-  // Day view component
   const DayView = () => {
     const hours = generateDayHours();
     const isToday =
@@ -449,7 +397,6 @@ const CalendarScheduler = () => {
             return (
               <Sheet
                 key={hour}
-                onClick={() => handleHourClick(hour)}
                 sx={{
                   display: "flex",
                   p: 1,
@@ -483,7 +430,12 @@ const CalendarScheduler = () => {
                         key={index}
                         variant="soft"
                         color={getEventColor(event.type)}
-                        sx={{ p: 1 }}
+                        onClick={() => handleEventClick(event)}
+                        sx={{
+                          p: 1,
+                          cursor: "pointer",
+                          transition: "transform 0.1s",
+                        }}
                       >
                         <Typography level="body-sm" fontWeight="lg">
                           {event.title}
@@ -493,7 +445,9 @@ const CalendarScheduler = () => {
                         </Typography>
                         {event.isOnline !== undefined && (
                           <Typography level="body-xs">
-                            {event.isOnline ? "Online" : "In-person"}
+                            {event.isOnline
+                              ? t("calendar.events.location.online")
+                              : t("calendar.events.location.inPerson")}
                           </Typography>
                         )}
                       </Card>
@@ -508,10 +462,11 @@ const CalendarScheduler = () => {
     );
   };
 
-  // Get the appropriate title based on current view
   const getViewTitle = () => {
     if (view === VIEWS.MONTH) {
-      return currentDate.format("MMMM YYYY");
+      const monthKey = currentDate.format("MMMM").toLowerCase();
+      const translatedMonth = t(`calendar.month.${monthKey}`);
+      return `${translatedMonth} ${currentDate.format("YYYY")}`;
     } else if (view === VIEWS.WEEK) {
       const startOfWeek = currentDate.startOf("week");
       const endOfWeek = currentDate.endOf("week");
@@ -523,7 +478,6 @@ const CalendarScheduler = () => {
     }
   };
 
-  // View selector for mobile
   const ViewSelector = () => (
     <FormControl size="sm">
       <Select
@@ -541,33 +495,32 @@ const CalendarScheduler = () => {
         endDecorator={<ArrowDropDown />}
         sx={{ minWidth: "120px" }}
       >
-        <Option value={VIEWS.MONTH}>Month</Option>
-        <Option value={VIEWS.WEEK}>Week</Option>
-        <Option value={VIEWS.DAY}>Day</Option>
+        <Option value={VIEWS.MONTH}>{t("calendar.views.month")}</Option>
+        <Option value={VIEWS.WEEK}>{t("calendar.views.week")}</Option>
+        <Option value={VIEWS.DAY}>{t("calendar.views.day")}</Option>
       </Select>
     </FormControl>
   );
 
-  // Regular view toggle buttons for desktop
   const ViewToggleButtons = () => (
     <ButtonGroup size="sm" variant="outlined" color="primary">
       <Button
         onClick={() => setView(VIEWS.MONTH)}
         variant={view === VIEWS.MONTH ? "soft" : "outlined"}
       >
-        Month
+        {t("calendar.views.month")}
       </Button>
       <Button
         onClick={() => setView(VIEWS.WEEK)}
         variant={view === VIEWS.WEEK ? "soft" : "outlined"}
       >
-        Week
+        {t("calendar.views.week")}
       </Button>
       <Button
         onClick={() => setView(VIEWS.DAY)}
         variant={view === VIEWS.DAY ? "soft" : "outlined"}
       >
-        Day
+        {t("calendar.views.day")}
       </Button>
     </ButtonGroup>
   );
@@ -575,7 +528,6 @@ const CalendarScheduler = () => {
   return (
     <Card sx={{ width: "100%" }}>
       <CardContent>
-        {/* Calendar header */}
         <Box
           sx={{
             display: "flex",
@@ -599,12 +551,10 @@ const CalendarScheduler = () => {
               alignItems: "center",
             }}
           >
-            {/* View toggle - dropdown on mobile, buttons on desktop */}
             {isMobile ? <ViewSelector /> : <ViewToggleButtons />}
 
             {!isMobile && <Divider orientation="vertical" sx={{ mx: 1 }} />}
 
-            {/* Navigation buttons */}
             <Box sx={{ display: "flex", gap: 1 }}>
               <IconButton variant="soft" onClick={goToPrevious}>
                 <ChevronLeft />
@@ -614,7 +564,7 @@ const CalendarScheduler = () => {
                 onClick={() => setCurrentDate(dayjs())}
                 size="sm"
               >
-                Today
+                {t("calendar.today")}
               </Button>
               <IconButton variant="soft" onClick={goToNext}>
                 <ChevronRight />
@@ -625,7 +575,6 @@ const CalendarScheduler = () => {
 
         <Divider sx={{ mb: 2 }} />
 
-        {/* Calendar body */}
         {view === VIEWS.MONTH && <MonthView />}
         {view === VIEWS.WEEK && <WeekView />}
         {view === VIEWS.DAY && <DayView />}

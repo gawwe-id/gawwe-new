@@ -1,0 +1,103 @@
+{
+  "calendar": {
+    "title": "Calendar",
+    "today": "Today",
+    "views": {
+      "month": "Month",
+      "week": "Week",
+      "day": "Day"
+    },
+    "weekDays": {
+      "short": {
+        "sunday": "Sun",
+        "monday": "Mon",
+        "tuesday": "Tue",
+        "wednesday": "Wed",
+        "thursday": "Thu",
+        "friday": "Fri",
+        "saturday": "Sat"
+      },
+      "long": {
+        "sunday": "Sunday",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday"
+      }
+    },
+    "hour": "Hour",
+    "events": {
+      "types": {
+        "schedule": "Schedule",
+        "event": "Event"
+      },
+      "location": {
+        "online": "Online",
+        "inPerson": "In-person"
+      }
+    },
+    "notifications": {
+      "clicked": {
+        "day": "Events for {{date}}:",
+        "hour": "Events for {{date}} at {{hour}}:00:"
+      }
+    },
+    "class": {
+      "management": {
+        "title": "Class Management",
+        "settings": "Class Settings",
+        "schedule": "Class Schedule",
+        "batch": "Manage Batch",
+        "enrollments": "Enrollment Status"
+      }
+    },
+    "month": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    }
+  },
+  "assignments": {
+    "title": "Assignments",
+    "tasks": "Tasks & Essays",
+    "exams": "Exams",
+    "grades": "Grades & Notes",
+    "management": {
+      "tasks": "Manage Tasks",
+      "exams": "Manage Exams",
+      "quizzes": "Quiz Management",
+      "grades": "Grade Management"
+    }
+  },
+  "dashboard": "Dashboard",
+  "myClasses": {
+    "title": "My Classes",
+    "allClasses": "All Classes",
+    "schedule": "Schedule"
+  },
+  "notifications": "Notifications",
+  "payments": "Payments",
+  "students": "Student Management",
+  "transactions": "Transactions",
+  "account": "Account Settings",
+  "events": {
+    "details": "Event Details",
+    "description": "Description",
+    "noDescription": "No description provided",
+    "noSelection": "No event selected",
+    "selectionHint": "Select an event from the calendar to view details",
+    "joinMeeting": "Join Meeting",
+    "edit": "Edit Event"
+  }
+}

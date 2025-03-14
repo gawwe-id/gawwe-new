@@ -1,0 +1,103 @@
+{
+  "calendar": {
+    "title": "Kalender",
+    "today": "Hari Ini",
+    "views": {
+      "month": "Bulan",
+      "week": "Minggu",
+      "day": "Hari"
+    },
+    "weekDays": {
+      "short": {
+        "sunday": "Min",
+        "monday": "Sen",
+        "tuesday": "Sel",
+        "wednesday": "Rab",
+        "thursday": "Kam",
+        "friday": "Jum",
+        "saturday": "Sab"
+      },
+      "long": {
+        "sunday": "Minggu",
+        "monday": "Senin",
+        "tuesday": "Selasa",
+        "wednesday": "Rabu",
+        "thursday": "Kamis",
+        "friday": "Jumat",
+        "saturday": "Sabtu"
+      }
+    },
+    "hour": "Jam",
+    "events": {
+      "types": {
+        "schedule": "Jadwal",
+        "event": "Acara"
+      },
+      "location": {
+        "online": "Daring",
+        "inPerson": "Tatap Muka"
+      }
+    },
+    "notifications": {
+      "clicked": {
+        "day": "Acara untuk {{date}}:",
+        "hour": "Acara untuk {{date}} pada jam {{hour}}:00:"
+      }
+    },
+    "class": {
+      "management": {
+        "title": "Manajemen Kelas",
+        "settings": "Pengaturan Kelas",
+        "schedule": "Jadwal Kelas",
+        "batch": "Kelola Batch",
+        "enrollments": "Status Pendaftaran"
+      }
+    },
+    "month": {
+      "january": "Januari",
+      "february": "Februari",
+      "march": "Maret",
+      "april": "April",
+      "may": "Mei",
+      "june": "Juni",
+      "july": "Juli",
+      "august": "Agustus",
+      "september": "September",
+      "october": "Oktober",
+      "november": "November",
+      "december": "Desember"
+    }
+  },
+  "assignments": {
+    "title": "Tugas",
+    "tasks": "Tugas & Esai",
+    "exams": "Ujian",
+    "grades": "Nilai & Catatan",
+    "management": {
+      "tasks": "Kelola Tugas",
+      "exams": "Kelola Ujian",
+      "quizzes": "Manajemen Kuis",
+      "grades": "Manajemen Nilai"
+    }
+  },
+  "dashboard": "Dasbor",
+  "myClasses": {
+    "title": "Kelas Saya",
+    "allClasses": "Semua Kelas",
+    "schedule": "Jadwal"
+  },
+  "notifications": "Notifikasi",
+  "payments": "Pembayaran",
+  "students": "Manajemen Siswa",
+  "transactions": "Transaksi",
+  "account": "Pengaturan Akun",
+  "events": {
+    "details": "Detail Acara",
+    "description": "Deskripsi",
+    "noDescription": "Tidak ada deskripsi",
+    "noSelection": "Tidak ada acara yang dipilih",
+    "selectionHint": "Pilih acara dari kalender untuk melihat detailnya",
+    "joinMeeting": "Gabung Pertemuan",
+    "edit": "Edit Acara"
+  }
+}
