@@ -146,7 +146,7 @@ export const useMenus = () => {
         {
           id: "assignments",
           title: t("homeworkManagement"),
-          url: "/assignments",
+          url: "/task-management",
         },
         {
           id: "exams",

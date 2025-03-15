@@ -1,7 +1,11 @@
-import { index, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core"
+import { index, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
-import { calendars, classes } from "."
-import { createInsertSchema, createSelectSchema } from "drizzle-zod"
+import { calendars, classes } from ".";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 
 // Assignments Table
 export const assignments = pgTable(
@@ -22,16 +26,14 @@ export const assignments = pgTable(
     titleAssignmentIdx: index("title_assignment_idx").on(table.title),
     classIdIdx: index("class_id_idx").on(table.classId),
     calendarIdIdx: index("calendar_id_idx").on(table.calendarId),
-  }),
-)
+  })
+);
 
 // Assignment Type
-export type Assignment = typeof assignments.$inferInsert
+export type Assignment = typeof assignments.$inferInsert;
+export type NewAssignment = typeof assignments.$inferInsert;
 
 // Drizzle Zod Schema
-export const createAssignmentSchema = createInsertSchema(assignments).omit({
-  id: true,
-})
-
-export const insertAssignmentSchema = createInsertSchema(assignments)
-export const selectAssignmentSchema = createSelectSchema(assignments)
+export const insertAssignmentSchema = createInsertSchema(assignments);
+export const selectAssignmentSchema = createSelectSchema(assignments);
+export const updateAssignmentSchema = createUpdateSchema(assignments);

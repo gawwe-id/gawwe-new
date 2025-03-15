@@ -18,6 +18,7 @@ const api = j
  * All routers in /server/routers should be added here manually.
  */
 const appRouter = j.mergeRouters(api, {
+  assignments: dynamic(() => import("./routers/assignments-router")),
   calendars: dynamic(() => import("./routers/calendars-router")),
   classes: dynamic(() => import("./routers/classes-router")),
   classSchedules: dynamic(() => import("./routers/class-schedules-router")),

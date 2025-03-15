@@ -1,0 +1,67 @@
+{
+  "page": {
+    "title": "Kelola Tugas",
+    "addButton": "Tambah Tugas Baru",
+    "loading": "Memuat..."
+  },
+  "filter": {
+    "search": "Cari",
+    "searchPlaceholder": "Cari tugas...",
+    "filterByClass": "Filter berdasarkan Kelas",
+    "selectClass": "Pilih kelas",
+    "dateRange": "Rentang Tanggal",
+    "startDate": "Tanggal Mulai",
+    "endDate": "Tanggal Akhir",
+    "clearFilters": "Hapus Filter"
+  },
+  "table": {
+    "title": "Judul",
+    "class": "Kelas",
+    "dueDate": "Tanggal Jatuh Tempo",
+    "actions": "Aksi",
+    "unknownClass": "Kelas Tidak Diketahui",
+    "viewSubmissions": "Lihat Pengumpulan",
+    "generateReport": "Buat Laporan",
+    "sendNotification": "Kirim Notifikasi",
+    "noAssignmentsFound": "Tidak ada tugas ditemukan. Buat tugas baru!",
+    "deleteConfirmation": "Apakah Anda yakin ingin menghapus tugas ini?"
+  },
+  "modal": {
+    "editTitle": "Edit Tugas",
+    "createTitle": "Buat Tugas Baru",
+    "tabs": {
+      "basicInfo": "Informasi Dasar",
+      "quizSettings": "Pengaturan Kuis",
+      "essayQuestions": "Pertanyaan Esai"
+    },
+    "form": {
+      "title": "Judul",
+      "titlePlaceholder": "Judul tugas",
+      "description": "Deskripsi",
+      "descriptionPlaceholder": "Deskripsi tugas",
+      "class": "Kelas",
+      "selectClass": "Pilih kelas",
+      "dueDate": "Tanggal Jatuh Tempo",
+      "calendarEvent": "Acara Kalender",
+      "calendarEventPlaceholder": "Tautan ke acara kalender (opsional)",
+      "includeQuiz": "Sertakan Kuis",
+      "includeEssay": "Sertakan Pertanyaan Esai",
+      "quizTitle": "Judul Kuis",
+      "quizTitlePlaceholder": "Judul kuis",
+      "quizDescription": "Deskripsi Kuis",
+      "quizDescriptionPlaceholder": "Deskripsi kuis",
+      "quizNote": "Catatan: Setelah membuat tugas, Anda akan diarahkan ke halaman Manajemen Kuis untuk menambahkan pertanyaan.",
+      "essayQuestionsTitle": "Pertanyaan Esai",
+      "addQuestion": "Tambah Pertanyaan",
+      "questionLabel": "Pertanyaan {{number}}",
+      "questionText": "Teks Pertanyaan",
+      "questionTextPlaceholder": "Masukkan pertanyaan esai",
+      "maxWords": "Jumlah Kata Maksimum (Opsional)",
+      "maxWordsPlaceholder": "Jumlah kata maksimum",
+      "noEssayQuestions": "Belum ada pertanyaan esai. Klik tombol \"Tambah Pertanyaan\" untuk membuat satu.",
+      "cancel": "Batal",
+      "update": "Perbarui Tugas",
+      "create": "Buat Tugas"
+    }
+  }
+}
