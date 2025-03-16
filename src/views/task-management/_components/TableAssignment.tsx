@@ -23,7 +23,10 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useMemo } from "react";
+import { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { AssignmentFormValues } from "..";
+import { useDialogAlertStore } from "@/store/useDialogAlertStore";
 
 type Assignment = {
   id: string;
@@ -32,6 +35,8 @@ type Assignment = {
   title: string;
   description: string;
   dueDate: Date;
+  hasQuiz: boolean;
+  hasEssay: boolean;
 };
 
 type Class = {
@@ -56,17 +61,24 @@ type Class = {
 interface TableAssignmentProps {
   assignments: Assignment[] | undefined;
   classes: Class[] | undefined;
+  form: UseFormReturn<AssignmentFormValues>;
 }
 
-const TableAssignment = ({ assignments, classes }: TableAssignmentProps) => {
+const TableAssignment = ({
+  assignments,
+  classes,
+  form,
+}: TableAssignmentProps) => {
   const { t } = useTranslation("assignment");
   const queryClient = useQueryClient();
 
   const { searchTerm, selectedClass, dateRange, setEditId } =
     useTaskManagementStore();
+  const { openDialog, setLoading, closeDialog } = useDialogAlertStore();
 
   const { mutate: deleteAssignment } = useMutation({
     mutationFn: async (id: string) => {
+      setLoading(true);
       const res = await client.assignments.delete.$post({
         assignmentId: id,
       });
@@ -74,6 +86,8 @@ const TableAssignment = ({ assignments, classes }: TableAssignmentProps) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["assignments"] });
+      setLoading(false);
+      closeDialog();
     },
   });
 
@@ -100,12 +114,26 @@ const TableAssignment = ({ assignments, classes }: TableAssignmentProps) => {
 
   const handleEdit = (assignment: Assignment) => {
     setEditId(assignment.id);
+
+    form.reset({
+      title: assignment.title,
+      description: assignment.description,
+      classId: assignment?.classId as string,
+      dueDate: new Date(assignment.dueDate),
+      calendarId: assignment.calendarId,
+      hasQuiz: assignment.hasQuiz,
+      hasEssay: assignment.hasEssay,
+    });
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm(t("table.deleteConfirmation"))) {
-      deleteAssignment(id);
-    }
+    openDialog({
+      title: t("modal.deleteTitle"),
+      description: t("modal.descriptionDelete"),
+      textCancel: t("modal.form.cancel"),
+      textAction: t("modal.form.delete"),
+      onAction: () => deleteAssignment(id),
+    });
   };
 
   // Get class name by ID
@@ -151,7 +179,7 @@ const TableAssignment = ({ assignments, classes }: TableAssignmentProps) => {
                       <Typography fontWeight="md">
                         {assignment.title}
                       </Typography>
-                      <Typography level="body-sm">
+                      <Typography level="body-xs">
                         {assignment.description.substring(0, 100)}
                         {assignment.description.length > 100 ? "..." : ""}
                       </Typography>

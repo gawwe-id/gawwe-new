@@ -33,11 +33,17 @@ export default function DialogAlert() {
             variant="solid"
             color="danger"
             loading={isLoading}
+            disabled={isLoading}
             onClick={onAction}
           >
             {textAction}
           </Button>
-          <Button variant="plain" color="neutral" onClick={closeDialog}>
+          <Button
+            variant="plain"
+            color="neutral"
+            disabled={isLoading}
+            onClick={closeDialog}
+          >
             {textCancel}
           </Button>
         </DialogActions>

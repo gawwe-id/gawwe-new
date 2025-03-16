@@ -3,7 +3,7 @@ import {
   insertAssignmentSchema,
   updateAssignmentSchema,
 } from "@/server/db/schema/assignments";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { j, privateProcedure, publicProcedure } from "../jstack";
 import { z } from "zod";
 import { throwApiError } from "@/utils/api-error";
@@ -29,9 +29,16 @@ export const assignmentsRouter = j.router({
         throwApiError(404, "Kelas tidak ditemukan", "CLASS_NOT_FOUND");
       }
 
+      // Ensure hasQuiz and hasEssay have default values if not provided
+      const assignmentData = {
+        ...input,
+        hasQuiz: input.hasQuiz ?? false,
+        hasEssay: input.hasEssay ?? false,
+      };
+
       const [assignment] = await db
         .insert(assignments)
-        .values(input)
+        .values(assignmentData)
         .returning();
 
       return c.superjson(
@@ -106,30 +113,6 @@ export const assignmentsRouter = j.router({
         {
           message: "Berhasil mendapatkan daftar tugas berdasarkan kelas",
           data: assignmentsByClass,
-        },
-        200
-      );
-    }),
-
-  /** ========================================
-   * GET ASSIGNMENTS BY CALENDAR ID
-   ======================================== */
-  byCalendar: publicProcedure
-    .input(z.object({ calendarId: z.string() }))
-    .query(async ({ c, ctx, input }) => {
-      const { db } = ctx;
-      const { calendarId } = input;
-
-      const assignmentsByCalendar = await db
-        .select()
-        .from(assignments)
-        .where(eq(assignments.calendarId, calendarId))
-        .execute();
-
-      return c.superjson(
-        {
-          message: "Berhasil mendapatkan daftar tugas berdasarkan kalender",
-          data: assignmentsByCalendar,
         },
         200
       );

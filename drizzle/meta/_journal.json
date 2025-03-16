@@ -57,6 +57,13 @@
       "when": 1741702018026,
       "tag": "0007_redundant_revanche",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1742119292950,
+      "tag": "0008_peaceful_scourge",
+      "breakpoints": true
     }
   ]
 }

@@ -34,11 +34,12 @@ import {
 } from "@mui/joy";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import React from "react";
+import React, { useEffect } from "react";
 import DatePicker from "react-datepicker";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
+import { AssignmentFormValues } from "..";
 
 type Class = {
   id: string;
@@ -70,37 +71,16 @@ type Calendar = {
   link: string | null;
 };
 
-// Form schema with zod validation
-const assignmentSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  classId: z.string().uuid("Please select a class"),
-  dueDate: z.date(),
-  calendarId: z.string().uuid().optional().nullable(),
-  hasQuiz: z.boolean().optional(),
-  hasEssay: z.boolean().optional(),
-  quizTitle: z.string().optional(),
-  quizDescription: z.string().optional(),
-  essayQuestions: z
-    .array(
-      z.object({
-        questionText: z.string(),
-        maxWords: z.number().optional(),
-      })
-    )
-    .optional(),
-});
-
-type AssignmentFormValues = z.infer<typeof assignmentSchema>;
-
 interface DialogAddAssignmentProps {
   classes: Class[] | undefined;
   calendars: Calendar[] | undefined;
+  form: UseFormReturn<AssignmentFormValues>;
 }
 
 const DialogAddAssignment = ({
   classes,
   calendars,
+  form,
 }: DialogAddAssignmentProps) => {
   const { t } = useTranslation("assignment");
   const queryClient = useQueryClient();
@@ -114,24 +94,40 @@ const DialogAddAssignment = ({
     watch,
     setValue,
     formState: { errors },
-  } = useForm<AssignmentFormValues>({
-    resolver: zodResolver(assignmentSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      dueDate: new Date(),
-      calendarId: null,
-      hasQuiz: false,
-      hasEssay: false,
-      essayQuestions: [],
-    },
-  });
+  } = form;
 
   const hasQuiz = watch("hasQuiz");
   const hasEssay = watch("hasEssay");
 
+  const { data: assignmentDetails } = useQuery({
+    queryKey: ["assignment", editId],
+    queryFn: async () => {
+      if (!editId) return null;
+      const res = await client.assignments.single.$get({
+        assignmentId: editId,
+      });
+      return res.json();
+    },
+    enabled: !!editId, // Only run when editId exists
+  });
+
+  useEffect(() => {
+    if (assignmentDetails?.data && editId) {
+      const assignment = assignmentDetails.data;
+      reset({
+        title: assignment.title,
+        description: assignment.description,
+        classId: assignment.classId as string,
+        dueDate: new Date(assignment.dueDate),
+        calendarId: assignment.calendarId,
+        hasQuiz: assignment.hasQuiz,
+        hasEssay: assignment.hasEssay,
+      });
+    }
+  }, [assignmentDetails, editId, reset]);
+
   // Mutations
-  const { mutate: createAssignment } = useMutation({
+  const { mutate: createAssignment, isPending: isCreating } = useMutation({
     mutationFn: async (data: AssignmentFormValues) => {
       const res = await client.assignments.create.$post(data);
       return res.json();
@@ -142,7 +138,7 @@ const DialogAddAssignment = ({
     },
   });
 
-  const { mutate: updateAssignment } = useMutation({
+  const { mutate: updateAssignment, isPending: isUpdating } = useMutation({
     mutationFn: async ({
       id,
       data,
@@ -185,6 +181,8 @@ const DialogAddAssignment = ({
       createAssignment(data);
     }
   };
+
+  const isLoading = isCreating || isUpdating;
 
   return (
     <Modal open={isModalOpen} onClose={closeModal}>
@@ -256,11 +254,13 @@ const DialogAddAssignment = ({
                   <FormLabel>{t("modal.form.class")}</FormLabel>
                   <Controller
                     name="classId"
+                    defaultValue=""
                     control={control}
                     render={({ field }) => (
                       <Select
                         placeholder={t("modal.form.selectClass")}
                         {...field}
+                        value={field.value}
                         onChange={(_, value) => field.onChange(value)}
                       >
                         {classes?.map((classItem: Class) => (
@@ -525,7 +525,7 @@ const DialogAddAssignment = ({
             <Button variant="plain" color="neutral" onClick={closeModal}>
               {t("modal.form.cancel")}
             </Button>
-            <Button type="submit">
+            <Button type="submit" loading={isLoading} disabled={isLoading}>
               {editId ? t("modal.form.update") : t("modal.form.create")}
             </Button>
           </Box>

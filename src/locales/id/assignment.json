@@ -29,6 +29,8 @@
   "modal": {
     "editTitle": "Edit Tugas",
     "createTitle": "Buat Tugas Baru",
+    "deleteTitle": "Hapus Tugas",
+    "descriptionDelete": "Apakah Kamu yakin ingin menghapus Tugas ini?",
     "tabs": {
       "basicInfo": "Informasi Dasar",
       "quizSettings": "Pengaturan Kuis",
@@ -60,6 +62,7 @@
       "maxWordsPlaceholder": "Jumlah kata maksimum",
       "noEssayQuestions": "Belum ada pertanyaan esai. Klik tombol \"Tambah Pertanyaan\" untuk membuat satu.",
       "cancel": "Batal",
+      "delete": "Hapus",
       "update": "Perbarui Tugas",
       "create": "Buat Tugas"
     }

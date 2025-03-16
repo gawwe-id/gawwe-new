@@ -1,4 +1,11 @@
-import { index, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  index,
+  pgTable,
+  timestamp,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 import { calendars, classes } from ".";
 import {
@@ -21,6 +28,8 @@ export const assignments = pgTable(
     title: varchar("title").notNull(),
     description: varchar("description").notNull(),
     dueDate: timestamp("due_date").notNull().defaultNow(),
+    hasQuiz: boolean("has_quiz").default(false).notNull(),
+    hasEssay: boolean("has_essay").default(false).notNull(),
   },
   (table) => ({
     titleAssignmentIdx: index("title_assignment_idx").on(table.title),

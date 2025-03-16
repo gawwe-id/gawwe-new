@@ -19,6 +19,7 @@ interface DialogAlertState {
 
 export const useDialogAlertStore = create<DialogAlertState>((set) => ({
   isOpen: false,
+  isLoading: false,
   dialogConfig: null,
   openDialog: (config) =>
     set({

@@ -65,7 +65,7 @@ const FilterAssginment = ({ classes }: FilterAssginmentProps) => {
           p: 2,
         }}
       >
-        <FormControl sx={{ minWidth: 240 }}>
+        <FormControl sx={{ maxWidth: 240 }}>
           <FormLabel>{t("filter.search")}</FormLabel>
           <Input
             size="sm"
@@ -76,12 +76,12 @@ const FilterAssginment = ({ classes }: FilterAssginmentProps) => {
           />
         </FormControl>
 
-        <FormControl sx={{ minWidth: 240 }}>
+        <FormControl sx={{ maxWidth: 240 }}>
           <FormLabel>{t("filter.filterByClass")}</FormLabel>
           <Select
             size="sm"
             placeholder={t("filter.selectClass")}
-            defaultValue={selectedClass}
+            value={selectedClass}
             onChange={(_, value) => setSelectedClass(value)}
             startDecorator={<ClassRounded />}
           >
@@ -93,8 +93,8 @@ const FilterAssginment = ({ classes }: FilterAssginmentProps) => {
           </Select>
         </FormControl>
 
-        <FormControl sx={{ minWidth: 240 }}>
-          <FormLabel>{t("filter.dateRange")}</FormLabel>
+        <FormControl sx={{ maxWidth: 240 }}>
+          <FormLabel>{t("filter.startDate")}</FormLabel>
           <DatePicker
             selected={dateRange.start}
             onChange={(date) => setDateRange({ start: date })}
@@ -112,7 +112,8 @@ const FilterAssginment = ({ classes }: FilterAssginmentProps) => {
           />
         </FormControl>
 
-        <FormControl sx={{ minWidth: 240 }}>
+        <FormControl sx={{ maxWidth: 240 }}>
+          <FormLabel>{t("filter.endDate")}</FormLabel>
           <DatePicker
             selected={dateRange.end}
             onChange={(date) => setDateRange({ end: date })}
