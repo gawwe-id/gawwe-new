@@ -1,7 +1,11 @@
 import { index, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 
 import { assignments, exams } from ".";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 
 // Quiz Table
 export const quiz = pgTable(
@@ -25,15 +29,6 @@ export const quiz = pgTable(
 export type Quiz = typeof quiz.$inferInsert;
 
 // Drizzle Zod Schema
-export const createQuizSchema = createInsertSchema(quiz)
-  .omit({ id: true })
-  .refine(
-    (data) => data.examId !== undefined || data.assignmentId !== undefined,
-    {
-      message: "Quiz must be associated with either an exam or an assignment",
-    }
-  );
-
 export const insertQuizSchema = createInsertSchema(quiz).refine(
   (data) => data.examId !== undefined || data.assignmentId !== undefined,
   {
@@ -41,3 +36,4 @@ export const insertQuizSchema = createInsertSchema(quiz).refine(
   }
 );
 export const selectQuizSchema = createSelectSchema(quiz);
+export const updateQuizSchema = createUpdateSchema(quiz);

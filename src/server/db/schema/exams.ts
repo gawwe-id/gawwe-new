@@ -5,10 +5,14 @@ import {
   timestamp,
   uuid,
   varchar,
-} from "drizzle-orm/pg-core"
+} from "drizzle-orm/pg-core";
 
-import { calendars, classes } from "."
-import { createInsertSchema, createSelectSchema } from "drizzle-zod"
+import { calendars, classes } from ".";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 
 // Exams Table
 export const exams = pgTable(
@@ -31,14 +35,13 @@ export const exams = pgTable(
     titleExamIdx: index("exams_title_exam_idx").on(table.title),
     classIdIdx: index("exams_class_id_idx").on(table.classId),
     calendarIdIdx: index("exams_calendar_id_idx").on(table.calendarId),
-  }),
-)
+  })
+);
 
 // Exam Type
-export type Exam = typeof exams.$inferInsert
+export type Exam = typeof exams.$inferInsert;
 
 // Drizzle Zod Schema
-export const createExamSchema = createInsertSchema(exams).omit({ id: true })
-
-export const insertExamSchema = createInsertSchema(exams)
-export const selectExamSchema = createSelectSchema(exams)
+export const insertExamSchema = createInsertSchema(exams);
+export const selectExamSchema = createSelectSchema(exams);
+export const updateExamSchema = createUpdateSchema(exams);

@@ -18,6 +18,7 @@ const api = j
  * All routers in /server/routers should be added here manually.
  */
 const appRouter = j.mergeRouters(api, {
+  answerOptions: dynamic(() => import("./routers/answer-options-router")),
   assignments: dynamic(() => import("./routers/assignments-router")),
   calendars: dynamic(() => import("./routers/calendars-router")),
   classes: dynamic(() => import("./routers/classes-router")),
@@ -26,8 +27,11 @@ const appRouter = j.mergeRouters(api, {
     () => import("./routers/class-participants-router")
   ),
   educationLevels: dynamic(() => import("./routers/education-levels-router")),
+  exams: dynamic(() => import("./routers/exams-router")),
   languageClasses: dynamic(() => import("./routers/language-classes-router")),
   languages: dynamic(() => import("./routers/languages-router")),
+  questions: dynamic(() => import("./routers/questions-router")),
+  quiz: dynamic(() => import("./routers/quiz-router")),
   roles: dynamic(() => import("./routers/roles-router")),
   regions: dynamic(() => import("./routers/region-router")),
   profileAgencies: dynamic(() => import("./routers/profile-agencies-router")),

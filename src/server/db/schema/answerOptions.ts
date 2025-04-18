@@ -1,7 +1,11 @@
-import { index, pgTable, uuid, varchar } from "drizzle-orm/pg-core"
+import { index, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 
-import { questions } from "."
-import { createInsertSchema, createSelectSchema } from "drizzle-zod"
+import { questions } from ".";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 
 // Answer Option Table
 export const answerOptions = pgTable(
@@ -16,16 +20,13 @@ export const answerOptions = pgTable(
   },
   (table) => ({
     questionIdIdx: index("question_id_idx").on(table.questionId),
-  }),
-)
+  })
+);
 
 // AnswerOption Type
-export type AnswerOption = typeof answerOptions.$inferInsert
+export type AnswerOption = typeof answerOptions.$inferInsert;
 
 // Drizzle Zod Schema
-export const createAnswerOptionsSchema = createInsertSchema(answerOptions).omit(
-  { id: true },
-)
-
-export const insertAnswerOptionsSchema = createInsertSchema(answerOptions)
-export const selectAnswerOptionsSchema = createSelectSchema(answerOptions)
+export const insertAnswerOptionsSchema = createInsertSchema(answerOptions);
+export const selectAnswerOptionsSchema = createSelectSchema(answerOptions);
+export const updateAnswerOptionsSchema = createUpdateSchema(answerOptions);
