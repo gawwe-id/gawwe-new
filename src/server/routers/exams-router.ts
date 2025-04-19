@@ -1,6 +1,6 @@
 import { exams, calendars, classes } from "@/server/db/schema";
 import { throwApiError } from "@/utils/api-error";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, gte } from "drizzle-orm";
 import { z } from "zod";
 import { j, privateProcedure, publicProcedure } from "../jstack";
 import { insertExamSchema, updateExamSchema } from "../db/schema/exams";
@@ -9,6 +9,15 @@ import { insertExamSchema, updateExamSchema } from "../db/schema/exams";
 const ExamIdInput = z.object({ examId: z.string() });
 const ClassIdInput = z.object({ classId: z.string() });
 const CalendarIdInput = z.object({ calendarId: z.string() });
+
+// Define an enum for status validation
+const ExamStatusEnum = z.enum([
+  "draft",
+  "published",
+  "ongoing",
+  "completed",
+  "cancelled",
+]);
 
 export const examsRouter = j.router({
   /** ========================================
@@ -42,6 +51,16 @@ export const examsRouter = j.router({
 
         if (!calendarExists) {
           throwApiError(404, "Calendar not found");
+        }
+      }
+
+      // Validate that endTime is after startTime
+      if (input.startTime && input.endTime) {
+        const startTime = new Date(input.startTime);
+        const endTime = new Date(input.endTime);
+
+        if (endTime <= startTime) {
+          throwApiError(400, "End time must be after start time");
         }
       }
 
@@ -225,6 +244,41 @@ export const examsRouter = j.router({
         }
       }
 
+      // Validate status if provided
+      if (data.status) {
+        try {
+          ExamStatusEnum.parse(data.status);
+        } catch (error) {
+          throwApiError(400, "Invalid exam status");
+        }
+      }
+
+      // Validate that endTime is after startTime if both are being updated
+      if (data.startTime && data.endTime) {
+        const startTime = new Date(data.startTime);
+        const endTime = new Date(data.endTime);
+
+        if (endTime <= startTime) {
+          throwApiError(400, "End time must be after start time");
+        }
+      }
+      // If only one time is being updated, check against existing value
+      else if (data.startTime && existingExam?.endTime) {
+        const startTime = new Date(data.startTime);
+        const endTime = new Date(existingExam?.endTime);
+
+        if (endTime <= startTime) {
+          throwApiError(400, "End time must be after start time");
+        }
+      } else if (data.endTime && existingExam?.startTime) {
+        const startTime = new Date(existingExam?.startTime);
+        const endTime = new Date(data.endTime);
+
+        if (endTime <= startTime) {
+          throwApiError(400, "End time must be after start time");
+        }
+      }
+
       // Update the exam
       const [updatedExam] = await db
         .update(exams)
@@ -355,25 +409,70 @@ export const examsRouter = j.router({
   /** ========================================
    * GET UPCOMING EXAMS
    ======================================== */
-  upcoming: publicProcedure.query(async ({ c, ctx }) => {
-    const { db } = ctx;
+  upcoming: publicProcedure
+    .input(
+      z
+        .object({
+          limit: z.number().optional().default(10),
+          includeStatus: z.array(ExamStatusEnum).optional(),
+        })
+        .optional()
+    )
+    .query(async ({ c, ctx, input }) => {
+      const { db } = ctx;
+      const limit = input?.limit || 10;
+      const includeStatus = input?.includeStatus || ["published", "ongoing"];
 
-    const now = new Date();
+      const now = new Date();
 
-    // Get all exams with exam date in the future
-    const upcomingExams = await db
-      .select()
-      .from(exams)
-      .where(sql`${exams.examDate} > ${now}`)
-      .orderBy(exams.examDate)
-      .execute();
+      // Get upcoming exams with specified statuses
+      const upcomingExams = await db
+        .select()
+        .from(exams)
+        .where(
+          sql`${exams.examDate} > ${now} AND ${exams.status} IN (${includeStatus.join(",")})`
+        )
+        .orderBy(exams.examDate)
+        .limit(limit)
+        .execute();
 
-    return c.superjson(
-      {
-        message: "Upcoming exams retrieved successfully",
-        data: upcomingExams,
-      },
-      200
-    );
-  }),
+      return c.superjson(
+        {
+          message: "Upcoming exams retrieved successfully",
+          data: upcomingExams,
+        },
+        200
+      );
+    }),
+
+  /** ========================================
+   * GET EXAMS BY STATUS
+   ======================================== */
+  byStatus: publicProcedure
+    .input(
+      z.object({
+        status: ExamStatusEnum,
+        limit: z.number().optional().default(10),
+      })
+    )
+    .query(async ({ c, ctx, input }) => {
+      const { db } = ctx;
+      const { status, limit } = input;
+
+      // Get exams by status
+      const examsList = await db
+        .select()
+        .from(exams)
+        .where(eq(exams.status, status))
+        .limit(limit)
+        .execute();
+
+      return c.superjson(
+        {
+          message: `${status} exams retrieved successfully`,
+          data: examsList,
+        },
+        200
+      );
+    }),
 });
