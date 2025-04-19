@@ -1,0 +1,8 @@
+{
+  "title": "Page Not Found",
+  "subtitle": "We couldn't find the page you're looking for",
+  "description": "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.",
+  "goHome": "Go to Home Page",
+  "goBack": "Go Back",
+  "errorCode": "Error 404"
+}

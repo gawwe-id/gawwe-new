@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800px" height="800px" viewBox="0 0 800 800" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <title>404 Illustration</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="gradient-1">
+            <stop stop-color="#fa541c" offset="0%"></stop>
+            <stop stop-color="#d4380d" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="gradient-2">
+            <stop stop-color="#E0E0E0" offset="0%"></stop>
+            <stop stop-color="#BDBDBD" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Background elements -->
+        <circle fill="#fff2e8" cx="400" cy="400" r="200"></circle>
+        <path d="M610,330 C630,380 630,450 580,490 C530,530 480,520 450,500 C420,480 400,450 410,420 C420,390 450,380 500,390 C550,400 590,280 610,330 Z" fill="#ffd8bf" opacity="0.5"></path>
+        <path d="M190,330 C170,380 170,450 220,490 C270,530 320,520 350,500 C380,480 400,450 390,420 C380,390 350,380 300,390 C250,400 210,280 190,330 Z" fill="#ffd8bf" opacity="0.5"></path>
+        
+        <!-- 404 Text -->
+        <g transform="translate(160, 300)">
+            <!-- 4 -->
+            <path d="M80,0 L80,200 M0,120 L160,120" stroke="url(#gradient-1)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"></path>
+            
+            <!-- 0 -->
+            <circle cx="240" cy="100" r="80" stroke="url(#gradient-1)" stroke-width="30" fill="none"></circle>
+            
+            <!-- 4 -->
+            <path d="M400,0 L400,200 M320,120 L480,120" stroke="url(#gradient-1)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"></path>
+        </g>
+        
+        <!-- Decorative elements -->
+        <circle cx="200" cy="150" r="15" fill="url(#gradient-2)"></circle>
+        <circle cx="600" cy="200" r="25" fill="url(#gradient-2)"></circle>
+        <circle cx="700" cy="350" r="10" fill="url(#gradient-2)"></circle>
+        <circle cx="150" cy="500" r="20" fill="url(#gradient-2)"></circle>
+        <circle cx="500" cy="650" r="15" fill="url(#gradient-2)"></circle>
+        
+        <!-- Character -->
+        <g transform="translate(330, 550)">
+            <!-- Body -->
+            <ellipse cx="70" cy="80" rx="50" ry="70" fill="#fa541c"></ellipse>
+            
+            <!-- Head -->
+            <circle cx="70" cy="0" r="40" fill="#ff7a45"></circle>
+            
+            <!-- Eyes -->
+            <circle cx="55" cy="-5" r="8" fill="white"></circle>
+            <circle cx="85" cy="-5" r="8" fill="white"></circle>
+            <circle cx="55" cy="-5" r="3" fill="#333333"></circle>
+            <circle cx="85" cy="-5" r="3" fill="#333333"></circle>
+            
+            <!-- Mouth - sad -->
+            <path d="M55,15 C65,10 75,10 85,15" stroke="#333333" stroke-width="3" fill="none"></path>
+            
+            <!-- Arms -->
+            <path d="M20,60 C0,40 -10,50 -20,70" stroke="#d4380d" stroke-width="10" stroke-linecap="round"></path>
+            <path d="M120,60 C140,40 150,50 160,70" stroke="#d4380d" stroke-width="10" stroke-linecap="round"></path>
+        </g>
+    </g>
+</svg> 
