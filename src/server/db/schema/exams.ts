@@ -28,6 +28,11 @@ export const exams = pgTable(
     title: varchar("title").notNull(),
     description: varchar("description"),
     examDate: timestamp("exam_date").notNull().defaultNow(),
+    status: varchar("status", {
+      enum: ["draft", "published", "ongoing", "completed", "cancelled"],
+    }).default("draft"),
+    startTime: timestamp("start_time").notNull(),
+    endTime: timestamp("end_time").notNull(),
     isOnline: boolean("is_online").default(false),
     link: varchar("link"),
   },
