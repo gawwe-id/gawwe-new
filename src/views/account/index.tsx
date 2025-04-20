@@ -129,7 +129,7 @@ const Account = () => {
     role === "participant" ? profileData.participant : profileData.agency;
 
   return (
-    <Box sx={{ px: { xs: 2, md: 6 } }}>
+    <Box sx={{ px: { xs: 2, md: 6 }, maxWidth: "1300px", mx: "auto" }}>
       <Typography level="h2" component="h1" sx={{ mt: 1, mb: 2 }}>
         {t("pageTitle")}
       </Typography>
@@ -137,7 +137,7 @@ const Account = () => {
       <Tabs
         value={activeTab}
         onChange={handleTabChange}
-        sx={{ bgcolor: "transparent" }}
+        sx={{ bgcolor: "transparent", mt: 3 }}
       >
         <TabsAccount />
 
@@ -188,7 +188,6 @@ const Account = () => {
             </TabPanel>
 
             <TabPanel value="1">{/* Profile Info Tab Content */}</TabPanel>
-
             <TabPanel value="2">{/* Address Info Tab Content */}</TabPanel>
           </>
         )}
