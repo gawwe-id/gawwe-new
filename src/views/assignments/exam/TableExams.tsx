@@ -9,6 +9,9 @@ import {
 import { useMemo } from "react";
 import { Exam } from "@/server/db/schema/exams";
 import { useExamStore } from "@/store/examStore";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { client } from "@/lib/client";
+import { useDialogAlertStore } from "@/store/useDialogAlertStore";
 
 type Class = {
   id: string;
@@ -45,14 +48,47 @@ interface TableExamsProps {
 
 const TableExams = ({ exams, classes }: TableExamsProps) => {
   const { t } = useTranslation("assignment");
+  const queryClient = useQueryClient();
 
-  const { searchTerm, selectedClass, dateRange, status, setEditId } =
+  const { searchTerm, selectedClass, dateRange, status, setEditId, openEdit } =
     useExamStore();
+  const { openDialog, setLoading, closeDialog } = useDialogAlertStore();
+
+  // Delete Exam
+  const { mutate: deleteExam } = useMutation({
+    mutationFn: async (id: string) => {
+      setLoading(true);
+      const res = await client.exams.delete.$post({
+        examId: id,
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["exams"] });
+      setLoading(false);
+      closeDialog();
+    },
+  });
 
   // Get class name by ID
   const getClassName = (classId: string) => {
     const classItem = classes?.find((c: Class) => c.id === classId);
     return classItem ? classItem.name : t("table.unknownClass");
+  };
+
+  const handleEditExam = (examId: string) => {
+    openEdit();
+    setEditId(examId);
+  };
+
+  const handleDeleteExam = (examId: string) => {
+    openDialog({
+      title: t("exam.modal.deleteTitle"),
+      description: t("exam.modal.descriptionDelete"),
+      textCancel: t("exam.form.cancel"),
+      textAction: t("exam.form.delete"),
+      onAction: () => deleteExam(examId),
+    });
   };
 
   const filteredExams = useMemo(() => {
@@ -78,8 +114,6 @@ const TableExams = ({ exams, classes }: TableExamsProps) => {
       return matchesSearch && matchesStatus && matchesClass && matchesDateRange;
     });
   }, [exams, searchTerm, selectedClass, dateRange, status]);
-
-  console.log("filteredExams : ", filteredExams);
 
   return (
     <Sheet
@@ -148,10 +182,20 @@ const TableExams = ({ exams, classes }: TableExamsProps) => {
                 </td>
                 <td>
                   <Box sx={{ display: "flex", gap: 1 }}>
-                    <IconButton size="sm" variant="soft" color="neutral">
+                    <IconButton
+                      size="sm"
+                      variant="soft"
+                      color="neutral"
+                      onClick={() => handleEditExam(exam.id)}
+                    >
                       <EditRounded />
                     </IconButton>
-                    <IconButton size="sm" variant="soft" color="danger">
+                    <IconButton
+                      size="sm"
+                      variant="soft"
+                      color="danger"
+                      onClick={() => handleDeleteExam(exam.id)}
+                    >
                       <DeleteRounded />
                     </IconButton>
                   </Box>

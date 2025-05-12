@@ -105,6 +105,10 @@
       "endDate": "Tanggal selesai",
       "clearFilters": "Hapus filter"
     },
+    "modal": {
+      "deleteTitle": "Hapus Ujian",
+      "descriptionDelete": "Apakah Kamu yakin ingin menghapus Ujian ini?"
+    },
     "form": {
       "title": "Judul Ujian",
       "description": "Deskripsi",
@@ -118,10 +122,12 @@
       "calendar": "Kalender",
       "status": "Status",
       "isPublished": "Dipublikasikan",
-      "isActive": "Aktif",
+      "isOnline": "Ujian Online",
+      "link": "Link Ujian",
       "calendarEventPlaceholder": "Link ke Acara Kalender (opsional)",
       "create": "Buat",
       "creating": "Membuat...",
+      "delete": "Hapus",
       "cancel": "Batal"
     },
     "table": {

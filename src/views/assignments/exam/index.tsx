@@ -23,7 +23,8 @@ const examSchema = z.object({
   calendarId: z.string().optional(),
   status: z.string().default("draft"),
   isPublished: z.boolean().default(false),
-  isActive: z.boolean().default(true),
+  isOnline: z.boolean().default(false),
+  link: z.string().url().optional(),
 });
 
 export type ExamFormValues = z.infer<typeof examSchema>;
@@ -40,7 +41,8 @@ const ExamContent = () => {
       description: "",
       status: "draft",
       isPublished: false,
-      isActive: true,
+      isOnline: false,
+      link: "",
     },
   });
 
@@ -61,14 +63,6 @@ const ExamContent = () => {
     },
   });
 
-  const { data: calendars, isLoading: isLoadingCalendars } = useQuery({
-    queryKey: ["calendars"],
-    queryFn: async () => {
-      const res = await client.calendars.list.$get();
-      return res.json();
-    },
-  });
-
   const handleCreate = () => {
     setEditId(null);
     openModal();
@@ -78,12 +72,13 @@ const ExamContent = () => {
       description: "",
       status: "draft",
       isPublished: false,
-      isActive: true,
+      isOnline: false,
+      link: "",
     });
   };
 
   // Loading state
-  if (isLoadingExams || isLoadingClasses || isLoadingCalendars) {
+  if (isLoadingExams || isLoadingClasses) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
         <Typography level="h4">{t("exam.page.loading")}</Typography>
@@ -124,11 +119,7 @@ const ExamContent = () => {
       />
 
       {/* Create Exam Dialog */}
-      <CreateExamDialog
-        form={form}
-        classes={classes?.data}
-        calendars={calendars?.data}
-      />
+      <CreateExamDialog form={form} classes={classes?.data} />
     </>
   );
 };

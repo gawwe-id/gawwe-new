@@ -4,7 +4,7 @@ import { eq, sql, gte } from "drizzle-orm";
 import { z } from "zod";
 import { j, privateProcedure, publicProcedure } from "../jstack";
 import dayjs from "dayjs";
-import { insertExamSchema } from "../db/schema/exams";
+import { insertExamSchema, updateExamSchema } from "../db/schema/exams";
 
 // Define input schemas
 const ExamIdInput = z.object({ examId: z.string() });
@@ -19,42 +19,6 @@ const ExamStatusEnum = z.enum([
   "completed",
   "cancelled",
 ]);
-
-const createExamInputSchema = z.object({
-  title: z.string(),
-  description: z.string().optional(),
-  examDate: z.date(),
-  startTime: z.string().regex(/^\d{2}:\d{2}$/), // HH:MM format
-  endTime: z.string().regex(/^\d{2}:\d{2}$/), // HH:MM format
-  status: ExamStatusEnum.default("draft"),
-  isOnline: z.boolean().default(false),
-  link: z.string().optional(),
-  classId: z.string().uuid().optional(),
-  calendarId: z.string().uuid().optional(),
-});
-
-// Define a schema for the update exam input
-const updateExamInputSchema = z.object({
-  examId: z.string().uuid(),
-  data: z.object({
-    title: z.string().optional(),
-    description: z.string().optional(),
-    examDate: z.date().optional(),
-    startTime: z
-      .string()
-      .regex(/^\d{2}:\d{2}$/)
-      .optional(), // HH:MM format
-    endTime: z
-      .string()
-      .regex(/^\d{2}:\d{2}$/)
-      .optional(), // HH:MM format
-    status: ExamStatusEnum.optional(),
-    isOnline: z.boolean().optional(),
-    link: z.string().optional(),
-    classId: z.string().uuid().optional(),
-    calendarId: z.string().uuid().optional(),
-  }),
-});
 
 function combineDateTime(dateObj: Date | undefined, timeObj: Date): Date {
   // Create a new date object to avoid mutating the original
@@ -269,7 +233,7 @@ export const examsRouter = j.router({
     .input(
       z.object({
         examId: z.string(),
-        data: updateExamInputSchema,
+        data: updateExamSchema,
       })
     )
     .mutation(async ({ c, ctx, input }) => {
@@ -291,39 +255,74 @@ export const examsRouter = j.router({
       const processedData: any = { ...data };
 
       // If updating both examDate and startTime, combine them
-      if (data.data.examDate && data.data.startTime) {
+      if (data.examDate && data.startTime) {
         processedData.startTime = combineDateTime(
-          data.data.examDate,
-          data?.data?.startTime
+          data.examDate,
+          data.startTime as unknown as Date
         );
       }
       // If updating just startTime, use existing examDate
-      else if (
-        data.data.startTime &&
-        !data.data.examDate &&
-        existingExam?.examDate
-      ) {
+      else if (data.startTime && !data.examDate && existingExam?.examDate) {
         processedData.startTime = combineDateTime(
-          existingExam?.examDate,
-          data.data.startTime
+          existingExam.examDate,
+          data.startTime as unknown as Date
         );
       }
 
       // Same for endTime
-      if (data.data.examDate && data.data.endTime) {
+      if (data.examDate && data.endTime) {
         processedData.endTime = combineDateTime(
-          data.data.examDate,
-          data.data.endTime
+          data.examDate,
+          data.endTime as unknown as Date
         );
-      } else if (
-        data.data.endTime &&
-        !data.data.examDate &&
-        existingExam?.examDate
-      ) {
+      } else if (data.endTime && !data.examDate && existingExam?.examDate) {
         processedData.endTime = combineDateTime(
-          existingExam?.examDate,
-          data.data.endTime
+          existingExam.examDate,
+          data.endTime as unknown as Date
         );
+      }
+
+      // If only examDate is being updated, update startTime and endTime accordingly
+      if (data.examDate && !data.startTime && !data.endTime) {
+        // Update startTime
+        if (existingExam?.startTime) {
+          const existingTime = new Date(existingExam.startTime);
+          processedData.startTime = combineDateTime(
+            data.examDate,
+            existingTime
+          );
+        }
+
+        // Update endTime
+        if (existingExam?.endTime) {
+          const existingTime = new Date(existingExam.endTime);
+          processedData.endTime = combineDateTime(data.examDate, existingTime);
+        }
+      }
+
+      // Validate that endTime is after startTime
+      if (processedData.startTime && processedData.endTime) {
+        if (
+          processedData.startTime.getTime() >= processedData.endTime.getTime()
+        ) {
+          throwApiError(400, "End time must be after start time");
+        }
+      }
+      // If only one time is being updated, check against existing value
+      else if (processedData.startTime && existingExam?.endTime) {
+        if (
+          processedData.startTime.getTime() >=
+          new Date(existingExam?.endTime).getTime()
+        ) {
+          throwApiError(400, "End time must be after start time");
+        }
+      } else if (processedData.endTime && existingExam?.startTime) {
+        if (
+          new Date(existingExam?.startTime).getTime() >=
+          processedData.endTime.getTime()
+        ) {
+          throwApiError(400, "End time must be after start time");
+        }
       }
 
       // Check if the class exists if classId is provided
@@ -352,34 +351,10 @@ export const examsRouter = j.router({
         }
       }
 
-      // Validate that endTime is after startTime if both are being updated
-      if (processedData.startTime && processedData.endTime) {
-        if (
-          processedData.startTime.getTime() >= processedData.endTime.getTime()
-        ) {
-          throwApiError(400, "End time must be after start time");
-        }
+      // Remove examDate from processed data as it's not a field in the table
+      if ("examDate" in processedData) {
+        delete processedData.examDate;
       }
-      // If only one time is being updated, check against existing value
-      else if (processedData.startTime && existingExam?.endTime) {
-        if (
-          processedData.startTime.getTime() >=
-          new Date(existingExam?.endTime).getTime()
-        ) {
-          throwApiError(400, "End time must be after start time");
-        }
-      } else if (processedData.endTime && existingExam?.startTime) {
-        if (
-          new Date(existingExam?.startTime).getTime() >=
-          processedData.endTime.getTime()
-        ) {
-          throwApiError(400, "End time must be after start time");
-        }
-      }
-
-      // Remove non-DB fields
-      if (data.data.startTime) delete data.data.startTime;
-      if (data.data.endTime) delete data.data.endTime;
 
       // Update the exam
       try {

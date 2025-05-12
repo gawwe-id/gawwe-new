@@ -7,6 +7,7 @@ type DateRange = {
 
 interface ExamState {
   isModalOpen: boolean;
+  isEditOpen: boolean;
   editId: string | null;
   searchTerm: string;
   selectedClass: string | null;
@@ -16,7 +17,9 @@ interface ExamState {
 
 interface ExamActions {
   openModal: () => void;
+  openEdit: () => void;
   closeModal: () => void;
+  closeEdit: () => void;
   setEditId: (id: string | null) => void;
   setSearchTerm: (term: string) => void;
   setSelectedClass: (classId: string | null) => void;
@@ -28,6 +31,7 @@ interface ExamActions {
 export const useExamStore = create<ExamState & ExamActions>((set) => ({
   // Initial state
   isModalOpen: false,
+  isEditOpen: false,
   editId: null,
   searchTerm: "",
   selectedClass: null,
@@ -36,8 +40,10 @@ export const useExamStore = create<ExamState & ExamActions>((set) => ({
 
   // Actions
   openModal: () => set({ isModalOpen: true }),
-  closeModal: () => set({ isModalOpen: false, editId: null }),
-  setEditId: (id) => set({ editId: id, isModalOpen: true }),
+  openEdit: () => set({ isEditOpen: true }),
+  closeModal: () => set({ isModalOpen: false }),
+  closeEdit: () => set({ isEditOpen: false }),
+  setEditId: (id) => set({ editId: id, isEditOpen: true }),
   setSearchTerm: (term) => set({ searchTerm: term }),
   setSelectedClass: (classId) => set({ selectedClass: classId }),
   setDateRange: (range) =>

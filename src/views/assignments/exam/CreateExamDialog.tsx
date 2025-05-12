@@ -18,17 +18,16 @@ import {
   Input,
   Box,
   Typography,
+  Switch,
 } from "@mui/joy";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Controller, UseFormReturn } from "react-hook-form";
 import {
-  CalendarMonthRounded,
   DateRangeRounded,
   PostAddRounded,
   ScheduleRounded,
 } from "@mui/icons-material";
-import { useEffect } from "react";
 import { ExamFormValues } from ".";
 import { useExamStore } from "@/store/examStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -67,13 +66,11 @@ type Calendar = {
 interface CreateExamDialogProps {
   form: UseFormReturn<ExamFormValues>;
   classes: Class[] | undefined;
-  calendars: Calendar[] | undefined;
 }
 
 export default function CreateExamDialog({
   form,
   classes,
-  calendars,
 }: CreateExamDialogProps) {
   const { t } = useTranslation("assignment");
   const queryClient = useQueryClient();
@@ -90,17 +87,7 @@ export default function CreateExamDialog({
 
   const startTime = watch("startTime");
   const endTime = watch("endTime");
-
-  useEffect(() => {
-    if (startTime || endTime) {
-      console.log("Form time values:", {
-        startTime,
-        endTime,
-        startTimeFormatted: startTime ? dayjs(startTime).format("HH:mm") : null,
-        endTimeFormatted: endTime ? dayjs(endTime).format("HH:mm") : null,
-      });
-    }
-  }, [startTime, endTime]);
+  const isOnline = watch("isOnline");
 
   // Mutations
   const { mutate: createExam, isPending: isCreating } = useMutation({
@@ -335,29 +322,52 @@ export default function CreateExamDialog({
             </Grid>
 
             <Grid xs={12} md={6}>
-              <Controller
-                name="calendarId"
-                control={control}
-                render={({ field }) => (
-                  <FormControl>
-                    <FormLabel>{t("exam.form.calendar")}</FormLabel>
-                    <Select
-                      placeholder={t("exam.form.calendarEventPlaceholder")}
-                      value={field.value || ""}
-                      onChange={(e, val) => field.onChange(val)}
-                      startDecorator={<CalendarMonthRounded />}
-                    >
-                      {calendars?.map((calendar: any) => (
-                        <Option key={calendar.id} value={calendar.id}>
-                          {calendar.title}
-                        </Option>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-              />
+              <FormControl>
+                <FormLabel>{t("exam.form.isOnline")}</FormLabel>
+                <Controller
+                  name="isOnline"
+                  control={control}
+                  render={({ field }) => (
+                    <Switch
+                      checked={field.value}
+                      onChange={(event) => field.onChange(event.target.checked)}
+                      sx={{
+                        "--Switch-trackWidth": "64px",
+                        "--Switch-trackHeight": "34px",
+                        "--Switch-thumbSize": "26px",
+                        "--Switch-trackRadius": "18px",
+                      }}
+                    />
+                  )}
+                />
+              </FormControl>
             </Grid>
+
+            {isOnline && (
+              <Grid xs={12} md={12}>
+                <FormControl error={!!errors.link}>
+                  <FormLabel>{t("exam.form.link")}</FormLabel>
+                  <Controller
+                    name="link"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        fullWidth
+                        size="sm"
+                        disabled={loading}
+                        placeholder="https://exam-meetup.com/"
+                      />
+                    )}
+                  />
+                  {errors.link && (
+                    <FormHelperText>{errors.link.message}</FormHelperText>
+                  )}
+                </FormControl>
+              </Grid>
+            )}
           </Grid>
+
           <Box
             sx={{ display: "flex", gap: 1, justifyContent: "flex-end", mt: 4 }}
           >

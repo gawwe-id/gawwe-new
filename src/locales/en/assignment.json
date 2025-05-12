@@ -105,6 +105,10 @@
       "endDate": "End date",
       "clearFilters": "Clear filters"
     },
+    "modal": {
+      "deleteTitle": "Delete Exam",
+      "descriptionDelete": "Are you sure you want to delete this Exam?"
+    },
     "form": {
       "title": "Exam Title",
       "description": "Description",
@@ -118,10 +122,12 @@
       "calendar": "Calendar",
       "status": "Status",
       "isPublished": "Published",
-      "isActive": "Active",
+      "isOnline": "Online Exam",
+      "link": "Exam Link",
       "calendarEventPlaceholder": "Link to Calendar Event (optional)",
       "create": "Create",
       "creating": "Creating...",
+      "delete": "Delete",
       "cancel": "Cancel"
     },
     "table": {
