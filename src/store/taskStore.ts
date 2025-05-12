@@ -1,4 +1,3 @@
-// src/stores/taskManagementStore.ts
 import { create } from "zustand";
 
 type DateRange = {
@@ -6,7 +5,7 @@ type DateRange = {
   end: Date | null;
 };
 
-interface TaskManagementState {
+interface TaskState {
   isModalOpen: boolean;
   editId: string | null;
   searchTerm: string;
@@ -14,7 +13,7 @@ interface TaskManagementState {
   dateRange: DateRange;
 }
 
-interface TaskManagementActions {
+interface TaskActions {
   openModal: () => void;
   closeModal: () => void;
   setEditId: (id: string | null) => void;
@@ -24,9 +23,7 @@ interface TaskManagementActions {
   resetFilters: () => void;
 }
 
-export const useTaskManagementStore = create<
-  TaskManagementState & TaskManagementActions
->((set) => ({
+export const useTaskStore = create<TaskState & TaskActions>((set) => ({
   // Initial state
   isModalOpen: false,
   editId: null,

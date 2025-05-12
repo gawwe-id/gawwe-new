@@ -64,6 +64,13 @@
       "when": 1742119292950,
       "tag": "0008_peaceful_scourge",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1745047372908,
+      "tag": "0009_shallow_penance",
+      "breakpoints": true
     }
   ]
 }

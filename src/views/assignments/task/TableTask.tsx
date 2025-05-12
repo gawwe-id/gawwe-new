@@ -1,7 +1,7 @@
 "use client";
 
 import { client } from "@/lib/client";
-import { useTaskManagementStore } from "@/store/taskManagementStore";
+import { useTaskStore } from "@/store/taskStore";
 import {
   DeleteRounded,
   EditRounded,
@@ -25,8 +25,8 @@ import dayjs from "dayjs";
 import { useMemo } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { AssignmentFormValues } from "..";
 import { useDialogAlertStore } from "@/store/useDialogAlertStore";
+import { AssignmentFormValues } from ".";
 
 type Assignment = {
   id: string;
@@ -58,22 +58,17 @@ type Class = {
   updatedAt: Date;
 };
 
-interface TableAssignmentProps {
+interface TableTaskProps {
   assignments: Assignment[] | undefined;
   classes: Class[] | undefined;
   form: UseFormReturn<AssignmentFormValues>;
 }
 
-const TableAssignment = ({
-  assignments,
-  classes,
-  form,
-}: TableAssignmentProps) => {
+const TableTask = ({ assignments, classes, form }: TableTaskProps) => {
   const { t } = useTranslation("assignment");
   const queryClient = useQueryClient();
 
-  const { searchTerm, selectedClass, dateRange, setEditId } =
-    useTaskManagementStore();
+  const { searchTerm, selectedClass, dateRange, setEditId } = useTaskStore();
   const { openDialog, setLoading, closeDialog } = useDialogAlertStore();
 
   const { mutate: deleteAssignment } = useMutation({
@@ -128,10 +123,10 @@ const TableAssignment = ({
 
   const handleDelete = (id: string) => {
     openDialog({
-      title: t("modal.deleteTitle"),
-      description: t("modal.descriptionDelete"),
-      textCancel: t("modal.form.cancel"),
-      textAction: t("modal.form.delete"),
+      title: t("task.modal.deleteTitle"),
+      description: t("task.modal.descriptionDelete"),
+      textCancel: t("task.modal.form.cancel"),
+      textAction: t("task.modal.form.delete"),
       onAction: () => deleteAssignment(id),
     });
   };
@@ -139,7 +134,7 @@ const TableAssignment = ({
   // Get class name by ID
   const getClassName = (classId: string) => {
     const classItem = classes?.find((c: Class) => c.id === classId);
-    return classItem ? classItem.name : t("table.unknownClass");
+    return classItem ? classItem.name : t("task.table.unknownClass");
   };
 
   return (
@@ -162,10 +157,10 @@ const TableAssignment = ({
       >
         <thead>
           <tr>
-            <th style={{ width: "40%" }}>{t("table.title")}</th>
-            <th>{t("table.class")}</th>
-            <th>{t("table.dueDate")}</th>
-            <th style={{ width: "15%" }}>{t("table.actions")}</th>
+            <th style={{ width: "40%" }}>{t("task.table.title")}</th>
+            <th>{t("task.table.class")}</th>
+            <th>{t("task.table.dueDate")}</th>
+            <th style={{ width: "15%" }}>{t("task.table.actions")}</th>
           </tr>
         </thead>
         <tbody>
@@ -224,9 +219,9 @@ const TableAssignment = ({
                         <MoreVertRounded />
                       </MenuButton>
                       <Menu placement="bottom-end">
-                        <MenuItem>{t("table.viewSubmissions")}</MenuItem>
-                        <MenuItem>{t("table.generateReport")}</MenuItem>
-                        <MenuItem>{t("table.sendNotification")}</MenuItem>
+                        <MenuItem>{t("task.table.viewSubmissions")}</MenuItem>
+                        <MenuItem>{t("task.table.generateReport")}</MenuItem>
+                        <MenuItem>{t("task.table.sendNotification")}</MenuItem>
                       </Menu>
                     </Dropdown>
                   </Box>
@@ -238,7 +233,7 @@ const TableAssignment = ({
               <td colSpan={4} style={{ textAlign: "center" }}>
                 <Box sx={{ py: 3 }}>
                   <Typography level="body-lg">
-                    {t("table.noAssignmentsFound")}
+                    {t("task.table.noAssignmentsFound")}
                   </Typography>
                 </Box>
               </td>
@@ -250,4 +245,4 @@ const TableAssignment = ({
   );
 };
 
-export default TableAssignment;
+export default TableTask;

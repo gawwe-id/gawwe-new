@@ -21,6 +21,7 @@ const i18nNamespaces = [
   "class",
   "schedules",
   "assignment",
+  "exams",
 ];
 
 export default async function DashboardLayout({

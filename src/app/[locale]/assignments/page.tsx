@@ -1,14 +1,14 @@
 import DasbhboardLayout from "@/layout/DashboardLayout";
-import TaskManagement from "@/views/task-management";
+import Assignments from "@/views/assignments";
 
-export default async function TaskManagementPage(props: {
+export default async function AssignmentsPage(props: {
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await props.params;
 
   return (
     <DasbhboardLayout locale={locale}>
-      <TaskManagement />
+      <Assignments />
     </DasbhboardLayout>
   );
 }

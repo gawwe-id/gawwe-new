@@ -1,0 +1,73 @@
+{
+  "title": "Manajemen Ujian",
+  "subtitle": "Kelola semua ujian Anda di satu tempat",
+  "actions": {
+    "create": "Buat Ujian",
+    "edit": "Edit Ujian",
+    "delete": "Hapus Ujian",
+    "view": "Lihat Detail"
+  },
+  "filters": {
+    "all": "Semua Ujian",
+    "upcoming": "Akan Datang",
+    "past": "Selesai",
+    "byClass": "Filter berdasarkan Kelas"
+  },
+  "filter": {
+    "search": "Cari",
+    "searchPlaceholder": "Cari berdasarkan nama atau deskripsi...",
+    "status": "Status",
+    "selectStatus": "Pilih status",
+    "allStatuses": "Semua status",
+    "filterByClass": "Filter berdasarkan kelas",
+    "selectClass": "Pilih kelas",
+    "allClasses": "Semua kelas",
+    "startDate": "Tanggal mulai",
+    "endDate": "Tanggal selesai",
+    "clearFilters": "Hapus filter"
+  },
+  "form": {
+    "title": "Judul Ujian",
+    "description": "Deskripsi",
+    "date": "Tanggal Ujian",
+    "startTime": "Waktu Mulai",
+    "endTime": "Waktu Selesai",
+    "duration": "Durasi (menit)",
+    "maxScore": "Skor Maksimum",
+    "passingScore": "Skor Kelulusan",
+    "class": "Kelas",
+    "calendar": "Kalender",
+    "status": "Status",
+    "isPublished": "Dipublikasikan",
+    "isActive": "Aktif",
+    "calendarEventPlaceholder": "Link ke Acara Kalender (opsional)"
+  },
+  "table": {
+    "id": "ID",
+    "title": "Judul",
+    "class": "Kelas",
+    "date": "Tanggal",
+    "examDate": "Tanggal Ujian",
+    "startTime": "Waktu Mulai",
+    "endTime": "Waktu Selesai",
+    "duration": "Durasi",
+    "status": "Status",
+    "actions": "Tindakan"
+  },
+  "status": {
+    "draft": "Draft",
+    "published": "Dipublikasikan",
+    "ongoing": "Sedang Berlangsung",
+    "completed": "Selesai",
+    "cancelled": "Dibatalkan"
+  },
+  "messages": {
+    "createSuccess": "Ujian berhasil dibuat",
+    "updateSuccess": "Ujian berhasil diperbarui",
+    "deleteSuccess": "Ujian berhasil dihapus",
+    "createError": "Gagal membuat ujian",
+    "updateError": "Gagal memperbarui ujian",
+    "deleteError": "Gagal menghapus ujian",
+    "confirmDelete": "Apakah Anda yakin ingin menghapus ujian ini?"
+  }
+}

@@ -1,9 +1,4 @@
-import { useTaskManagementStore } from "@/store/taskManagementStore";
-import {
-  ClassRounded,
-  DateRangeRounded,
-  SearchRounded,
-} from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Button,
@@ -14,9 +9,15 @@ import {
   Option,
   Select,
 } from "@mui/joy";
+import {
+  ClassRounded,
+  DateRangeRounded,
+  SearchRounded,
+} from "@mui/icons-material";
 import React from "react";
 import DatePicker from "react-datepicker";
-import { useTranslation } from "react-i18next";
+import "react-datepicker/dist/react-datepicker.css";
+import { useExamStore } from "@/store/examStore";
 
 type Class = {
   id: string;
@@ -37,22 +38,23 @@ type Class = {
   updatedAt: Date;
 };
 
-interface FilterAssginmentProps {
+interface FilterExamProps {
   classes: Class[] | undefined;
 }
 
-const FilterAssginment = ({ classes }: FilterAssginmentProps) => {
+const FilterExam = ({ classes }: FilterExamProps) => {
   const { t } = useTranslation("assignment");
-
   const {
     searchTerm,
     selectedClass,
     dateRange,
+    status,
     setSearchTerm,
     setSelectedClass,
     setDateRange,
+    setStatus,
     resetFilters,
-  } = useTaskManagementStore();
+  } = useExamStore();
 
   return (
     <Card variant="outlined" sx={{ mb: 3 }}>
@@ -66,25 +68,43 @@ const FilterAssginment = ({ classes }: FilterAssginmentProps) => {
         }}
       >
         <FormControl sx={{ maxWidth: 240 }}>
-          <FormLabel>{t("filter.search")}</FormLabel>
+          <FormLabel>{t("exam.filter.search")}</FormLabel>
           <Input
             size="sm"
             startDecorator={<SearchRounded />}
-            placeholder={t("filter.searchPlaceholder")}
+            placeholder={t("exam.filter.searchPlaceholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </FormControl>
 
         <FormControl sx={{ maxWidth: 240 }}>
-          <FormLabel>{t("filter.filterByClass")}</FormLabel>
+          <FormLabel>{t("exam.filter.status")}</FormLabel>
           <Select
             size="sm"
-            placeholder={t("filter.selectClass")}
+            placeholder={t("exam.filter.selectStatus")}
+            value={status}
+            onChange={(_, value) => setStatus(value as string)}
+          >
+            <Option value="">{t("exam.filter.allStatuses")}</Option>
+            <Option value="draft">{t("exam.status.draft")}</Option>
+            <Option value="published">{t("exam.status.published")}</Option>
+            <Option value="ongoing">{t("exam.status.ongoing")}</Option>
+            <Option value="completed">{t("exam.status.completed")}</Option>
+            <Option value="cancelled">{t("exam.status.cancelled")}</Option>
+          </Select>
+        </FormControl>
+
+        <FormControl sx={{ maxWidth: 240 }}>
+          <FormLabel>{t("exam.filter.filterByClass")}</FormLabel>
+          <Select
+            size="sm"
+            placeholder={t("exam.filter.selectClass")}
             value={selectedClass}
             onChange={(_, value) => setSelectedClass(value)}
             startDecorator={<ClassRounded />}
           >
+            <Option value="">{t("exam.filter.allClasses")}</Option>
             {classes?.map((classItem: Class) => (
               <Option key={classItem.id} value={classItem.id}>
                 {classItem.name}
@@ -94,14 +114,14 @@ const FilterAssginment = ({ classes }: FilterAssginmentProps) => {
         </FormControl>
 
         <FormControl sx={{ maxWidth: 240 }}>
-          <FormLabel>{t("filter.startDate")}</FormLabel>
+          <FormLabel>{t("exam.filter.startDate")}</FormLabel>
           <DatePicker
             selected={dateRange.start}
             onChange={(date) => setDateRange({ start: date })}
             selectsStart
             startDate={dateRange.start}
             endDate={dateRange.end}
-            placeholderText={t("filter.startDate")}
+            placeholderText={t("exam.filter.startDate")}
             customInput={
               <Input
                 startDecorator={<DateRangeRounded />}
@@ -113,15 +133,15 @@ const FilterAssginment = ({ classes }: FilterAssginmentProps) => {
         </FormControl>
 
         <FormControl sx={{ maxWidth: 240 }}>
-          <FormLabel>{t("filter.endDate")}</FormLabel>
+          <FormLabel>{t("exam.filter.endDate")}</FormLabel>
           <DatePicker
             selected={dateRange.end}
             onChange={(date) => setDateRange({ end: date })}
             selectsEnd
             startDate={dateRange.start}
             endDate={dateRange.end}
-            // minDate={dateRange.start}
-            placeholderText={t("filter.endDate")}
+            // minDate={filterOptions.dateRange.start}
+            placeholderText={t("exam.filter.endDate")}
             customInput={
               <Input
                 startDecorator={<DateRangeRounded />}
@@ -133,11 +153,11 @@ const FilterAssginment = ({ classes }: FilterAssginmentProps) => {
         </FormControl>
 
         <Button size="sm" variant="plain" color="danger" onClick={resetFilters}>
-          {t("filter.clearFilters")}
+          {t("exam.filter.clearFilters")}
         </Button>
       </Box>
     </Card>
   );
 };
 
-export default FilterAssginment;
+export default FilterExam;

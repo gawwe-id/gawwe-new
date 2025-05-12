@@ -1,70 +1,158 @@
 {
-  "page": {
-    "title": "Kelola Tugas",
-    "addButton": "Tambah Tugas Baru",
-    "loading": "Memuat..."
+  "tabs": {
+    "task": "Tugas & PR",
+    "exam": "Ujian",
+    "quiz": "Kuis"
   },
-  "filter": {
-    "search": "Cari",
-    "searchPlaceholder": "Cari tugas...",
-    "filterByClass": "Filter berdasarkan Kelas",
-    "selectClass": "Pilih kelas",
-    "dateRange": "Rentang Tanggal",
-    "startDate": "Tanggal Mulai",
-    "endDate": "Tanggal Akhir",
-    "clearFilters": "Hapus Filter"
+  "task": {
+    "page": {
+      "title": "Kelola Tugas",
+      "addButton": "Buat Tugas",
+      "loading": "Memuat..."
+    },
+    "filter": {
+      "search": "Cari",
+      "searchPlaceholder": "Cari...",
+      "filterByClass": "Filter berdasarkan Kelas",
+      "selectClass": "Pilih kelas",
+      "dateRange": "Rentang Tanggal",
+      "startDate": "Tanggal Mulai",
+      "endDate": "Tanggal Akhir",
+      "clearFilters": "Hapus Filter"
+    },
+    "table": {
+      "title": "Judul",
+      "class": "Kelas",
+      "dueDate": "Tanggal Jatuh Tempo",
+      "actions": "Aksi",
+      "unknownClass": "Kelas Tidak Diketahui",
+      "viewSubmissions": "Lihat Pengumpulan",
+      "generateReport": "Buat Laporan",
+      "sendNotification": "Kirim Notifikasi",
+      "noAssignmentsFound": "Tidak ada tugas ditemukan. Buat tugas baru!",
+      "deleteConfirmation": "Apakah Anda yakin ingin menghapus tugas ini?"
+    },
+    "modal": {
+      "editTitle": "Edit Tugas",
+      "createTitle": "Buat Tugas",
+      "deleteTitle": "Hapus Tugas",
+      "descriptionDelete": "Apakah Kamu yakin ingin menghapus Tugas ini?",
+      "tabs": {
+        "basicInfo": "Informasi Dasar",
+        "quizSettings": "Pengaturan Kuis",
+        "essayQuestions": "Pertanyaan Esai"
+      },
+      "form": {
+        "title": "Judul",
+        "titlePlaceholder": "Judul tugas",
+        "description": "Deskripsi",
+        "descriptionPlaceholder": "Deskripsi tugas",
+        "class": "Kelas",
+        "selectClass": "Pilih kelas",
+        "dueDate": "Tanggal Jatuh Tempo",
+        "calendarEvent": "Acara Kalender",
+        "calendarEventPlaceholder": "Tautan ke acara kalender (opsional)",
+        "includeQuiz": "Sertakan Kuis",
+        "includeEssay": "Sertakan Pertanyaan Esai",
+        "quizTitle": "Judul Kuis",
+        "quizTitlePlaceholder": "Judul kuis",
+        "quizDescription": "Deskripsi Kuis",
+        "quizDescriptionPlaceholder": "Deskripsi kuis",
+        "quizNote": "Catatan: Setelah membuat tugas, Anda akan diarahkan ke halaman Manajemen Kuis untuk menambahkan pertanyaan.",
+        "essayQuestionsTitle": "Pertanyaan Esai",
+        "addQuestion": "Tambah Pertanyaan",
+        "questionLabel": "Pertanyaan {{number}}",
+        "questionText": "Teks Pertanyaan",
+        "questionTextPlaceholder": "Masukkan pertanyaan esai",
+        "maxWords": "Jumlah Kata Maksimum (Opsional)",
+        "maxWordsPlaceholder": "Jumlah kata maksimum",
+        "noEssayQuestions": "Belum ada pertanyaan esai. Klik tombol \"Tambah Pertanyaan\" untuk membuat satu.",
+        "cancel": "Batal",
+        "delete": "Hapus",
+        "update": "Perbarui Tugas",
+        "create": "Buat Tugas"
+      }
+    }
   },
-  "table": {
-    "title": "Judul",
-    "class": "Kelas",
-    "dueDate": "Tanggal Jatuh Tempo",
-    "actions": "Aksi",
-    "unknownClass": "Kelas Tidak Diketahui",
-    "viewSubmissions": "Lihat Pengumpulan",
-    "generateReport": "Buat Laporan",
-    "sendNotification": "Kirim Notifikasi",
-    "noAssignmentsFound": "Tidak ada tugas ditemukan. Buat tugas baru!",
-    "deleteConfirmation": "Apakah Anda yakin ingin menghapus tugas ini?"
-  },
-  "modal": {
-    "editTitle": "Edit Tugas",
-    "createTitle": "Buat Tugas Baru",
-    "deleteTitle": "Hapus Tugas",
-    "descriptionDelete": "Apakah Kamu yakin ingin menghapus Tugas ini?",
-    "tabs": {
-      "basicInfo": "Informasi Dasar",
-      "quizSettings": "Pengaturan Kuis",
-      "essayQuestions": "Pertanyaan Esai"
+  "exam": {
+    "page": {
+      "title": "Manajemen Ujian",
+      "subtitle": "Kelola semua ujian Anda di satu tempat",
+      "loading": "Memuat..."
+    },
+    "actions": {
+      "create": "Buat Ujian",
+      "edit": "Edit Ujian",
+      "delete": "Hapus Ujian",
+      "view": "Lihat Detail"
+    },
+    "filters": {
+      "all": "Semua Ujian",
+      "upcoming": "Akan Datang",
+      "past": "Selesai",
+      "byClass": "Filter berdasarkan Kelas"
+    },
+    "filter": {
+      "search": "Cari",
+      "searchPlaceholder": "Cari berdasarkan nama atau deskripsi...",
+      "status": "Status",
+      "selectStatus": "Pilih status",
+      "allStatuses": "Semua status",
+      "filterByClass": "Filter berdasarkan kelas",
+      "selectClass": "Pilih kelas",
+      "allClasses": "Semua kelas",
+      "startDate": "Tanggal mulai",
+      "endDate": "Tanggal selesai",
+      "clearFilters": "Hapus filter"
     },
     "form": {
-      "title": "Judul",
-      "titlePlaceholder": "Judul tugas",
+      "title": "Judul Ujian",
       "description": "Deskripsi",
-      "descriptionPlaceholder": "Deskripsi tugas",
+      "date": "Tanggal Ujian",
+      "startTime": "Waktu Mulai",
+      "endTime": "Waktu Selesai",
+      "duration": "Durasi (menit)",
+      "maxScore": "Skor Maksimum",
+      "passingScore": "Skor Kelulusan",
       "class": "Kelas",
-      "selectClass": "Pilih kelas",
-      "dueDate": "Tanggal Jatuh Tempo",
-      "calendarEvent": "Acara Kalender",
-      "calendarEventPlaceholder": "Tautan ke acara kalender (opsional)",
-      "includeQuiz": "Sertakan Kuis",
-      "includeEssay": "Sertakan Pertanyaan Esai",
-      "quizTitle": "Judul Kuis",
-      "quizTitlePlaceholder": "Judul kuis",
-      "quizDescription": "Deskripsi Kuis",
-      "quizDescriptionPlaceholder": "Deskripsi kuis",
-      "quizNote": "Catatan: Setelah membuat tugas, Anda akan diarahkan ke halaman Manajemen Kuis untuk menambahkan pertanyaan.",
-      "essayQuestionsTitle": "Pertanyaan Esai",
-      "addQuestion": "Tambah Pertanyaan",
-      "questionLabel": "Pertanyaan {{number}}",
-      "questionText": "Teks Pertanyaan",
-      "questionTextPlaceholder": "Masukkan pertanyaan esai",
-      "maxWords": "Jumlah Kata Maksimum (Opsional)",
-      "maxWordsPlaceholder": "Jumlah kata maksimum",
-      "noEssayQuestions": "Belum ada pertanyaan esai. Klik tombol \"Tambah Pertanyaan\" untuk membuat satu.",
-      "cancel": "Batal",
-      "delete": "Hapus",
-      "update": "Perbarui Tugas",
-      "create": "Buat Tugas"
+      "calendar": "Kalender",
+      "status": "Status",
+      "isPublished": "Dipublikasikan",
+      "isActive": "Aktif",
+      "calendarEventPlaceholder": "Link ke Acara Kalender (opsional)",
+      "create": "Buat",
+      "creating": "Membuat...",
+      "cancel": "Batal"
+    },
+    "table": {
+      "id": "ID",
+      "title": "Judul",
+      "class": "Kelas",
+      "date": "Tanggal",
+      "examDate": "Tanggal Ujian",
+      "examTime": "Waktu Ujian",
+      "startTime": "Waktu Mulai",
+      "endTime": "Waktu Selesai",
+      "duration": "Durasi",
+      "status": "Status",
+      "actions": "Tindakan",
+      "noExamsFound": "Tidak ada ujian ditemukan. Buat tugas baru!"
+    },
+    "status": {
+      "draft": "Draft",
+      "published": "Dipublikasikan",
+      "ongoing": "Sedang Berlangsung",
+      "completed": "Selesai",
+      "cancelled": "Dibatalkan"
+    },
+    "messages": {
+      "createSuccess": "Ujian berhasil dibuat",
+      "updateSuccess": "Ujian berhasil diperbarui",
+      "deleteSuccess": "Ujian berhasil dihapus",
+      "createError": "Gagal membuat ujian",
+      "updateError": "Gagal memperbarui ujian",
+      "deleteError": "Gagal menghapus ujian",
+      "confirmDelete": "Apakah Anda yakin ingin menghapus ujian ini?"
     }
   }
 }

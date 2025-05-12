@@ -141,29 +141,7 @@ export const useMenus = () => {
       id: "assignments",
       title: "Assignments",
       icon: icon.assignments!,
-      url: "",
-      children: [
-        {
-          id: "assignments",
-          title: t("homeworkManagement"),
-          url: "/task-management",
-        },
-        {
-          id: "exams",
-          title: t("examManagement"),
-          url: "/exams",
-        },
-        {
-          id: "quizzes",
-          title: t("quizManagement"),
-          url: "/quizzes",
-        },
-        {
-          id: "grades",
-          title: t("gradeManagement"),
-          url: "/grades",
-        },
-      ],
+      url: "/assignments?activetab=0",
     },
     {
       id: "calendar",

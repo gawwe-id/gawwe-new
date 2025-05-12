@@ -1,6 +1,5 @@
 import { client } from "@/lib/client";
-import { useTaskManagementStore } from "@/store/taskManagementStore";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useTaskStore } from "@/store/taskStore";
 import {
   AddRounded,
   CalendarMonthRounded,
@@ -38,8 +37,7 @@ import React, { useEffect } from "react";
 import DatePicker from "react-datepicker";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { z } from "zod";
-import { AssignmentFormValues } from "..";
+import { AssignmentFormValues } from ".";
 
 type Class = {
   id: string;
@@ -71,20 +69,16 @@ type Calendar = {
   link: string | null;
 };
 
-interface DialogAddAssignmentProps {
+interface DialogAddTaskProps {
   classes: Class[] | undefined;
   calendars: Calendar[] | undefined;
   form: UseFormReturn<AssignmentFormValues>;
 }
 
-const DialogAddAssignment = ({
-  classes,
-  calendars,
-  form,
-}: DialogAddAssignmentProps) => {
+const DialogAddTask = ({ classes, calendars, form }: DialogAddTaskProps) => {
   const { t } = useTranslation("assignment");
   const queryClient = useQueryClient();
-  const { isModalOpen, editId, closeModal } = useTaskManagementStore();
+  const { isModalOpen, editId, closeModal } = useTaskStore();
 
   // Form setup
   const {
@@ -193,32 +187,32 @@ const DialogAddAssignment = ({
       >
         <ModalClose />
         <Typography id="assignment-modal-title" level="h4" component="h2">
-          {editId ? t("modal.editTitle") : t("modal.createTitle")}
+          {editId ? t("task.modal.editTitle") : t("task.modal.createTitle")}
         </Typography>
         <Divider sx={{ my: 2 }} />
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Tabs defaultValue="basic">
             <TabList>
-              <Tab value="basic">{t("modal.tabs.basicInfo")}</Tab>
+              <Tab value="basic">{t("task.modal.tabs.basicInfo")}</Tab>
               <Tab value="quiz" disabled={!hasQuiz}>
-                {t("modal.tabs.quizSettings")}
+                {t("task.modal.tabs.quizSettings")}
               </Tab>
               <Tab value="essay" disabled={!hasEssay}>
-                {t("modal.tabs.essayQuestions")}
+                {t("task.modal.tabs.essayQuestions")}
               </Tab>
             </TabList>
 
             <TabPanel value="basic">
               <Stack spacing={2} sx={{ mt: 2 }}>
                 <FormControl error={!!errors.title}>
-                  <FormLabel>{t("modal.form.title")}</FormLabel>
+                  <FormLabel>{t("task.modal.form.title")}</FormLabel>
                   <Controller
                     name="title"
                     control={control}
                     render={({ field }) => (
                       <Input
-                        placeholder={t("modal.form.titlePlaceholder")}
+                        placeholder={t("task.modal.form.titlePlaceholder")}
                         {...field}
                       />
                     )}
@@ -231,14 +225,16 @@ const DialogAddAssignment = ({
                 </FormControl>
 
                 <FormControl error={!!errors.description}>
-                  <FormLabel>{t("modal.form.description")}</FormLabel>
+                  <FormLabel>{t("task.modal.form.description")}</FormLabel>
                   <Controller
                     name="description"
                     control={control}
                     render={({ field }) => (
                       <Textarea
                         minRows={3}
-                        placeholder={t("modal.form.descriptionPlaceholder")}
+                        placeholder={t(
+                          "task.modal.form.descriptionPlaceholder"
+                        )}
                         {...field}
                       />
                     )}
@@ -251,14 +247,14 @@ const DialogAddAssignment = ({
                 </FormControl>
 
                 <FormControl error={!!errors.classId}>
-                  <FormLabel>{t("modal.form.class")}</FormLabel>
+                  <FormLabel>{t("task.modal.form.class")}</FormLabel>
                   <Controller
                     name="classId"
                     defaultValue=""
                     control={control}
                     render={({ field }) => (
                       <Select
-                        placeholder={t("modal.form.selectClass")}
+                        placeholder={t("task.modal.form.selectClass")}
                         {...field}
                         value={field.value}
                         onChange={(_, value) => field.onChange(value)}
@@ -279,7 +275,7 @@ const DialogAddAssignment = ({
                 </FormControl>
 
                 <FormControl error={!!errors.dueDate}>
-                  <FormLabel>{t("modal.form.dueDate")}</FormLabel>
+                  <FormLabel>{t("task.modal.form.dueDate")}</FormLabel>
                   <Controller
                     name="dueDate"
                     control={control}
@@ -306,13 +302,15 @@ const DialogAddAssignment = ({
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel>{t("modal.form.calendarEvent")}</FormLabel>
+                  <FormLabel>{t("task.modal.form.calendarEvent")}</FormLabel>
                   <Controller
                     name="calendarId"
                     control={control}
                     render={({ field }) => (
                       <Select
-                        placeholder={t("modal.form.calendarEventPlaceholder")}
+                        placeholder={t(
+                          "task.modal.form.calendarEventPlaceholder"
+                        )}
                         {...field}
                         onChange={(_, value) => field.onChange(value)}
                         startDecorator={<CalendarMonthRounded />}
@@ -320,7 +318,7 @@ const DialogAddAssignment = ({
                         {calendars?.map((calendar: Calendar) => (
                           <Option key={calendar.id} value={calendar.id}>
                             {calendar.title} (
-                            {dayjs(calendar.date).format("DD MMM YYYY")})
+                            {dayjs(calendar.date).format("task.DD MMM YYYY")})
                           </Option>
                         ))}
                       </Select>
@@ -335,7 +333,7 @@ const DialogAddAssignment = ({
                       control={control}
                       render={({ field }) => (
                         <Checkbox
-                          label={t("modal.form.includeQuiz")}
+                          label={t("task.modal.form.includeQuiz")}
                           checked={field.value}
                           onChange={(e) => field.onChange(e.target.checked)}
                         />
@@ -349,7 +347,7 @@ const DialogAddAssignment = ({
                       control={control}
                       render={({ field }) => (
                         <Checkbox
-                          label={t("modal.form.includeEssay")}
+                          label={t("task.modal.form.includeEssay")}
                           checked={field.value}
                           onChange={(e) => field.onChange(e.target.checked)}
                         />
@@ -363,14 +361,14 @@ const DialogAddAssignment = ({
             <TabPanel value="quiz">
               <Stack spacing={2} sx={{ mt: 2 }}>
                 <FormControl>
-                  <FormLabel>{t("modal.form.quizTitle")}</FormLabel>
+                  <FormLabel>{t("task.modal.form.quizTitle")}</FormLabel>
                   <Controller
                     name="quizTitle"
                     control={control}
                     render={({ field }) => (
                       <Input
                         startDecorator={<QuizRounded />}
-                        placeholder={t("modal.form.quizTitlePlaceholder")}
+                        placeholder={t("task.modal.form.quizTitlePlaceholder")}
                         {...field}
                       />
                     )}
@@ -378,14 +376,16 @@ const DialogAddAssignment = ({
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel>{t("modal.form.quizDescription")}</FormLabel>
+                  <FormLabel>{t("task.modal.form.quizDescription")}</FormLabel>
                   <Controller
                     name="quizDescription"
                     control={control}
                     render={({ field }) => (
                       <Textarea
                         minRows={2}
-                        placeholder={t("modal.form.quizDescriptionPlaceholder")}
+                        placeholder={t(
+                          "task.modal.form.quizDescriptionPlaceholder"
+                        )}
                         {...field}
                       />
                     )}
@@ -393,7 +393,7 @@ const DialogAddAssignment = ({
                 </FormControl>
 
                 <Typography level="body-sm" color="primary">
-                  {t("modal.form.quizNote")}
+                  {t("task.modal.form.quizNote")}
                 </Typography>
               </Stack>
             </TabPanel>
@@ -408,14 +408,14 @@ const DialogAddAssignment = ({
                   }}
                 >
                   <Typography level="title-md">
-                    {t("modal.form.essayQuestionsTitle")}
+                    {t("task.modal.form.essayQuestionsTitle")}
                   </Typography>
                   <Button
                     size="sm"
                     startDecorator={<AddRounded />}
                     onClick={addEssayQuestion}
                   >
-                    {t("modal.form.addQuestion")}
+                    {t("task.modal.form.addQuestion")}
                   </Button>
                 </Box>
 
@@ -430,7 +430,9 @@ const DialogAddAssignment = ({
                         }}
                       >
                         <Typography level="title-sm">
-                          {t("modal.form.questionLabel", { number: index + 1 })}
+                          {t("task.modal.form.questionLabel", {
+                            number: index + 1,
+                          })}
                         </Typography>
                         <IconButton
                           size="sm"
@@ -445,7 +447,7 @@ const DialogAddAssignment = ({
                         <Grid xs={12}>
                           <FormControl>
                             <FormLabel>
-                              {t("modal.form.questionText")}
+                              {t("task.modal.form.questionText")}
                             </FormLabel>
                             <Controller
                               name={`essayQuestions.${index}.questionText`}
@@ -465,7 +467,9 @@ const DialogAddAssignment = ({
                         </Grid>
                         <Grid xs={12} sm={6}>
                           <FormControl>
-                            <FormLabel>{t("modal.form.maxWords")}</FormLabel>
+                            <FormLabel>
+                              {t("task.modal.form.maxWords")}
+                            </FormLabel>
                             <Controller
                               name={`essayQuestions.${index}.maxWords`}
                               control={control}
@@ -505,7 +509,7 @@ const DialogAddAssignment = ({
                       }}
                     >
                       <Typography level="body-sm">
-                        {t("modal.form.noEssayQuestions")}
+                        {t("task.modal.form.noEssayQuestions")}
                       </Typography>
                     </Box>
                   )}
@@ -523,10 +527,12 @@ const DialogAddAssignment = ({
             }}
           >
             <Button variant="plain" color="neutral" onClick={closeModal}>
-              {t("modal.form.cancel")}
+              {t("task.modal.form.cancel")}
             </Button>
             <Button type="submit" loading={isLoading} disabled={isLoading}>
-              {editId ? t("modal.form.update") : t("modal.form.create")}
+              {editId
+                ? t("task.modal.form.update")
+                : t("task.modal.form.create")}
             </Button>
           </Box>
         </form>
@@ -535,4 +541,4 @@ const DialogAddAssignment = ({
   );
 };
 
-export default DialogAddAssignment;
+export default DialogAddTask;

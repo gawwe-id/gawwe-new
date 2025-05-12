@@ -1,26 +1,22 @@
 "use client";
 
-import * as React from "react";
-import { Typography, Button, Box } from "@mui/joy";
-import { useQuery } from "@tanstack/react-query";
+import { Box, Button, Typography } from "@mui/joy";
 import { client } from "@/lib/client";
+import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTaskStore } from "@/store/taskStore";
 import { z } from "zod";
-import { useTranslation } from "react-i18next";
-import { useTaskManagementStore } from "@/store/taskManagementStore";
-
-// _components
-import DialogAddAssignment from "./_components/DialogAddAssignment";
-import FilterAssginment from "./_components/FilterAssginment";
-import TableAssignment from "./_components/TableAssignment";
+import TableTask from "./TableTask";
+import FilterTask from "./FilterTask";
+import DialogAddTask from "./DialogAddTask";
 
 // assets
 import {
   AddRounded as AddIcon,
   AssignmentRounded as AssignmentIcon,
 } from "@mui/icons-material";
-
 import "react-datepicker/dist/react-datepicker.css";
 
 // Form schema with zod validation
@@ -46,9 +42,9 @@ const assignmentSchema = z.object({
 
 export type AssignmentFormValues = z.infer<typeof assignmentSchema>;
 
-export default function TaskManagement() {
+const TaskContent = () => {
   const { t } = useTranslation("assignment");
-  const { openModal, setEditId } = useTaskManagementStore();
+  const { openModal, setEditId } = useTaskStore();
 
   // Form setup
   const form = useForm<AssignmentFormValues>({
@@ -108,44 +104,46 @@ export default function TaskManagement() {
   if (isLoadingAssignments || isLoadingClasses || isLoadingCalendars) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
-        <Typography level="h4">{t("page.loading")}</Typography>
+        <Typography level="h4">{t("task.page.loading")}</Typography>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ py: 4, px: { xs: 2, md: 4 }, maxWidth: "1300px", mx: "auto" }}>
+    <>
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mb: 3,
+          my: 3,
         }}
       >
         <Typography level="h3" startDecorator={<AssignmentIcon />}>
-          {t("page.title")}
+          {t("task.page.title")}
         </Typography>
         <Button
           startDecorator={<AddIcon />}
           onClick={handleCreate}
           color="primary"
         >
-          {t("page.addButton")}
+          {t("task.page.addButton")}
         </Button>
       </Box>
 
-      <FilterAssginment classes={classes?.data} />
-      <TableAssignment
+      <FilterTask classes={classes?.data} />
+      <TableTask
         form={form}
         assignments={assignments?.data}
         classes={classes?.data}
       />
-      <DialogAddAssignment
+      <DialogAddTask
         form={form}
         classes={classes?.data}
         calendars={calendars?.data}
       />
-    </Box>
+    </>
   );
-}
+};
+
+export default TaskContent;

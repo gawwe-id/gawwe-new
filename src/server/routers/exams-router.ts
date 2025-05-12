@@ -3,7 +3,8 @@ import { throwApiError } from "@/utils/api-error";
 import { eq, sql, gte } from "drizzle-orm";
 import { z } from "zod";
 import { j, privateProcedure, publicProcedure } from "../jstack";
-import { insertExamSchema, updateExamSchema } from "../db/schema/exams";
+import dayjs from "dayjs";
+import { insertExamSchema } from "../db/schema/exams";
 
 // Define input schemas
 const ExamIdInput = z.object({ examId: z.string() });
@@ -19,6 +20,56 @@ const ExamStatusEnum = z.enum([
   "cancelled",
 ]);
 
+const createExamInputSchema = z.object({
+  title: z.string(),
+  description: z.string().optional(),
+  examDate: z.date(),
+  startTime: z.string().regex(/^\d{2}:\d{2}$/), // HH:MM format
+  endTime: z.string().regex(/^\d{2}:\d{2}$/), // HH:MM format
+  status: ExamStatusEnum.default("draft"),
+  isOnline: z.boolean().default(false),
+  link: z.string().optional(),
+  classId: z.string().uuid().optional(),
+  calendarId: z.string().uuid().optional(),
+});
+
+// Define a schema for the update exam input
+const updateExamInputSchema = z.object({
+  examId: z.string().uuid(),
+  data: z.object({
+    title: z.string().optional(),
+    description: z.string().optional(),
+    examDate: z.date().optional(),
+    startTime: z
+      .string()
+      .regex(/^\d{2}:\d{2}$/)
+      .optional(), // HH:MM format
+    endTime: z
+      .string()
+      .regex(/^\d{2}:\d{2}$/)
+      .optional(), // HH:MM format
+    status: ExamStatusEnum.optional(),
+    isOnline: z.boolean().optional(),
+    link: z.string().optional(),
+    classId: z.string().uuid().optional(),
+    calendarId: z.string().uuid().optional(),
+  }),
+});
+
+function combineDateTime(dateObj: Date | undefined, timeObj: Date): Date {
+  // Create a new date object to avoid mutating the original
+  const combinedDate = dateObj ? new Date(dateObj) : new Date();
+
+  // Extract hours and minutes from the time Date object
+  const hours = timeObj.getHours();
+  const minutes = timeObj.getMinutes();
+
+  // Set the time on the combined date
+  combinedDate.setHours(hours, minutes, 0, 0);
+
+  return combinedDate;
+}
+
 export const examsRouter = j.router({
   /** ========================================
    * CREATE EXAM
@@ -28,12 +79,25 @@ export const examsRouter = j.router({
     .mutation(async ({ c, ctx, input }) => {
       const { db } = ctx;
 
+      // Log the input for debugging
+      console.log("Original input:", JSON.stringify(input, null, 2));
+
+      // Create a processed version of the input with proper timestamps
+      const processedInput = {
+        ...input,
+        // Combine the examDate with the time components from startTime and endTime
+        startTime: combineDateTime(input.examDate, input.startTime),
+        endTime: combineDateTime(input.examDate, input.endTime),
+      };
+
+      console.log("Processed input:", JSON.stringify(processedInput, null, 2));
+
       // Check if the class exists if classId is provided
-      if (input.classId) {
+      if (processedInput.classId) {
         const [classExists] = await db
           .select()
           .from(classes)
-          .where(eq(classes.id, input.classId))
+          .where(eq(classes.id, processedInput.classId))
           .execute();
 
         if (!classExists) {
@@ -42,11 +106,11 @@ export const examsRouter = j.router({
       }
 
       // Check if the calendar exists if calendarId is provided
-      if (input.calendarId) {
+      if (processedInput.calendarId) {
         const [calendarExists] = await db
           .select()
           .from(calendars)
-          .where(eq(calendars.id, input.calendarId))
+          .where(eq(calendars.id, processedInput.calendarId))
           .execute();
 
         if (!calendarExists) {
@@ -55,25 +119,30 @@ export const examsRouter = j.router({
       }
 
       // Validate that endTime is after startTime
-      if (input.startTime && input.endTime) {
-        const startTime = new Date(input.startTime);
-        const endTime = new Date(input.endTime);
-
-        if (endTime <= startTime) {
-          throwApiError(400, "End time must be after start time");
-        }
+      if (
+        processedInput.startTime.getTime() >= processedInput.endTime.getTime()
+      ) {
+        throwApiError(400, "End time must be after start time");
       }
 
       // Create the exam
-      const [newExam] = await db.insert(exams).values(input).returning();
+      try {
+        const [newExam] = await db
+          .insert(exams)
+          .values(processedInput)
+          .returning();
 
-      return c.superjson(
-        {
-          message: "Exam created successfully",
-          data: newExam,
-        },
-        201
-      );
+        return c.superjson(
+          {
+            message: "Exam created successfully",
+            data: newExam,
+          },
+          201
+        );
+      } catch (error) {
+        console.error("Error inserting exam:", error);
+        throwApiError(500, "Failed to create exam");
+      }
     }),
 
   /** ========================================
@@ -200,7 +269,7 @@ export const examsRouter = j.router({
     .input(
       z.object({
         examId: z.string(),
-        data: updateExamSchema,
+        data: updateExamInputSchema,
       })
     )
     .mutation(async ({ c, ctx, input }) => {
@@ -218,12 +287,51 @@ export const examsRouter = j.router({
         throwApiError(404, "Exam not found");
       }
 
+      // Create a processed version of the input
+      const processedData: any = { ...data };
+
+      // If updating both examDate and startTime, combine them
+      if (data.data.examDate && data.data.startTime) {
+        processedData.startTime = combineDateTime(
+          data.data.examDate,
+          data?.data?.startTime
+        );
+      }
+      // If updating just startTime, use existing examDate
+      else if (
+        data.data.startTime &&
+        !data.data.examDate &&
+        existingExam?.examDate
+      ) {
+        processedData.startTime = combineDateTime(
+          existingExam?.examDate,
+          data.data.startTime
+        );
+      }
+
+      // Same for endTime
+      if (data.data.examDate && data.data.endTime) {
+        processedData.endTime = combineDateTime(
+          data.data.examDate,
+          data.data.endTime
+        );
+      } else if (
+        data.data.endTime &&
+        !data.data.examDate &&
+        existingExam?.examDate
+      ) {
+        processedData.endTime = combineDateTime(
+          existingExam?.examDate,
+          data.data.endTime
+        );
+      }
+
       // Check if the class exists if classId is provided
-      if (data.classId) {
+      if (processedData.classId) {
         const [classExists] = await db
           .select()
           .from(classes)
-          .where(eq(classes.id, data.classId))
+          .where(eq(classes.id, processedData.classId))
           .execute();
 
         if (!classExists) {
@@ -232,11 +340,11 @@ export const examsRouter = j.router({
       }
 
       // Check if the calendar exists if calendarId is provided
-      if (data.calendarId) {
+      if (processedData.calendarId) {
         const [calendarExists] = await db
           .select()
           .from(calendars)
-          .where(eq(calendars.id, data.calendarId))
+          .where(eq(calendars.id, processedData.calendarId))
           .execute();
 
         if (!calendarExists) {
@@ -244,55 +352,54 @@ export const examsRouter = j.router({
         }
       }
 
-      // Validate status if provided
-      if (data.status) {
-        try {
-          ExamStatusEnum.parse(data.status);
-        } catch (error) {
-          throwApiError(400, "Invalid exam status");
-        }
-      }
-
       // Validate that endTime is after startTime if both are being updated
-      if (data.startTime && data.endTime) {
-        const startTime = new Date(data.startTime);
-        const endTime = new Date(data.endTime);
-
-        if (endTime <= startTime) {
+      if (processedData.startTime && processedData.endTime) {
+        if (
+          processedData.startTime.getTime() >= processedData.endTime.getTime()
+        ) {
           throwApiError(400, "End time must be after start time");
         }
       }
       // If only one time is being updated, check against existing value
-      else if (data.startTime && existingExam?.endTime) {
-        const startTime = new Date(data.startTime);
-        const endTime = new Date(existingExam?.endTime);
-
-        if (endTime <= startTime) {
+      else if (processedData.startTime && existingExam?.endTime) {
+        if (
+          processedData.startTime.getTime() >=
+          new Date(existingExam?.endTime).getTime()
+        ) {
           throwApiError(400, "End time must be after start time");
         }
-      } else if (data.endTime && existingExam?.startTime) {
-        const startTime = new Date(existingExam?.startTime);
-        const endTime = new Date(data.endTime);
-
-        if (endTime <= startTime) {
+      } else if (processedData.endTime && existingExam?.startTime) {
+        if (
+          new Date(existingExam?.startTime).getTime() >=
+          processedData.endTime.getTime()
+        ) {
           throwApiError(400, "End time must be after start time");
         }
       }
 
-      // Update the exam
-      const [updatedExam] = await db
-        .update(exams)
-        .set(data)
-        .where(eq(exams.id, examId))
-        .returning();
+      // Remove non-DB fields
+      if (data.data.startTime) delete data.data.startTime;
+      if (data.data.endTime) delete data.data.endTime;
 
-      return c.superjson(
-        {
-          message: "Exam updated successfully",
-          data: updatedExam,
-        },
-        200
-      );
+      // Update the exam
+      try {
+        const [updatedExam] = await db
+          .update(exams)
+          .set(processedData)
+          .where(eq(exams.id, examId))
+          .returning();
+
+        return c.superjson(
+          {
+            message: "Exam updated successfully",
+            data: updatedExam,
+          },
+          200
+        );
+      } catch (error) {
+        console.error("Error updating exam:", error);
+        throwApiError(500, "Failed to update exam");
+      }
     }),
 
   /** ========================================
