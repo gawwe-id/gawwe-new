@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useExamStore } from "@/store/examStore";
 import CreateExamDialog from "./CreateExamDialog";
+import EditExamDialog from "./EditExamDialog";
 
 const examSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -20,7 +21,7 @@ const examSchema = z.object({
   startTime: z.date(),
   endTime: z.date(),
   classId: z.string(),
-  calendarId: z.string().optional(),
+  calendarId: z.string().uuid().optional(),
   status: z.string().default("draft"),
   isPublished: z.boolean().default(false),
   isOnline: z.boolean().default(false),
@@ -120,6 +121,9 @@ const ExamContent = () => {
 
       {/* Create Exam Dialog */}
       <CreateExamDialog form={form} classes={classes?.data} />
+
+      {/* Edit xam Dialog */}
+      <EditExamDialog classes={classes?.data} />
     </>
   );
 };

@@ -269,6 +269,14 @@ export const examsRouter = j.router({
         );
       }
 
+      // No calendar ID
+      if (
+        processedData.calendarId === undefined ||
+        processedData.calendarId === null
+      ) {
+        processedData.calendarId = null;
+      }
+
       // Same for endTime
       if (data.examDate && data.endTime) {
         processedData.endTime = combineDateTime(

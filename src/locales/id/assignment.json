@@ -128,6 +128,8 @@
       "create": "Buat",
       "creating": "Membuat...",
       "delete": "Hapus",
+      "update": "Perbarui",
+      "updating": "Memperbarui...",
       "cancel": "Batal"
     },
     "table": {
