@@ -359,11 +359,6 @@ export const examsRouter = j.router({
         }
       }
 
-      // Remove examDate from processed data as it's not a field in the table
-      if ("examDate" in processedData) {
-        delete processedData.examDate;
-      }
-
       // Update the exam
       try {
         const [updatedExam] = await db
