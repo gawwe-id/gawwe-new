@@ -46,20 +46,20 @@ export const useMenus = () => {
       children: null,
     },
     {
-      id: "my_classes",
-      title: t("myClasses"),
+      id: "classes",
+      title: t("classes"),
       icon: icon.class!,
       url: "",
       children: [
         {
-          id: "classes",
-          title: t("allClasses"),
-          url: "/classes",
+          id: "my_classes",
+          title: t("myClasses"),
+          url: "/my-classes",
         },
         {
-          id: "schedules",
-          title: t("schedule"),
-          url: "/schedules",
+          id: "all_classes",
+          title: t("allClasses"),
+          url: "/classes",
         },
       ],
     },
