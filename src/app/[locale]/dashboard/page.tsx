@@ -1,6 +1,7 @@
 import DasbhboardLayout from "@/layout/DashboardLayout";
 import { auth } from "@/lib/auth";
 import DashboardAgency from "@/views/dashboard/agency";
+import DashboardParticipant from "@/views/dashboard/participant";
 
 export default async function DashboardPage(props: {
   params: Promise<{ locale: string }>;
@@ -13,7 +14,7 @@ export default async function DashboardPage(props: {
       {session?.user.role === "agency" ? (
         <DashboardAgency />
       ) : (
-        <h2>HHEHE PARTICIPANT</h2>
+        <DashboardParticipant />
       )}
     </DasbhboardLayout>
   );

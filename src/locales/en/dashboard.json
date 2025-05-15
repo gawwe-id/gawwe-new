@@ -1,0 +1,82 @@
+{
+  "agency": {
+    "welcome": "Welcome",
+    "welcomeMessage": "Manage your language classes and student progress from this dashboard.",
+    "createClass": "Create Class",
+    "manageStudents": "Manage Students",
+    "overview": "Agency Overview",
+    "statistics": {
+      "totalClasses": "Total Classes",
+      "activeStudents": "Active Students",
+      "completionRate": "Completion Rate",
+      "averageRating": "Average Rating"
+    },
+    "classManagement": {
+      "title": "Class Management",
+      "createNew": "Create New Class",
+      "viewAll": "View All Classes",
+      "search": "Search classes",
+      "noClasses": "No classes created yet"
+    },
+    "studentList": {
+      "title": "Recent Students",
+      "viewAll": "View All Students",
+      "search": "Search students",
+      "noStudents": "No students enrolled yet",
+      "enrollmentDate": "Enrollment Date",
+      "progress": "Progress"
+    },
+    "recentActivities": {
+      "title": "Recent Activities",
+      "viewAll": "View All Activities",
+      "noActivities": "No recent activities",
+      "enrollments": "New Enrollments",
+      "submissions": "Assignment Submissions",
+      "examResults": "Exam Results"
+    },
+    "earnings": {
+      "title": "Earnings Overview",
+      "totalEarnings": "Total Earnings",
+      "pendingPayouts": "Pending Payouts",
+      "monthlyRevenue": "Monthly Revenue",
+      "viewReport": "View Financial Report"
+    }
+  },
+  "participant": {
+    "welcome": "Welcome",
+    "welcomeMessage": "Continue your language learning journey. Your recent progress shows great improvement!",
+    "exploreClasses": "Explore Classes",
+    "viewSchedule": "View Schedule",
+    "enrolledCourses": "Enrolled Courses",
+    "completedAssignments": "Completed Tasks",
+    "upcomingExams": "Upcoming Exams",
+    "averageScore": "Average Score",
+    "myClasses": "My Classes",
+    "searchClasses": "Search classes",
+    "viewAll": "View All",
+    "allClasses": "All Classes",
+    "enrolled": "Enrolled",
+    "completed": "Completed",
+    "noCompletedClasses": "You haven't completed any classes yet",
+    "assignments": "Assignments",
+    "upcomingAssignments": "Upcoming Assignments",
+    "dueInNext7Days": "Tasks and exams due in the next 7 days",
+    "noUpcomingAssignments": "No upcoming assignments due",
+    "upcomingSchedule": "Upcoming Schedule",
+    "calendar": "Calendar",
+    "latestNews": "Latest News & Tips",
+    "achievements": "Achievements",
+    "allAchievements": "View all achievements",
+    "completeMoreAchievements": "Complete More Achievements",
+    "status": {
+      "completed": "Completed",
+      "pending": "Pending",
+      "overdue": "Overdue"
+    },
+    "progress": {
+      "overall": "Overall Progress",
+      "keepItUp": "Keep up the good work!",
+      "viewDetails": "View Details"
+    }
+  }
+}

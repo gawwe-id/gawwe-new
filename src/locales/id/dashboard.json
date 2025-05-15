@@ -1,0 +1,82 @@
+{
+  "agency": {
+    "welcome": "Selamat Datang",
+    "welcomeMessage": "Kelola kelas bahasa dan kemajuan siswa Anda dari dasbor ini.",
+    "createClass": "Buat Kelas",
+    "manageStudents": "Kelola Siswa",
+    "overview": "Ikhtisar Agensi",
+    "statistics": {
+      "totalClasses": "Total Kelas",
+      "activeStudents": "Siswa Aktif",
+      "completionRate": "Tingkat Penyelesaian",
+      "averageRating": "Penilaian Rata-rata"
+    },
+    "classManagement": {
+      "title": "Manajemen Kelas",
+      "createNew": "Buat Kelas Baru",
+      "viewAll": "Lihat Semua Kelas",
+      "search": "Cari kelas",
+      "noClasses": "Belum ada kelas yang dibuat"
+    },
+    "studentList": {
+      "title": "Siswa Terbaru",
+      "viewAll": "Lihat Semua Siswa",
+      "search": "Cari siswa",
+      "noStudents": "Belum ada siswa yang terdaftar",
+      "enrollmentDate": "Tanggal Pendaftaran",
+      "progress": "Kemajuan"
+    },
+    "recentActivities": {
+      "title": "Aktivitas Terbaru",
+      "viewAll": "Lihat Semua Aktivitas",
+      "noActivities": "Tidak ada aktivitas terbaru",
+      "enrollments": "Pendaftaran Baru",
+      "submissions": "Pengumpulan Tugas",
+      "examResults": "Hasil Ujian"
+    },
+    "earnings": {
+      "title": "Ikhtisar Pendapatan",
+      "totalEarnings": "Total Pendapatan",
+      "pendingPayouts": "Pembayaran Tertunda",
+      "monthlyRevenue": "Pendapatan Bulanan",
+      "viewReport": "Lihat Laporan Keuangan"
+    }
+  },
+  "participant": {
+    "welcome": "Selamat Datang",
+    "welcomeMessage": "Lanjutkan perjalanan belajar bahasa Anda. Kemajuan terbaru Anda menunjukkan peningkatan yang baik!",
+    "exploreClasses": "Jelajahi Kelas",
+    "viewSchedule": "Lihat Jadwal",
+    "enrolledCourses": "Kursus Terdaftar",
+    "completedAssignments": "Tugas Selesai",
+    "upcomingExams": "Ujian Mendatang",
+    "averageScore": "Nilai Rata-rata",
+    "myClasses": "Kelas Saya",
+    "searchClasses": "Cari kelas",
+    "viewAll": "Lihat Semua",
+    "allClasses": "Semua Kelas",
+    "enrolled": "Terdaftar",
+    "completed": "Selesai",
+    "noCompletedClasses": "Anda belum menyelesaikan kelas apapun",
+    "assignments": "Tugas",
+    "upcomingAssignments": "Tugas Mendatang",
+    "dueInNext7Days": "Tugas dan ujian yang harus diselesaikan dalam 7 hari ke depan",
+    "noUpcomingAssignments": "Tidak ada tugas mendatang",
+    "upcomingSchedule": "Jadwal Mendatang",
+    "calendar": "Kalender",
+    "latestNews": "Berita & Tips Terbaru",
+    "achievements": "Pencapaian",
+    "allAchievements": "Lihat semua pencapaian",
+    "completeMoreAchievements": "Selesaikan Lebih Banyak Pencapaian",
+    "status": {
+      "completed": "Selesai",
+      "pending": "Tertunda",
+      "overdue": "Terlambat"
+    },
+    "progress": {
+      "overall": "Kemajuan Keseluruhan",
+      "keepItUp": "Pertahankan kerja bagus Anda!",
+      "viewDetails": "Lihat Detail"
+    }
+  }
+}
